@@ -35,4 +35,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scene/scene/Utgard.unity
     guid: aa077c68593a9774399b9c22ac559eec
+  - enabled: 1
+    path: Assets/Scene/scene/Trost - anime revamp.unity
+    guid: a397ba7820dd1d942ae3676e56b00b38
   m_configObjects: {}

@@ -112,6 +112,8 @@ public class LevelBuilder : MonoBehaviour
             }
         });
 
+        
+
         _levels.Add(new Level
         {
             Name = "Akina",
@@ -219,6 +221,31 @@ public class LevelBuilder : MonoBehaviour
                 {
                 },
                 new WaveGamemodeSettings()
+            }
+        });
+        _levels.Add(new Level
+        {
+            Name = "Trost - Revamped (Anime)",
+            Description = "Classic trost map",
+            SceneName = "Trost - anime revamp",
+            Gamemodes = new List<GamemodeSettings>
+            {
+                new RushSettings
+                {
+                    Name = "Colossal Titan",
+                    Description = "Defeat the Colossal! Defeat the Colossal Titan.\nPrevent the abnormal titan from running to the north gate.",
+                    
+                },
+                new TrostSettings
+                {
+                    Name = "Trost",
+                    Description = "Escort Titan Eren"
+                },
+                new KillTitansSettings
+                {
+                    GamemodeType = GamemodeType.Titans,
+                },
+
             }
         });
     }

@@ -13,6 +13,8 @@ TagManager:
   - titanRespawn
   - playerRespawn
   - titanbodypart
+  - titanRespawn2
+  - route
   layers:
   - Default
   - TransparentFX

@@ -91,7 +91,7 @@ Material:
     - _SubsurfaceDistortion: 0.084
     - _UVSec: 0
     - _WindDirection: 0
-    - _WindIntensity: 0
+    - _WindIntensity: 0.1
     - _WindSpeed: 0.1
     - _ZWrite: 1
     - __dirty: 0

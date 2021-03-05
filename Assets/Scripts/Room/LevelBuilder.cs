@@ -234,18 +234,19 @@ public class LevelBuilder : MonoBehaviour
                 {
                     Name = "Colossal Titan",
                     Description = "Defeat the Colossal! Defeat the Colossal Titan.\nPrevent the abnormal titan from running to the north gate.",
-                    
-                },
-                new TrostSettings
-                {
-                    Name = "Trost",
-                    Description = "Escort Titan Eren"
                 },
                 new KillTitansSettings
                 {
                     GamemodeType = GamemodeType.Titans,
                 },
-
+                new EndlessSettings
+                {
+                    GamemodeType = GamemodeType.Endless,
+                },
+                new WaveGamemodeSettings(),
+                new CaptureGamemodeSettings(),
+                new RacingSettings(),
+                new InfectionGamemodeSettings(),
             }
         });
     }

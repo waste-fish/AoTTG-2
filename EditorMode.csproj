@@ -56,12 +56,12 @@
     <Analyzer Include="C:\Program Files (x86)\Microsoft Visual Studio Tools for Unity\16.0\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Tests\EditorMode\Titan\PlayerTitanTests.cs" />
     <Compile Include="Assets\Tests\EditorMode\Titan\MindlessTitanTests.cs" />
-    <Compile Include="Assets\Tests\EditorMode\Titan\ErenTitanTests.cs" />
     <Compile Include="Assets\Tests\EditorMode\Titan\ColossalTitanTests.cs" />
-    <Compile Include="Assets\Tests\EditorMode\VersionFormatterTests.cs" />
     <Compile Include="Assets\Tests\EditorMode\Titan\FemaleTitanTests.cs" />
+    <Compile Include="Assets\Tests\EditorMode\Titan\PlayerTitanTests.cs" />
+    <Compile Include="Assets\Tests\EditorMode\Titan\ErenTitanTests.cs" />
+    <Compile Include="Assets\Tests\EditorMode\VersionFormatterTests.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Tests\EditorMode\EditorMode.asmdef" />

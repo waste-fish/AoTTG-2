@@ -108,7 +108,7 @@ Material:
     - _bigwavesdirection: -30
     - _bigwavesflow: 0.142
     - _bigwavesintensity: 2.4
-    - _bigwavesspeed: 5
+    - _bigwavesspeed: 8
     - _bigwavetilling: 0.5
     - _distortionintensity: 0.5
     - _edgeblending: 30
@@ -117,7 +117,7 @@ Material:
     - _foamspeed: 0.5
     - _foamtilling: 10
     - _smallwavesDirection: -30
-    - _smallwavesSpeed: 4
+    - _smallwavesSpeed: 5
     - _smallwavesflow: 0.071
     - _smallwavesflow1: 0.267
     - _smallwavesintensity: 5

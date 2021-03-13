@@ -226,6 +226,27 @@ namespace Assets.Scripts.Room
                     new WaveGamemodeSettings()
                 }
             });
+            _levels.Add(new Level
+            {
+                Name = "Trost - Anime Revamp",
+                Description = "Revamped version of the Trost map, made to looked more like the anime",
+                SceneName = "Trost - anime revamp",
+                Gamemodes = new List<GamemodeSettings>
+                {
+                    new KillTitansSettings
+                    {
+                        GamemodeType = GamemodeType.Titans,
+                    },
+                    new EndlessSettings
+                    {
+                        GamemodeType = GamemodeType.Endless,
+                    },
+                    new WaveGamemodeSettings(),
+                    new CaptureGamemodeSettings(),
+                    new RacingSettings(),
+                    new InfectionGamemodeSettings()
+                }
+            });
         }
     }
 }

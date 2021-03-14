@@ -53,12 +53,12 @@
     <UnityVersion>2020.2.5f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Assets\Tests\EditorMode\Titan\PlayerTitanTests.cs" />
     <Compile Include="Assets\Tests\EditorMode\Titan\MindlessTitanTests.cs" />
-    <Compile Include="Assets\Tests\EditorMode\Titan\ErenTitanTests.cs" />
     <Compile Include="Assets\Tests\EditorMode\Titan\ColossalTitanTests.cs" />
-    <Compile Include="Assets\Tests\EditorMode\VersionFormatterTests.cs" />
     <Compile Include="Assets\Tests\EditorMode\Titan\FemaleTitanTests.cs" />
+    <Compile Include="Assets\Tests\EditorMode\Titan\PlayerTitanTests.cs" />
+    <Compile Include="Assets\Tests\EditorMode\Titan\ErenTitanTests.cs" />
+    <Compile Include="Assets\Tests\EditorMode\VersionFormatterTests.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Tests\EditorMode\EditorMode.asmdef" />

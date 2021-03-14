@@ -40,7 +40,7 @@
         /// </summary>
         /// <param name="player"></param>
         /// <returns>PhotonPlayerProperty.name</returns>
-        public static string GetPlayerName(PhotonPlayer player)
+        public static string GetPlayerName (PhotonPlayer player)
         {
             return RCextensions.returnStringFromObject(player.CustomProperties[PhotonPlayerProperty.name]);
         }

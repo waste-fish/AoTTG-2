@@ -51,7 +51,7 @@ public class AHSSShotGunCollider : MonoBehaviour
                     HitBox component = other.gameObject.GetComponent<HitBox>();
                     if ((((component != null) && (component.transform.root != null)) && (component.transform.root.GetComponent<Hero>().myTeam != this.myTeam)) && !component.transform.root.GetComponent<Hero>().IsInvincible)
                     {
-                        if ((!component.transform.root.GetComponent<Hero>().HasDied()) && !component.transform.root.GetComponent<Hero>().IsGrabbed)
+                        if ((!component.transform.root.GetComponent<Hero>().HasDiedOrInvincible()) && !component.transform.root.GetComponent<Hero>().IsGrabbed)
                         {
                             component.transform.root.GetComponent<Hero>().MarkDie();
                             object[] parameters = new object[5];

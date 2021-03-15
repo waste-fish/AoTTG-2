@@ -34,9 +34,9 @@ public class RockThrow : Photon.MonoBehaviour
 
     private void hitPlayer(GameObject hero)
     {
-        if (((hero != null) && !hero.GetComponent<Hero>().HasDied()) && !hero.GetComponent<Hero>().IsInvincible)
+        if (((hero != null) && !hero.GetComponent<Hero>().HasDiedOrInvincible()) && !hero.GetComponent<Hero>().IsInvincible)
         {
-            if ((!hero.GetComponent<Hero>().HasDied()) && !hero.GetComponent<Hero>().IsGrabbed)
+            if ((!hero.GetComponent<Hero>().HasDiedOrInvincible()) && !hero.GetComponent<Hero>().IsGrabbed)
             {
                 hero.GetComponent<Hero>().MarkDie();
                 int myOwnerViewID = -1;

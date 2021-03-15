@@ -72,7 +72,7 @@ namespace Assets.Scripts.Characters.Titan.Attacks
             if (obj7 != null)
             {
                 Vector3 vector4 = Titan.Body.Chest.position;
-                if (!((!Titan.photonView.isMine) || obj7.GetComponent<Hero>().HasDied()))
+                if (!((!Titan.photonView.isMine) || obj7.GetComponent<Hero>().HasDiedOrInvincible()))
                 {
                     obj7.GetComponent<Hero>().MarkDie();
                     object[] objArray5 = new object[] { (Vector3)(((obj7.transform.position - vector4) * 15f) * Titan.Size), false, Titan.photonView.viewID, Titan.name, true };

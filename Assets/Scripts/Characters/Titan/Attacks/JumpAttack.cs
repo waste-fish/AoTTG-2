@@ -185,7 +185,7 @@ namespace Assets.Scripts.Characters.Titan.Attacks
                 if (hero != null)
                 {
                     var vector13 = Titan.Body.Chest.position;
-                    if (Titan.photonView.isMine || !hero.HasDied())
+                    if (Titan.photonView.isMine || !hero.HasDiedOrInvincible())
                     {
                         hero.MarkDie();
                         object[] objArray8 = { (hero.transform.position - vector13) * 15f * Titan.Size, true, Titan.photonView.viewID, Titan.name, true };

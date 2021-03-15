@@ -276,7 +276,7 @@ namespace Assets.Scripts.Characters.Titan
             {
                 if (base.photonView.isMine)
                 {
-                    if (!grabTarget.HasDied())
+                    if (!grabTarget.HasDiedOrInvincible())
                     {
                         grabTarget.MarkDie();
                         object[] objArray2 = new object[] { -1, base.name };

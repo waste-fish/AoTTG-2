@@ -760,7 +760,7 @@ public class FemaleTitan : TitanBase
         Vector3 position = base.transform.position;
         foreach (GameObject obj3 in objArray)
         {
-            if (((obj3.GetComponent<Hero>() == null) || !obj3.GetComponent<Hero>().HasDied()) && ((obj3.GetComponent<ErenTitan>() == null) || !obj3.GetComponent<ErenTitan>().hasDied))
+            if (((obj3.GetComponent<Hero>() == null) || !obj3.GetComponent<Hero>().HasDiedOrInvincible()) && ((obj3.GetComponent<ErenTitan>() == null) || !obj3.GetComponent<ErenTitan>().hasDied))
             {
                 Vector3 vector2 = obj3.transform.position - position;
                 float sqrMagnitude = vector2.sqrMagnitude;
@@ -1060,7 +1060,7 @@ public class FemaleTitan : TitanBase
     {
         if (PhotonNetwork.isMasterClient)
         {
-            if (!target.GetComponent<Hero>().HasDied())
+            if (!target.GetComponent<Hero>().HasDiedOrInvincible())
             {
                 target.GetComponent<Hero>().MarkDie();
                 object[] parameters = new object[] { -1, "Female Titan" };
@@ -1079,7 +1079,7 @@ public class FemaleTitan : TitanBase
         if (hitHero != null)
         {
             Vector3 position = base.transform.Find("Amarture/Core/Controller_Body/hip/spine/chest").position;
-            if ((PhotonNetwork.isMasterClient) && !hitHero.GetComponent<Hero>().HasDied())
+            if ((PhotonNetwork.isMasterClient) && !hitHero.GetComponent<Hero>().HasDiedOrInvincible())
             {
                 hitHero.GetComponent<Hero>().MarkDie();
                 object[] parameters = new object[] { (Vector3) (((hitHero.transform.position - position) * 15f) * 4f), false, -1, "Female Titan", true };

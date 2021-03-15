@@ -63,7 +63,7 @@ public class EnemyCheckCollider : Photon.MonoBehaviour
                                 component.transform.root.GetComponent<Hero>().Die(((vector4.normalized * b) * 1000f) + (Vector3.up * 50f), this.isThisBite);
                             }
                         }
-                        else if ((!component.transform.root.GetComponent<Hero>().HasDied()) && !component.transform.root.GetComponent<Hero>().IsGrabbed)
+                        else if ((!component.transform.root.GetComponent<Hero>().HasDiedOrInvincible()) && !component.transform.root.GetComponent<Hero>().IsGrabbed)
                         {
                             component.transform.root.GetComponent<Hero>().MarkDie();
                             int myOwnerViewID = -1;

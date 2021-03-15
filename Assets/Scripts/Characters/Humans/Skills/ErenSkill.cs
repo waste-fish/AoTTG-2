@@ -10,7 +10,8 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override bool Use()
         {
-            throw new NotImplementedException();
+            Hero.Transform();
+            return true;
         }
 
         public override void OnUpdate()

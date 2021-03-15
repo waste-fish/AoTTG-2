@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.Characters.Humans.Constants;
 
 namespace Assets.Scripts.Characters.Humans.Skills
 {
@@ -10,7 +11,14 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override bool Use()
         {
-            throw new NotImplementedException();
+            if (!Hero.IsGrounded())
+                return false;
+
+            Hero.AttackAnimation = HeroAnim.SPECIAL_SASHA;
+            Hero.PlayAnimation(HeroAnim.SPECIAL_SASHA);
+            Hero.ApplyBuff(BUFF.SpeedUp, 10f);
+
+            return true;
         }
 
         public override void OnUpdate()

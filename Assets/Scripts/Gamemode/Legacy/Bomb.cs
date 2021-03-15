@@ -82,7 +82,7 @@ public class Bomb : Photon.MonoBehaviour
         foreach (Hero hero in EntityService.GetAll<Hero>())
         {
             GameObject heroGO = hero.gameObject;
-            if (((Vector3.Distance(heroGO.transform.position, position) < radius) && !heroGO.GetPhotonView().isMine) && !hero.bombImmune)
+            if (((Vector3.Distance(heroGO.transform.position, position) < radius) && !heroGO.GetPhotonView().isMine) && !hero.BombImmune)
             {
                 PhotonPlayer owner = heroGO.GetPhotonView().owner;
                 if (((GameSettings.Gamemode.TeamMode != TeamMode.Disabled) && (PhotonNetwork.player.CustomProperties[PhotonPlayerProperty.RCteam] != null)) && (owner.CustomProperties[PhotonPlayerProperty.RCteam] != null))

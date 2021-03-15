@@ -1,9 +1,11 @@
 ﻿using Assets.Scripts.UI.InGame.Controls;
+using Assets.Scripts.Input;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Assets.Scripts.UI.Input
 {
@@ -26,6 +28,10 @@ namespace Assets.Scripts.UI.Input
         public const KeyCode ScrollDown = KeyCode.Joystick8Button19;
         public static KeyCode Menu;
 
+        public static bool HumanJump { get; private set; }
+        public static bool HumanGas { get; private set; }
+        public static bool HumanGasBurst { get; private set; }
+
         public InputManager()
         {
 #if UNITY_EDITOR
@@ -40,6 +46,14 @@ namespace Assets.Scripts.UI.Input
 
         private void Awake()
         {
+            InputMap inputMap = new InputMap();
+            inputMap.Enable();
+
+            inputMap.Human.Jump.started += (context) => { HumanJump = true; };
+            inputMap.Human.Jump.canceled += (context) => { HumanJump = false; };
+            inputMap.Human.Gas.started += (context) => { HumanGas = true; };
+            inputMap.Human.Gas.canceled += (context) => { HumanGas = false; };
+
             LoadRebinds(typeof(InputCannon));
             LoadRebinds(typeof(InputHorse));
             LoadRebinds(typeof(InputHuman));
@@ -52,6 +66,11 @@ namespace Assets.Scripts.UI.Input
                 Settings = new ControlSettings();
                 PlayerPrefs.SetString(OtherPlayersPrefs, JsonConvert.SerializeObject(Settings));
             }
+        }
+
+        private void OnHumanJump(InputAction.CallbackContext context)
+        {
+
         }
 
         #region Default Rebinds
@@ -354,6 +373,7 @@ namespace Assets.Scripts.UI.Input
 
         #region KeyDown
 
+        [Obsolete]
         public static bool KeyDown(InputCannon input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -363,6 +383,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKeyDown(_cannonKeys[index]);
         }
 
+        [Obsolete]
         public static bool KeyDown(InputHuman input)
         {
             if (input != InputHuman.Item1 && MenuManager.IsAnyMenuOpen) return false;
@@ -372,6 +393,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKeyDown(_humanKeys[index]);
         }
 
+        [Obsolete]
         public static bool KeyDown(InputHorse input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -381,6 +403,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKeyDown(_horseKeys[index]);
         }
 
+        [Obsolete]
         public static bool KeyDown(InputTitan input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -390,6 +413,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKeyDown(_titanKeys[index]);
         }
 
+        [Obsolete]
         public static bool KeyDown(InputUi input)
         {
             if (input != InputUi.Chat && input != InputUi.Screenshot && MenuManager.IsAnyMenuOpen) return false;
@@ -403,6 +427,7 @@ namespace Assets.Scripts.UI.Input
 
         #region KeyPressed
 
+        [Obsolete]
         public static bool Key(InputCannon input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -412,6 +437,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKey(_cannonKeys[index]);
         }
 
+        [Obsolete]
         public static bool Key(InputHuman input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -421,6 +447,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKey(_humanKeys[index]);
         }
 
+        [Obsolete]
         public static bool Key(InputHorse input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -430,6 +457,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKey(_horseKeys[index]);
         }
 
+        [Obsolete]
         public static bool Key(InputTitan input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -439,6 +467,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKey(_titanKeys[index]);
         }
 
+        [Obsolete]
         public static bool Key(InputUi input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -452,6 +481,7 @@ namespace Assets.Scripts.UI.Input
 
         #region KeyUp
 
+        [Obsolete]
         public static bool KeyUp(InputCannon input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -460,6 +490,8 @@ namespace Assets.Scripts.UI.Input
                 ? IsScrolling(_cannonKeys[index])
                 : UnityEngine.Input.GetKeyUp(_cannonKeys[index]);
         }
+
+        [Obsolete]
 
         public static bool KeyUp(InputHuman input)
         {
@@ -470,6 +502,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKeyUp(_humanKeys[index]);
         }
 
+        [Obsolete]
         public static bool KeyUp(InputHorse input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -479,6 +512,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKeyUp(_horseKeys[index]);
         }
 
+        [Obsolete]
         public static bool KeyUp(InputTitan input)
         {
             if (MenuManager.IsAnyMenuOpen) return false;
@@ -488,6 +522,7 @@ namespace Assets.Scripts.UI.Input
                 : UnityEngine.Input.GetKeyUp(_titanKeys[index]);
         }
 
+        [Obsolete]
         public static bool KeyUp(InputUi input)
         {
             if (input != InputUi.InteractionWheel && MenuManager.IsAnyMenuOpen) return false;

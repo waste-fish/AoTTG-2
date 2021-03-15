@@ -160,7 +160,7 @@ namespace Assets.Scripts.Characters.Titan
             float positiveInfinity = float.PositiveInfinity;
             foreach (GameObject obj3 in objArray)
             {
-                if (((obj3.GetComponent<Hero>() == null) || !obj3.GetComponent<Hero>().HasDied()) && ((obj3.GetComponent<ErenTitan>() == null) || !obj3.GetComponent<ErenTitan>().hasDied))
+                if (((obj3.GetComponent<Hero>() == null) || !obj3.GetComponent<Hero>().HasDiedOrInvincible()) && ((obj3.GetComponent<ErenTitan>() == null) || !obj3.GetComponent<ErenTitan>().hasDied))
                 {
                     float num3 = Mathf.Sqrt(((obj3.transform.position.x - base.transform.position.x) * (obj3.transform.position.x - base.transform.position.x)) + ((obj3.transform.position.z - base.transform.position.z) * (obj3.transform.position.z - base.transform.position.z)));
                     if (((obj3.transform.position.y - base.transform.position.y) < 450f) && (num3 < positiveInfinity))
@@ -193,7 +193,7 @@ namespace Assets.Scripts.Characters.Titan
             if (hitHero != null)
             {
                 Vector3 position = base.transform.Find("Amarture/Core/Controller_Body/hip/spine/chest").position;
-                if (!hitHero.GetComponent<Hero>().HasDied())
+                if (!hitHero.GetComponent<Hero>().HasDiedOrInvincible())
                 {
                     hitHero.GetComponent<Hero>().MarkDie();
                     object[] parameters = new object[] { (Vector3) (((hitHero.transform.position - position) * 15f) * 4f), false, -1, "Colossal Titan", true };

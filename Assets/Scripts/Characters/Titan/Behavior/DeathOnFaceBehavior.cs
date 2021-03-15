@@ -13,7 +13,7 @@ namespace Assets.Scripts.Characters.Titan.Behavior
                 Vector3 vector15 = Titan.Body.Chest.position;
                 if (Titan.photonView.isMine)
                 {
-                    if (!hero.HasDied())
+                    if (!hero.HasDiedOrInvincible())
                     {
                         hero.MarkDie();
                         object[] objArray9 = new object[] { (Vector3)(((hero.transform.position - vector15) * 15f) * Titan.Size), true, Titan.photonView.viewID, Titan.name, true };

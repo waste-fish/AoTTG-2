@@ -31,6 +31,11 @@ namespace Assets.Scripts.UI.Input
         public static bool HumanJump { get; private set; }
         public static bool HumanGas { get; private set; }
         public static bool HumanGasBurst { get; private set; }
+        public static bool HumanAttack { get; private set; }
+        public static bool HumanSpecialAttack { get; private set; }
+        public static bool HumanHookLeft { get; private set; }
+        public static bool HumanHookRight { get; private set; }
+        public static bool HumanHookBoth { get; private set; }
 
         public InputManager()
         {
@@ -51,8 +56,30 @@ namespace Assets.Scripts.UI.Input
 
             inputMap.Human.Jump.started += (context) => { HumanJump = true; };
             inputMap.Human.Jump.canceled += (context) => { HumanJump = false; };
+
             inputMap.Human.Gas.started += (context) => { HumanGas = true; };
             inputMap.Human.Gas.canceled += (context) => { HumanGas = false; };
+
+            inputMap.Human.GasBurst.started += (context) => { HumanGasBurst = true; };
+            inputMap.Human.GasBurst.canceled += (context) => { HumanGasBurst = false; };
+
+            inputMap.Human.Attack.started += (context) => { HumanAttack = true; };
+            inputMap.Human.Attack.canceled += (context) => { HumanAttack = false; };
+
+            inputMap.Human.SpecialAttack.started += (context) => { HumanSpecialAttack = true; };
+            inputMap.Human.SpecialAttack.canceled += (context) => { HumanSpecialAttack = false; };
+
+            inputMap.Human.Attack.started += (context) => { HumanAttack = true; };
+            inputMap.Human.Attack.canceled += (context) => { HumanAttack = false; };
+
+            inputMap.Human.HookLeft.started += (context) => { HumanHookLeft = true; };
+            inputMap.Human.HookLeft.canceled += (context) => { HumanHookLeft = false; };
+
+            inputMap.Human.HookRight.started += (context) => { HumanHookRight = true; };
+            inputMap.Human.HookRight.canceled += (context) => { HumanHookRight = false; };
+
+            inputMap.Human.HookBoth.started += (context) => { HumanHookBoth = true; };
+            inputMap.Human.HookBoth.canceled += (context) => { HumanHookBoth = false; };
 
             LoadRebinds(typeof(InputCannon));
             LoadRebinds(typeof(InputHorse));
@@ -66,6 +93,17 @@ namespace Assets.Scripts.UI.Input
                 Settings = new ControlSettings();
                 PlayerPrefs.SetString(OtherPlayersPrefs, JsonConvert.SerializeObject(Settings));
             }
+        }
+
+        void RegisterEvent(InputAction inputAction, bool input)
+        {
+            inputAction.started += (context) => { input = true; };
+            inputAction.canceled += (context) => { input = false; };
+        }
+        void DeregisterEvent(InputAction inputAction, bool input)
+        {
+            inputAction.started -= (context) => { input = true; };
+            inputAction.canceled -= (context) => { input = false; };
         }
 
         private void OnHumanJump(InputAction.CallbackContext context)
@@ -197,7 +235,7 @@ namespace Assets.Scripts.UI.Input
                     SetDefaultCannonKeyBindings();
                     cannonRebinds = PlayerPrefs.GetString(CannonPlayerPrefs);
                 }
-                
+
                 _cannonKeys = JsonConvert.DeserializeObject<KeyCode[]>(cannonRebinds);
                 if (_cannonKeys.Length != Enum.GetNames(inputType).Length)
                 {

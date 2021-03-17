@@ -32,7 +32,7 @@ namespace Assets.Scripts.Characters.Humans.Skills
         {
             if (Hero.Animation.IsPlaying(HeroAnim.GRABBED_JEAN) && Hero.Animation[HeroAnim.GRABBED_JEAN].normalizedTime > 0.64f)
             {
-                Hero.Ungrabbed();
+                Hero.BreakFreeFromGrab();
                 Hero.Rigidbody.velocity = Vector3.up * 30f;
                 IsActive = false;
             }

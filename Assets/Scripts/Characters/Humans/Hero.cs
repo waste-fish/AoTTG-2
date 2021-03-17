@@ -2,6 +2,7 @@ using Assets.Scripts.Characters.Humans.Constants;
 using Assets.Scripts.Characters.Humans.Customization;
 using Assets.Scripts.Characters.Humans.Equipment;
 using Assets.Scripts.Characters.Humans.Skills;
+using Assets.Scripts.Characters.Humans.States;
 using Assets.Scripts.Characters.Titan;
 using Assets.Scripts.Constants;
 using Assets.Scripts.Gamemode.Options;
@@ -42,21 +43,31 @@ namespace Assets.Scripts.Characters.Humans
         #region Properties
         public Equipment.Equipment Equipment { get; private set; }
         public Skill Skill { get; private set; }
+        [Obsolete]
+        public HumanState State { get; protected set; } = HumanState.Idle;
+        private BaseHumanState squidState;
+        public BaseHumanState SquidState
+        {
+            get => squidState;
+            set
+            {
+                State = squidState.OldHumanState;
+                squidState = value;
+            }
+        }
 
-        private HumanState state;
-        public HumanState State => state;
 
         private void SetState(HumanState newState)
         {
-            if ((state == HumanState.AirDodge) || (state == HumanState.GroundDodge))
+            if ((State == HumanState.AirDodge) || (State == HumanState.GroundDodge))
                 DashTime = 0f;
-            state = newState;
+            State = newState;
         }
 
         private bool AlmostSingleHook { get; set; }
         public string AttackAnimation { get; set; }
         public int AttackLoop { get; set; }
-        private bool AttackReleased { get; set; }
+        public bool AttackReleased { get; set; }
         private GameObject BadGuy { get; set; }
         public float BombCD { get; set; }
         public bool BombImmune { get; set; }
@@ -65,10 +76,9 @@ namespace Assets.Scripts.Characters.Humans
         public float BombTime { get; set; }
         public float BombTimeMax { get; set; }
         private float BuffTime { get; set; }
-        private int BulletMax { get; set; } = 7;
+        public int BulletMax { get; private set; } = 7;
         public Bullet HookLeft { get; private set; }
         public Bullet HookRight { get; private set; }
-        private bool ButtonAttackRelease { get; set; }
         public Dictionary<string, Image> cachedSprites { get; set; }
         public float CameraMultiplier { get; set; }
         public TriggerColliderWeapon checkBoxLeft;
@@ -78,32 +88,32 @@ namespace Assets.Scripts.Characters.Humans
         private BUFF CurrentBuff { get; set; }
         public Camera currentCamera { get; set; }
         public IN_GAME_MAIN_CAMERA currentInGameCamera { get; set; }
-        private float CurrentGas { get; set; } = 100f;
+        public float CurrentGas { get; set; } = 100f;
         public float currentSpeed { get; set; }
         public Vector3 currentV { get; set; }
         private bool DashD { get; set; }
         public Vector3 DashDirection { get; set; }
         private bool DashL { get; set; }
         private bool DashR { get; set; }
-        private float DashTime { get; set; }
+        public float DashTime { get; set; }
         private bool DashU { get; set; }
         private Vector3 DashV { get; set; }
         public bool detonate { get; set; }
         private float DTapTime { get; set; } = -1f;
-        private bool EHold { get; set; }
+        private bool RightHookHold { get; set; }
         private ErenTitan ErenTitan { get; set; }
         public float FacingDirection { get; set; }
         private Transform ForearmL { get; set; }
         private Transform ForearmR { get; set; }
         private float Gravity { get; set; } = 20f;
         public bool grounded { get; set; }
-        private GameObject GunDummy { get; set; }
-        private Vector3 GunTarget { get; set; }
+        public GameObject GunDummy { get; private set; }
+        public Vector3 GunTarget { get; set; }
         private Transform HandL { get; set; }
         private Transform HandR { get; set; }
         private bool HasDied { get; set; }
         public bool hasSpawn { get; set; }
-        private bool HookBySomeOne { get; set; } = true;
+        private bool HookedBySomeone { get; set; } = true;
         public GameObject hookRefL1;
         public GameObject hookRefL2;
         public GameObject hookRefR1;
@@ -114,8 +124,8 @@ namespace Assets.Scripts.Characters.Humans
         public bool isCannon { get; set; }
         private bool IsLaunchLeft { get; set; }
         private bool IsLaunchRight { get; set; }
-        private bool IsLeftHandHooked { get; set; }
-        private bool IsMounted { get; set; }
+        public bool IsLeftHandHooked { get; private set; }
+        public bool IsMounted { get; private set; }
         public bool isPhotonCamera { get; set; }
         private bool IsRightHandHooked { get; set; }
         public float jumpHeight { get; set; } = 2f;
@@ -126,8 +136,8 @@ namespace Assets.Scripts.Characters.Humans
         private Vector3 LaunchForce { get; set; }
         public Vector3 LaunchPointLeft { get; private set; }
         public Vector3 LaunchPointRight { get; private set; }
-        private bool LeanLeft { get; set; }
-        private bool LeftArmAim { get; set; }
+        public bool LeanLeft { get; private set; }
+        public bool LeftArmAim { get; set; }
         /*
     public XWeaponTrail leftbladetrail;
     public XWeaponTrail leftbladetrail2;
@@ -145,18 +155,18 @@ namespace Assets.Scripts.Characters.Humans
         public Transform myCannonBase { get; set; }
         public Transform myCannonPlayer { get; set; }
         public CannonPropRegion myCannonRegion { get; set; }
-        private Horse MyHorse { get; set; }
+        public Horse Horse { get; private set; }
         [Obsolete("Old method of using player names")]
         public GameObject MyNetWorkName { get; set; }
         public float myScale { get; set; } = 1f;
         public int myTeam { get; set; } = 1;
         public List<MindlessTitan> myTitans;
-        private bool NeedLean { get; set; }
+        public bool NeedLean { get; private set; }
         private Quaternion OldHeadRotation { get; set; }
-        private float OriginVM { get; set; }
-        private bool QHold { get; set; }
+        public float OriginVM { get; private set; }
+        private bool LeftHookHold { get; set; }
         public string reloadAnimation { get; set; } = string.Empty;
-        private bool RightArmAim { get; set; }
+        public bool RightArmAim { get; set; }
 
         [Obsolete("Should be within AHSS.cs")]
         public int rightBulletLeft { get; set; } = 7;
@@ -174,20 +184,20 @@ namespace Assets.Scripts.Characters.Humans
         [SerializeField] private ParticleSystem particle_Smoke_3dmg;
         private ParticleSystem.EmissionModule smoke_3dmg_em;
         [SerializeField] private ParticleSystem particle_Sparks;
-        private ParticleSystem.EmissionModule sparks_em;
+        public ParticleSystem.EmissionModule SparksEM;
 
         public float speed { get; set; } = 10f;
         public GameObject speedFX { get; set; }
         public GameObject speedFX1 { get; set; }
         public bool spinning { get; set; }
-        private string StandAnimation { get; set; } = HeroAnim.STAND;
+        public string StandAnimation { get; private set; } = HeroAnim.STAND;
         private Quaternion TargetHeadRotation { get; set; }
         public Quaternion TargetRotation { get; set; }
         public Vector3 targetV { get; set; }
         public bool throwedBlades { get; set; }
         public bool titanForm { get; set; }
-        private GameObject TitanWhoGrabMe { get; set; }
-        private int TitanWhoGrabMeID { get; set; }
+        public GameObject TitanWhoGrabMe { get; private set; }
+        public int TitanWhoGrabMeID { get; private set; }
         public float totalBladeSta { get; set; } = 100f;
         public float totalGas { get; set; } = 100f;
         private Transform UpperarmL { get; set; }
@@ -220,14 +230,114 @@ namespace Assets.Scripts.Characters.Humans
 
 
 
-        private Vector2 targetMoveDirection;
+        public Vector2 TargetMoveDirection { get; private set; }
+
+        private void RegisterInputs()
+        {
+            inputMap = new InputMap();
+            inputMap.Enable();
+
+            //inputMap.Human.Move.performed += OnMoveInput;
+            //inputMap.Human.Move.canceled += OnMoveInput;
+            //inputMap.Human.Gas.performed += Gas;
+            //inputMap.Human.Jump.performed += Jump;
+            //inputMap.Human.Attack.performed += OnAttack;
+            //inputMap.Human.SpecialAttack.performed += OnSkillInput;
+            //inputMap.Human.Item1.performed += OnItem1Input;
+            //inputMap.Human.Item2.performed += OnItem2Input;
+            //inputMap.Human.Item3.performed += OnItem3Input;
+            //inputMap.UI.Restart.performed += OnRestart;
+        }
+        private void DeregisterInputs()
+        {
+            if (inputMap == null)
+                return;
+
+            inputMap.Disable();
+
+            inputMap.Human.Move.performed -= OnMoveInput;
+            inputMap.Human.Move.canceled -= OnMoveInput;
+            inputMap.Human.Gas.performed -= OnGasInput;
+            inputMap.Human.Jump.performed -= OnJumpInput;
+            inputMap.Human.Attack.performed -= OnAttackInput;
+            inputMap.Human.SpecialAttack.performed -= OnSkillInput;
+            inputMap.Human.Item1.performed -= OnItem1Input;
+            inputMap.Human.Item2.performed -= OnItem2Input;
+            inputMap.Human.Item3.performed -= OnItem3Input;
+            inputMap.UI.Restart.performed -= OnRestart;
+        }
+
+        private void OnMoveInput(InputAction.CallbackContext context)
+        {
+            if (IN_GAME_MAIN_CAMERA.isTyping)
+                return;
+
+            TargetMoveDirection = context.ReadValue<Vector2>();
+
+            Debug.Log("Move Input: " + TargetMoveDirection);
+        }
+
+        private void OnGasInput(InputAction.CallbackContext context)
+        {
+
+        }
+
+        private void OnJumpInput(InputAction.CallbackContext context)
+        {
+
+        }
+
+        private void OnAttackInput(InputAction.CallbackContext context)
+        {
+            if (HasDied || !photonView.isMine)
+                return;
+        }
+
+        private void OnSkillInput(InputAction.CallbackContext context)
+        {
+
+        }
+
+        private void OnSkillInputUp(InputAction.CallbackContext context)
+        {
+
+        }
+
+        private void OnItem1Input(InputAction.CallbackContext context)
+        {
+            if (!MenuManager.IsAnyMenuOpen)
+                SquidState.OnItem1();
+        }
+        private void OnItem2Input(InputAction.CallbackContext context)
+        {
+            if (!MenuManager.IsAnyMenuOpen)
+                SquidState.OnItem2();
+        }
+        private void OnItem3Input(InputAction.CallbackContext context)
+        {
+            if (!MenuManager.IsAnyMenuOpen)
+                SquidState.OnItem3();
+        }
+
+        private void OnRestart(InputAction.CallbackContext context)
+        {
+            if (!PhotonNetwork.offlineMode)
+                Suicide();
+        }
+
+        public void ApplyBuff(BUFF buff, float time)
+        {
+            CurrentBuff = buff;
+            BuffTime = time;
+        }
 
 
-        #region Unity Methods
 
         protected override void Awake()
         {
             base.Awake();
+
+            SquidState = new IdleState(this);
 
             Animation = GetComponent<Animation>();
             Rigidbody = GetComponent<Rigidbody>();
@@ -255,14 +365,14 @@ namespace Assets.Scripts.Characters.Humans
             gameObject.AddComponent<PlayerInteractable>();
             SetHorse();
 
-            sparks_em = particle_Sparks.emission;
+            SparksEM = particle_Sparks.emission;
             smoke_3dmg_em = particle_Smoke_3dmg.emission;
 
             transform.localScale = new Vector3(myScale, myScale, myScale);
             FacingDirection = transform.rotation.eulerAngles.y;
             TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
             smoke_3dmg_em.enabled = false;
-            sparks_em.enabled = false;
+            SparksEM.enabled = false;
 
             if (PhotonNetwork.isMasterClient)
             {
@@ -276,15 +386,7 @@ namespace Assets.Scripts.Characters.Humans
                     FengGameManagerMKII.heroHash.Add(iD, this);
                 }
 
-                inputMap = new InputMap();
-                inputMap.Enable();
-
-                inputMap.Human.Move.performed += OnMoveInput;
-                inputMap.Human.Move.canceled += OnMoveInput;
-                inputMap.Human.Gas.performed += Gas;
-                inputMap.Human.Jump.performed += Jump;
-                inputMap.Human.Attack.performed += OnAttack;
-                inputMap.Human.SpecialAttack.performed += UseSkill;
+                RegisterInputs();
             }
 
             PlayerName.text = FengGameManagerMKII.instance.name;
@@ -327,13 +429,11 @@ namespace Assets.Scripts.Characters.Humans
             }
         }
 
-        public void Update()
+        public void SquidUpdate()
         {
             // Upon spawning, we cannot be damaged for 3s
             if (Invincible > 0f)
-            {
-                Invincible = Mathf.MoveTowards(Invincible, 0f, Time.deltaTime);
-            }
+                Invincible -= Time.deltaTime;
 
             if (HasDied)
                 return;
@@ -361,18 +461,168 @@ namespace Assets.Scripts.Characters.Humans
                 }
             }
 
-            if (Skill != null && Skill.IsActive)
-                Skill.OnUpdate();
+            // TODO: SKILL STUFF 1
 
+            if (!titanForm && !isCannon)
+                SquidState.OnUpdate();
+
+            ShowGas();
+            ShowAimUI();
+        }
+
+        public void SquidFixedUpdate()
+        {
+            var check = !(SquidState is IdleState) && (Animation.IsPlaying(HeroAnim.ATTACK3_1) || Animation.IsPlaying(HeroAnim.ATTACK5) || (Animation.IsPlaying(HeroAnim.SPECIAL_PETRA) || SquidState is GrabState));
+
+            if (InputManager.HumanHookLeft && !check)
+            {
+                if (HookLeft != null)
+                    LeftHookHold = true;
+                else
+                {
+                    RaycastHit hit4;
+                    Ray ray4 = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+                    LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
+
+                    if (Physics.Raycast(ray4, out hit4, HookRaycastDistance, mask.value))
+                    {
+                        LaunchLeftRope(hit4.distance, hit4.point, true);
+                    }
+                    else
+                    {
+                        LaunchLeftRope(HookRaycastDistance, ray4.GetPoint(HookRaycastDistance), true);
+                    }
+                    rope.Play();
+                }
+            }
+            else
+                LeftHookHold = false;
+
+
+            if (InputManager.HumanHookRight && !check)
+            {
+                if (HookRight != null)
+                    RightHookHold = true;
+                else
+                {
+                    RaycastHit hit5;
+                    Ray ray5 = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+                    LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
+
+                    if (Physics.Raycast(ray5, out hit5, HookRaycastDistance, mask.value))
+                    {
+                        LaunchRightRope(hit5.distance, hit5.point, true);
+                    }
+                    else
+                    {
+                        LaunchRightRope(HookRaycastDistance, ray5.GetPoint(HookRaycastDistance), true);
+                    }
+                    rope.Play();
+                }
+            }
+            else
+                RightHookHold = false;
+
+            if (InputManager.HumanHookBoth && !check)
+            {
+                LeftHookHold = true;
+                RightHookHold = true;
+                if ((HookLeft == null) && (HookRight == null))
+                {
+                    RaycastHit hit6;
+                    Ray ray6 = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+                    LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
+
+                    if (Physics.Raycast(ray6, out hit6, HookRaycastDistance, mask.value))
+                    {
+                        LaunchLeftRope(hit6.distance, hit6.point, false);
+                        LaunchRightRope(hit6.distance, hit6.point, false);
+                    }
+                    else
+                    {
+                        LaunchLeftRope(HookRaycastDistance, ray6.GetPoint(HookRaycastDistance), false);
+                        LaunchRightRope(HookRaycastDistance, ray6.GetPoint(HookRaycastDistance), false);
+                    }
+                    rope.Play();
+                }
+            }
+        }
+
+        #region Update
+        public void Update()
+        {
+            #region Beginning stuff
+            // Upon spawning, we cannot be damaged for 3s
+            if (Invincible > 0f)
+            {
+                Invincible -= Time.deltaTime;
+            }
+
+            if (HasDied)
+                return;
+
+            if (titanForm && (ErenTitan != null))
+            {
+                transform.position = ErenTitan.Body.Neck.position;
+                SmoothSync.disabled = true;
+            }
+            else if (isCannon && (myCannon != null))
+            {
+                UpdateCannon();
+                SmoothSync.disabled = true;
+            }
+
+            if (!photonView.isMine)
+                return;
+
+            if (myCannonRegion != null)
+            {
+                Service.Ui.SetMessage(LabelPosition.Center, "Press 'Cannon Mount' key to use Cannon.");
+                if (InputManager.KeyDown(InputCannon.Mount))
+                {
+                    myCannonRegion.photonView.RPC(nameof(CannonPropRegion.RequestControlRPC), PhotonTargets.MasterClient, new object[] { photonView.viewID });
+                }
+            }
+            #endregion
+
+            #region SKILL STUFF 1
+            // SKILL STUFF 1
+            if (Skill != null)
+            {
+                if (Skill.IsActive)
+                {
+                    Skill.OnUpdate();
+                }
+                else if (InputManager.KeyDown(InputHuman.AttackSpecial))
+                {
+                    if (!Skill.Use() && State == HumanState.Idle)
+                    {
+                        if (NeedLean)
+                        {
+                            if (LeanLeft)
+                            {
+                                AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
+                            }
+                            else
+                            {
+                                AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
+                            }
+                        }
+                        else
+                        {
+                            AttackAnimation = HeroAnim.ATTACK1;
+                        }
+                        PlayAnimation(AttackAnimation);
+                    }
+                }
+            }
+            #endregion
+
+            #region GRAB STUFF 1
             if ((State == HumanState.Grab) && !useGun)
             {
                 if (Skill is ErenSkill)
                 {
-                    ShowSkillCD();
-                    if (!IN_GAME_MAIN_CAMERA.isPausing)
-                    {
-                        CalcSkillCD();
-                    }
                     if (InputManager.KeyDown(InputHuman.AttackSpecial))
                     {
                         bool flag2 = false;
@@ -385,7 +635,7 @@ namespace Assets.Scripts.Characters.Humans
                             skillCDDuration = skillCDLast;
                             if (TitanWhoGrabMe.GetComponent<MindlessTitan>() != null)
                             {
-                                Ungrabbed();
+                                BreakFreeFromGrab();
                                 photonView.RPC(nameof(NetSetIsGrabbedFalse), PhotonTargets.All, new object[0]);
                                 if (PhotonNetwork.isMasterClient)
                                 {
@@ -401,6 +651,8 @@ namespace Assets.Scripts.Characters.Humans
                     }
                 }
             }
+            #endregion
+
             else if (!titanForm && !isCannon)
             {
                 bool isBothHooksPressed;
@@ -443,15 +695,17 @@ namespace Assets.Scripts.Characters.Humans
                         return;
                     }
                 }
+
+                #region Idle or Slide while grounded
                 if (grounded && ((State == HumanState.Idle) || (State == HumanState.Slide)))
                 {
-                    if (!((!InputManager.HumanJump || Animation.IsPlaying(HeroAnim.JUMP)) || Animation.IsPlaying(HeroAnim.HORSE_GET_ON)))
+                    if (!((!InputManager.KeyDown(InputHuman.Jump) || Animation.IsPlaying(HeroAnim.JUMP)) || Animation.IsPlaying(HeroAnim.HORSE_GET_ON)))
                     {
                         Idle();
                         CrossFade(HeroAnim.JUMP, 0.1f);
-                        sparks_em.enabled = false;
+                        SparksEM.enabled = false;
                     }
-                    if (!((!InputManager.KeyDown(InputHorse.Mount) || Animation.IsPlaying(HeroAnim.JUMP)) || Animation.IsPlaying(HeroAnim.HORSE_GET_ON)) && (((MyHorse != null) && !IsMounted) && (Vector3.Distance(MyHorse.transform.position, transform.position) < 15f)))
+                    if (!((!InputManager.KeyDown(InputHorse.Mount) || Animation.IsPlaying(HeroAnim.JUMP)) || Animation.IsPlaying(HeroAnim.HORSE_GET_ON)) && (((Horse != null) && !IsMounted) && (Vector3.Distance(Horse.transform.position, transform.position) < 15f)))
                     {
                         GetOnHorse();
                     }
@@ -461,8 +715,12 @@ namespace Assets.Scripts.Characters.Humans
                         return;
                     }
                 }
+                #endregion
+
+                #region Idle
                 if (State == HumanState.Idle)
                 {
+                    #region Items
                     if (!MenuManager.IsAnyMenuOpen)
                     {
                         if (InputManager.KeyDown(InputHuman.Item1))
@@ -478,6 +736,9 @@ namespace Assets.Scripts.Characters.Humans
                             ShootFlare(3);
                         }
                     }
+                    #endregion
+
+                    #region Restart
                     if (InputManager.KeyDown(InputUi.Restart))
                     {
                         if (!PhotonNetwork.offlineMode)
@@ -485,24 +746,185 @@ namespace Assets.Scripts.Characters.Humans
                             Suicide();
                         }
                     }
-                    if (((MyHorse != null) && IsMounted) && InputManager.KeyDown(InputHorse.Mount))
+                    #endregion
+
+                    #region Mount
+                    if (((Horse != null) && IsMounted) && InputManager.KeyDown(InputHorse.Mount))
                     {
                         GetOffHorse();
                     }
+                    #endregion
+
+                    #region Reload
                     if (((Animation.IsPlaying(StandAnimation) || !grounded) && InputManager.KeyDown(InputHuman.Reload)) && ((!useGun || (GameSettings.PvP.AhssAirReload.Value)) || grounded))
                     {
-                        ChangeBlade();
+                        Reload();
                         return;
                     }
+                    #endregion
+
+                    #region Salute
                     if (Animation.IsPlaying(StandAnimation) && InputManager.KeyDown(InputHuman.Salute))
                     {
                         Salute();
                         return;
                     }
+                    #endregion
+
                     if ((!IsMounted && (InputManager.KeyDown(InputHuman.Attack) || InputManager.KeyDown(InputHuman.AttackSpecial))) && !useGun)
                     {
                         bool flag3 = false;
-                        //Attack(ref flag3);
+                        #region Special
+                        if (InputManager.KeyDown(InputHuman.AttackSpecial))
+                        {
+                            if ((skillCDDuration > 0f) || flag3)
+                            {
+                                flag3 = true;
+                            }
+                            else
+                            {
+                                skillCDDuration = skillCDLast;
+                                //TODO: Eren Skill
+                                if (Skill is ErenSkill)
+                                {
+                                    Transform();
+                                    return;
+                                }
+                                //TODO: Marco Skill
+                                if (Skill is MarcoSkill)
+                                {
+                                    if (IsGrounded())
+                                    {
+                                        AttackAnimation = (UnityEngine.Random.Range(0, 2) != 0) ? HeroAnim.SPECIAL_MARCO_1 : HeroAnim.SPECIAL_MARCO_0;
+                                        PlayAnimation(AttackAnimation);
+                                    }
+                                    else
+                                    {
+                                        flag3 = true;
+                                        skillCDDuration = 0f;
+                                    }
+                                }
+                                //TODO: Armin Skill
+                                else if (Skill is ArminSkill)
+                                {
+                                    if (IsGrounded())
+                                    {
+                                        AttackAnimation = HeroAnim.SPECIAL_ARMIN;
+                                        PlayAnimation(HeroAnim.SPECIAL_ARMIN);
+                                    }
+                                    else
+                                    {
+                                        flag3 = true;
+                                        skillCDDuration = 0f;
+                                    }
+                                }
+                                //TODO: Sasha Skill
+                                else if (Skill is SashaSkill)
+                                {
+                                    if (IsGrounded())
+                                    {
+                                        AttackAnimation = HeroAnim.SPECIAL_SASHA;
+                                        PlayAnimation(HeroAnim.SPECIAL_SASHA);
+                                        CurrentBuff = BUFF.SpeedUp;
+                                        BuffTime = 10f;
+                                    }
+                                    else
+                                    {
+                                        flag3 = true;
+                                        skillCDDuration = 0f;
+                                    }
+                                }
+                            }
+                        }
+                        #endregion
+                        #region Attack
+                        else if (InputManager.KeyDown(InputHuman.Attack))
+                        {
+                            if (NeedLean)
+                            {
+                                if (InputManager.Key(InputHuman.Left))
+                                {
+                                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
+                                }
+                                else if (InputManager.Key(InputHuman.Right))
+                                {
+                                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
+                                }
+                                else if (LeanLeft)
+                                {
+                                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
+                                }
+                                else
+                                {
+                                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
+                                }
+                            }
+                            else if (InputManager.Key(InputHuman.Left))
+                            {
+                                AttackAnimation = HeroAnim.ATTACK2;
+                            }
+                            else if (InputManager.Key(InputHuman.Right))
+                            {
+                                AttackAnimation = HeroAnim.ATTACK1;
+                            }
+                            else if (lastHook != null && lastHook.TryGetComponent<TitanBase>(out var titan))
+                            {
+                                if (titan.Body.Neck != null)
+                                {
+                                    AttackAccordingToTarget(titan.Body.Neck);
+                                }
+                                else
+                                {
+                                    flag3 = true;
+                                }
+                            }
+                            else if ((HookLeft != null) && (HookLeft.transform.parent != null))
+                            {
+                                Transform a = HookLeft.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
+                                if (a != null)
+                                {
+                                    AttackAccordingToTarget(a);
+                                }
+                                else
+                                {
+                                    AttackAccordingToMouse();
+                                }
+                            }
+                            else if ((HookRight != null) && (HookRight.transform.parent != null))
+                            {
+                                Transform transform2 = HookRight.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
+                                if (transform2 != null)
+                                {
+                                    AttackAccordingToTarget(transform2);
+                                }
+                                else
+                                {
+                                    AttackAccordingToMouse();
+                                }
+                            }
+                            else
+                            {
+                                GameObject obj2 = FindNearestTitan();
+                                if (obj2 != null)
+                                {
+                                    Transform transform3 = obj2.transform.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
+                                    if (transform3 != null)
+                                    {
+                                        AttackAccordingToTarget(transform3);
+                                    }
+                                    else
+                                    {
+                                        AttackAccordingToMouse();
+                                    }
+                                }
+                                else
+                                {
+                                    AttackAccordingToMouse();
+                                }
+                            }
+                        }
+                        #endregion
+                        #region flag3
                         if (!flag3)
                         {
                             checkBoxLeft.ClearHits();
@@ -513,27 +935,29 @@ namespace Assets.Scripts.Characters.Humans
                             }
                             PlayAnimation(AttackAnimation);
                             Animation[AttackAnimation].time = 0f;
-                            ButtonAttackRelease = false;
-                            state = HumanState.Attack;
+                            State = HumanState.Attack;
                             if ((grounded || (AttackAnimation == HeroAnim.ATTACK3_1)) || ((AttackAnimation == HeroAnim.ATTACK5) || (AttackAnimation == HeroAnim.SPECIAL_PETRA)))
                             {
                                 AttackReleased = true;
-                                ButtonAttackRelease = true;
                             }
                             else
                             {
                                 AttackReleased = false;
                             }
-                            sparks_em.enabled = false;
+                            SparksEM.enabled = false;
                         }
+                        #endregion
                     }
                     if (useGun)
                     {
+                        #region Gun Special Attack
                         if (InputManager.Key(InputHuman.AttackSpecial))
                         {
                             LeftArmAim = true;
                             RightArmAim = true;
                         }
+                        #endregion
+                        #region Gun Attack
                         else if (InputManager.Key(InputHuman.Attack))
                         {
                             if (leftGunHasBullet)
@@ -554,11 +978,16 @@ namespace Assets.Scripts.Characters.Humans
                                 }
                             }
                         }
+                        #endregion
+                        #region ???
                         else
                         {
                             LeftArmAim = false;
                             RightArmAim = false;
                         }
+                        #endregion
+
+                        #region Gun
                         if (LeftArmAim || RightArmAim)
                         {
                             RaycastHit hit3;
@@ -569,10 +998,14 @@ namespace Assets.Scripts.Characters.Humans
                                 GunTarget = hit3.point;
                             }
                         }
+                        #endregion
+                        #region flag4-6
                         bool flag4 = false;
                         bool flag5 = false;
                         bool flag6 = false;
+                        #endregion
                         //TODO: AHSS skill dual shot
+                        #region Attack Special Up
                         if (InputManager.KeyUp(InputHuman.AttackSpecial) && (!(Skill is BombPvpSkill)))
                         {
                             if (leftGunHasBullet && rightGunHasBullet)
@@ -596,6 +1029,8 @@ namespace Assets.Scripts.Characters.Humans
                                 flag6 = true;
                             }
                         }
+                        #endregion
+                        #region Attack Up
                         if (flag6 || InputManager.KeyUp(InputHuman.Attack))
                         {
                             if (grounded)
@@ -648,9 +1083,11 @@ namespace Assets.Scripts.Characters.Humans
                                 flag5 = true;
                             }
                         }
+                        #endregion
+                        #region flag4
                         if (flag4)
                         {
-                            state = HumanState.Attack;
+                            State = HumanState.Attack;
                             CrossFade(AttackAnimation, 0.05f);
                             GunDummy.transform.position = transform.position;
                             GunDummy.transform.rotation = transform.rotation;
@@ -661,22 +1098,22 @@ namespace Assets.Scripts.Characters.Humans
                         }
                         else if (flag5 && (grounded || (GameSettings.PvP.AhssAirReload.Value)))
                         {
-                            ChangeBlade();
+                            Reload();
                         }
+                        #endregion
                     }
                 }
+                #endregion
+                #region Attack
                 else if (State == HumanState.Attack)
                 {
                     if (!useGun)
                     {
-                        if (!InputManager.Key(InputHuman.Attack))
-                        {
-                            ButtonAttackRelease = true;
-                        }
+                        #region Holding Attack
                         if (!AttackReleased)
                         {
                             //TODO: Pause the Animation if the player is holding a button
-                            if (ButtonAttackRelease)
+                            if (!InputManager.HumanAttack)
                             {
                                 SetAnimationSpeed(CurrentAnimation);
                                 AttackReleased = true;
@@ -687,6 +1124,8 @@ namespace Assets.Scripts.Characters.Humans
                                 SetAnimationSpeed(AttackAnimation, 0f);
                             }
                         }
+                        #endregion
+                        #region Attack Animations
                         if ((AttackAnimation == HeroAnim.ATTACK3_1) && (currentBladeSta > 0f))
                         {
                             if (Animation[AttackAnimation].normalizedTime >= 0.8f)
@@ -800,6 +1239,8 @@ namespace Assets.Scripts.Characters.Humans
                                 PlayAnimationAt(AttackAnimation, num2);
                             }
                         }
+                        #endregion
+                        #region Marco Anim
                         if (Animation[AttackAnimation].normalizedTime >= 1f)
                         {
                             if ((AttackAnimation == HeroAnim.SPECIAL_MARCO_0) || (AttackAnimation == HeroAnim.SPECIAL_MARCO_1))
@@ -839,12 +1280,14 @@ namespace Assets.Scripts.Characters.Humans
                                 Idle();
                             }
                         }
+                        #endregion
                         if (Animation.IsPlaying(HeroAnim.ATTACK3_2) && (Animation[HeroAnim.ATTACK3_2].normalizedTime >= 1f))
                         {
                             FalseAttack();
                             Idle();
                         }
                     }
+                    #region Gun
                     else
                     {
                         checkBoxLeft.IsActive = false;
@@ -915,7 +1358,10 @@ namespace Assets.Scripts.Characters.Humans
                             checkBoxRight.IsActive = false;
                         }
                     }
+                    #endregion
                 }
+                #endregion
+                #region ChangeBlade
                 else if (State == HumanState.ChangeBlade)
                 {
                     Equipment.Weapon.Reload();
@@ -924,6 +1370,8 @@ namespace Assets.Scripts.Characters.Humans
                         Idle();
                     }
                 }
+                #endregion
+                #region Salute
                 else if (State == HumanState.Salute)
                 {
                     if (Animation[HeroAnim.SALUTE].normalizedTime >= 1f)
@@ -931,6 +1379,8 @@ namespace Assets.Scripts.Characters.Humans
                         Idle();
                     }
                 }
+                #endregion
+                #region GroundDodge
                 else if (State == HumanState.GroundDodge)
                 {
                     if (Animation.IsPlaying(HeroAnim.DODGE))
@@ -945,6 +1395,8 @@ namespace Assets.Scripts.Characters.Humans
                         }
                     }
                 }
+                #endregion
+                #region Land
                 else if (State == HumanState.Land)
                 {
                     if (Animation.IsPlaying(HeroAnim.DASH_LAND) && (Animation[HeroAnim.DASH_LAND].normalizedTime >= 1f))
@@ -952,6 +1404,8 @@ namespace Assets.Scripts.Characters.Humans
                         Idle();
                     }
                 }
+                #endregion
+                #region FillGas
                 else if (State == HumanState.FillGas)
                 {
                     if (Animation.IsPlaying(HeroAnim.SUPPLY) && Animation[HeroAnim.SUPPLY].normalizedTime >= 1f)
@@ -968,13 +1422,17 @@ namespace Assets.Scripts.Characters.Humans
                         Idle();
                     }
                 }
+                #endregion
+                #region Slide
                 else if (State == HumanState.Slide)
                 {
                     if (!grounded)
                     {
-                        state = HumanState.Idle;
+                        State = HumanState.Idle;
                     }
                 }
+                #endregion
+                #region AirDodge
                 else if (State == HumanState.AirDodge)
                 {
                     if (DashTime > 0f)
@@ -989,9 +1447,12 @@ namespace Assets.Scripts.Characters.Humans
                     {
                         DashTime = 0f;
                         // State must be set directly, as Idle() will cause the HERO to briefly enter the stand animation mid-air
-                        state = HumanState.Idle;
+                        State = HumanState.Idle;
                     }
                 }
+                #endregion
+
+                #region dumb stuff
                 if (InputManager.Key(InputHuman.HookLeft))
                 {
                     isLeftHookPressed = true;
@@ -1000,6 +1461,7 @@ namespace Assets.Scripts.Characters.Humans
                 {
                     isLeftHookPressed = false;
                 }
+                #endregion
 
                 //TODO: Properly refactor these if statements
 
@@ -1012,12 +1474,13 @@ namespace Assets.Scripts.Characters.Humans
                 // (Using HeroAnim.ATTACK3_1 OR Attack5 OR Petra OR Grabbed) AND NOT IDLE
                 // 
 
+                #region Other Junk
                 if (!(isLeftHookPressed ? (((Animation.IsPlaying(HeroAnim.ATTACK3_1) || Animation.IsPlaying(HeroAnim.ATTACK5)) || (Animation.IsPlaying(HeroAnim.SPECIAL_PETRA) || (State == HumanState.Grab))) ? (State != HumanState.Idle) : false) : true))
 
                 {
                     if (HookLeft != null)
                     {
-                        QHold = true;
+                        LeftHookHold = true;
                     }
                     else
                     {
@@ -1038,7 +1501,7 @@ namespace Assets.Scripts.Characters.Humans
                 }
                 else
                 {
-                    QHold = false;
+                    LeftHookHold = false;
                 }
                 if (InputManager.Key(InputHuman.HookRight))
                 {
@@ -1052,7 +1515,7 @@ namespace Assets.Scripts.Characters.Humans
                 {
                     if (HookRight != null)
                     {
-                        EHold = true;
+                        RightHookHold = true;
                     }
                     else
                     {
@@ -1073,7 +1536,7 @@ namespace Assets.Scripts.Characters.Humans
                 }
                 else
                 {
-                    EHold = false;
+                    RightHookHold = false;
                 }
                 if (InputManager.Key(InputHuman.HookBoth))
                 {
@@ -1085,8 +1548,8 @@ namespace Assets.Scripts.Characters.Humans
                 }
                 if (!(isBothHooksPressed ? (((Animation.IsPlaying(HeroAnim.ATTACK3_1) || Animation.IsPlaying(HeroAnim.ATTACK5)) || (Animation.IsPlaying(HeroAnim.SPECIAL_PETRA) || (State == HumanState.Grab))) ? (State != HumanState.Idle) : false) : true))
                 {
-                    QHold = true;
-                    EHold = true;
+                    LeftHookHold = true;
+                    RightHookHold = true;
                     if ((HookLeft == null) && (HookRight == null))
                     {
                         RaycastHit hit6;
@@ -1106,159 +1569,15 @@ namespace Assets.Scripts.Characters.Humans
                         rope.Play();
                     }
                 }
+
+                ShowGas();
+                ShowAimUI();
+                #endregion
             }
         }
+        #endregion
 
-
-
-        private void OnMoveInput(InputAction.CallbackContext context)
-        {
-            if (IN_GAME_MAIN_CAMERA.isTyping)
-                return;
-
-            targetMoveDirection = context.ReadValue<Vector2>();
-
-            Debug.Log("Move Input: " + targetMoveDirection);
-        }
-
-        private void Move()
-        {
-
-        }
-
-        private void Gas(InputAction.CallbackContext context)
-        {
-
-        }
-
-        private void Jump(InputAction.CallbackContext context)
-        {
-
-        }
-
-        private void Attack(ref bool skillFailed)
-        {
-            if (IsMounted || useGun)
-                return;
-        }
-        private void OnAttack(InputAction.CallbackContext context)
-        {
-            if (NeedLean)
-            {
-                if (targetMoveDirection.x < 0f)
-                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
-                else if (targetMoveDirection.x > 0f)
-                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
-                else if (LeanLeft)
-                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
-                else
-                    AttackAnimation = (UnityEngine.Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
-            }
-            else if (targetMoveDirection.x < 0f)
-                AttackAnimation = HeroAnim.ATTACK2;
-            else if (targetMoveDirection.x > 0f)
-                AttackAnimation = HeroAnim.ATTACK1;
-            else if (lastHook != null && lastHook.TryGetComponent<TitanBase>(out var titan))
-            {
-                if (titan.Body.Neck != null)
-                    AttackAccordingToTarget(titan.Body.Neck);
-                //else
-                //    skillFailed = true;
-            }
-            else if ((HookLeft != null) && (HookLeft.transform.parent != null))
-            {
-                var neck = HookLeft.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
-                if (neck != null)
-                {
-                    AttackAccordingToTarget(neck);
-                }
-                else
-                {
-                    AttackAccordingToMouse();
-                }
-            }
-            else if ((HookRight != null) && (HookRight.transform.parent != null))
-            {
-                var neck = HookRight.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
-                if (neck != null)
-                {
-                    AttackAccordingToTarget(neck);
-                }
-                else
-                {
-                    AttackAccordingToMouse();
-                }
-            }
-            else
-            {
-                var nearestTitan = FindNearestTitan();
-                if (nearestTitan != null)
-                {
-                    var neck = nearestTitan.transform.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
-                    if (neck != null)
-                        AttackAccordingToTarget(neck);
-                    else
-                        AttackAccordingToMouse();
-                }
-                else
-                    AttackAccordingToMouse();
-            }
-        }
-
-        private bool ProcessJump(bool flag2, bool flag3, bool flag4, Vector3 vector12)
-        {
-            if (((!flag3 && !flag4) && (!IsMounted && InputManager.HumanJump)) && (CurrentGas > 0f))
-            {
-                if (targetMoveDirection.magnitude > 0f)
-                {
-                    Rigidbody.AddForce(vector12, ForceMode.Acceleration);
-                }
-                else
-                {
-                    Rigidbody.AddForce((transform.forward * vector12.magnitude), ForceMode.Acceleration);
-                }
-                flag2 = true;
-            }
-
-            return flag2;
-        }
-
-        private void UseSkill(InputAction.CallbackContext context)
-        {
-            if (Skill == null || state != HumanState.Idle || Skill.IsActive || IsMounted || useGun)
-                return;
-
-            if (skillCDDuration > 0f || !Skill.Use())
-            {
-                skillCDDuration = skillCDLast;
-                OnAttack(context);
-                return;
-            }
-
-            skillCDDuration = 0f;
-        }
-
-        public void ApplyBuff(BUFF buff, float time)
-        {
-            CurrentBuff = buff;
-            BuffTime = time;
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            if (MyNetWorkName != null)
-            {
-                Destroy(MyNetWorkName);
-            }
-            if (GunDummy != null)
-            {
-                Destroy(GunDummy);
-            }
-            ReleaseIfIHookSb();
-
-        }
-
+        #region LateUpdate
         public void LateUpdate()
         {
             if ((MyNetWorkName != null))
@@ -1372,632 +1691,671 @@ namespace Assets.Scripts.Characters.Humans
                 BodyLean();
             }
         }
+        #endregion
 
+        #region FixedUpdate
         private void FixedUpdate()
         {
-            if (!photonView.isMine)
-                return;
-
-            if (titanForm || isCannon)
-                return;
-
-            currentSpeed = Rigidbody.velocity.magnitude;
-            if (!((Animation.IsPlaying(HeroAnim.ATTACK3_2) || Animation.IsPlaying(HeroAnim.ATTACK5)) || Animation.IsPlaying(HeroAnim.SPECIAL_PETRA)))
+            if (!photonView.isMine) return;
+            if ((!titanForm && !isCannon) && (!IN_GAME_MAIN_CAMERA.isPausing))
             {
-                Rigidbody.rotation = Quaternion.Lerp(gameObject.transform.rotation, TargetRotation, Time.deltaTime * 6f);
-            }
-
-            if (State == HumanState.Grab)
-            {
-                Rigidbody.AddForce(-Rigidbody.velocity, ForceMode.VelocityChange);
-                return;
-            }
-
-            if (IsGrounded())
-            {
-                if (!grounded)
+                currentSpeed = Rigidbody.velocity.magnitude;
+                if (!((Animation.IsPlaying(HeroAnim.ATTACK3_2) || Animation.IsPlaying(HeroAnim.ATTACK5)) || Animation.IsPlaying(HeroAnim.SPECIAL_PETRA)))
                 {
-                    JustGrounded = true;
+                    Rigidbody.rotation = Quaternion.Lerp(gameObject.transform.rotation, TargetRotation, Time.deltaTime * 6f);
                 }
-                grounded = true;
-            }
-            else
-                grounded = false;
-
-            if (Skill.IsActive)
-                Skill.OnFixedUpdate();
-
-            if (HookSomeone)
-                UpdateHookedSomeone();
-            else if (HookBySomeOne && (BadGuy != null))
-            {
-                UpdateHookedBySomeone();
-            }
-
-            bool flag2 = false;
-            bool flag3 = false;
-            bool flag4 = false;
-            IsLeftHandHooked = false;
-            IsRightHandHooked = false;
-
-            if (IsLaunchLeft)
-                UpdateLeftLaunch(ref flag2, ref flag3);
-
-            if (IsLaunchRight)
-                UpdateRightLaunch(ref flag2, ref flag4);
-
-            if (grounded)
-            {
-                Vector3 vector7;
-                Vector3 zero = Vector3.zero;
-                if (State == HumanState.Attack)
+                if (State == HumanState.Grab)
                 {
-                    if (AttackAnimation == HeroAnim.ATTACK5)
+                    Rigidbody.AddForce(-Rigidbody.velocity, ForceMode.VelocityChange);
+                }
+                else
+                {
+                    if (IsGrounded())
                     {
-                        if ((Animation[AttackAnimation].normalizedTime > 0.4f) && (Animation[AttackAnimation].normalizedTime < 0.61f))
+                        if (!grounded)
                         {
-                            Rigidbody.AddForce((gameObject.transform.forward * 200f));
+                            JustGrounded = true;
                         }
+                        grounded = true;
                     }
-                    else if (Animation.IsPlaying(HeroAnim.ATTACK3_2))
+                    else
                     {
-                        zero = Vector3.zero;
+                        grounded = false;
                     }
-                    else if (Animation.IsPlaying(HeroAnim.ATTACK1) || Animation.IsPlaying(HeroAnim.ATTACK2))
+
+                    if (Skill.IsActive)
                     {
-                        Rigidbody.AddForce((gameObject.transform.forward * 200f));
+                        Skill.OnFixedUpdate();
                     }
-                    if (Animation.IsPlaying(HeroAnim.ATTACK3_2))
+
+                    if (HookSomeone)
                     {
-                        zero = Vector3.zero;
-                    }
-                }
-                if (JustGrounded)
-                {
-                    //TODO: attackAnimation conditions appear to be useless
-                    if ((State != HumanState.Attack) || (((AttackAnimation != HeroAnim.ATTACK3_1) && (AttackAnimation != HeroAnim.ATTACK5)) && (AttackAnimation != HeroAnim.SPECIAL_PETRA)))
-                    {
-                        if ((((State != HumanState.Attack) && (targetMoveDirection.x == 0f)) && ((targetMoveDirection.y == 0f) && (HookLeft == null)))
-                            && ((HookRight == null) && (State != HumanState.FillGas)))
+                        if (HookTarget != null)
                         {
-                            state = HumanState.Land;
-                            CrossFade(HeroAnim.DASH_LAND, 0.01f);
+                            Vector3 vector2 = HookTarget.transform.position - transform.position;
+                            float magnitude = vector2.magnitude;
+                            if (magnitude > 2f)
+                            {
+                                Rigidbody.AddForce((((vector2.normalized * Mathf.Pow(magnitude, 0.15f)) * 30f) - (Rigidbody.velocity * 0.95f)), ForceMode.VelocityChange);
+                            }
                         }
                         else
                         {
-                            ButtonAttackRelease = true;
-                            if (((State != HumanState.Attack) && (((Rigidbody.velocity.x * Rigidbody.velocity.x) + (Rigidbody.velocity.z * Rigidbody.velocity.z)) > ((speed * speed) * 1.5f))) && (State != HumanState.FillGas))
+                            HookSomeone = false;
+                        }
+                    }
+                    else if (HookedBySomeone && (BadGuy != null))
+                    {
+                        if (BadGuy != null)
+                        {
+                            Vector3 vector3 = BadGuy.transform.position - transform.position;
+                            float f = vector3.magnitude;
+                            if (f > 5f)
                             {
-                                state = HumanState.Slide;
-                                CrossFade(HeroAnim.SLIDE, 0.05f);
-                                FacingDirection = Mathf.Atan2(Rigidbody.velocity.x, Rigidbody.velocity.z) * Mathf.Rad2Deg;
-                                TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
-                                sparks_em.enabled = true;
+                                Rigidbody.AddForce(((vector3.normalized * Mathf.Pow(f, 0.15f)) * 0.2f), ForceMode.Impulse);
+                            }
+                        }
+                        else
+                        {
+                            HookedBySomeone = false;
+                        }
+                    }
+                    float x = 0f;
+                    float z = 0f;
+                    if (!IN_GAME_MAIN_CAMERA.isTyping)
+                    {
+                        if (InputManager.Key(InputHuman.Forward))
+                        {
+                            z = 1f;
+                        }
+                        else if (InputManager.Key(InputHuman.Backward))
+                        {
+                            z = -1f;
+                        }
+                        else
+                        {
+                            z = 0f;
+                        }
+                        if (InputManager.Key(InputHuman.Left))
+                        {
+                            x = -1f;
+                        }
+                        else if (InputManager.Key(InputHuman.Right))
+                        {
+                            x = 1f;
+                        }
+                        else
+                        {
+                            x = 0f;
+                        }
+                    }
+                    bool flag2 = false;
+                    bool flag3 = false;
+                    bool flag4 = false;
+                    IsLeftHandHooked = false;
+                    IsRightHandHooked = false;
+                    if (IsLaunchLeft)
+                    {
+                        if ((HookLeft != null) && HookLeft.isHooked())
+                        {
+                            IsLeftHandHooked = true;
+                            Vector3 to = HookLeft.transform.position - transform.position;
+                            to.Normalize();
+                            to = (to * 10f);
+                            if (!IsLaunchRight)
+                            {
+                                to = (to * 2f);
+                            }
+                            if ((Vector3.Angle(Rigidbody.velocity, to) > 90f) && InputManager.Key(InputHuman.Jump))
+                            {
+                                flag3 = true;
+                                flag2 = true;
+                            }
+                            if (!flag3)
+                            {
+                                Rigidbody.AddForce(to);
+                                if (Vector3.Angle(Rigidbody.velocity, to) > 90f)
+                                {
+                                    Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
+                                }
+                            }
+                        }
+                        LaunchElapsedTimeL += Time.deltaTime;
+                        if (LeftHookHold && (CurrentGas > 0f))
+                        {
+                            UseGas(UseGasSpeed * Time.deltaTime);
+                        }
+                        else if (LaunchElapsedTimeL > 0.3f)
+                        {
+                            IsLaunchLeft = false;
+                            if (HookLeft != null)
+                            {
+                                HookLeft.disable();
+                                ReleaseIfIHookSb();
+                                HookLeft = null;
+                                flag3 = false;
                             }
                         }
                     }
-                    JustGrounded = false;
-                    zero = Rigidbody.velocity;
-                }
-                if (State == HumanState.GroundDodge)
-                {
-                    if ((Animation[HeroAnim.DODGE].normalizedTime >= 0.2f) && (Animation[HeroAnim.DODGE].normalizedTime < 0.8f))
+                    if (IsLaunchRight)
                     {
-                        zero = ((-transform.forward * 2.4f) * speed);
-                    }
-                    if (Animation[HeroAnim.DODGE].normalizedTime > 0.8f)
-                    {
-                        zero = (Rigidbody.velocity * 0.9f);
-                    }
-                }
-                else if (State == HumanState.Idle)
-                {
-                    var vector8 = new Vector3(targetMoveDirection.x, 0f, targetMoveDirection.y);
-                    var resultAngle = GetGlobalFacingDirection(targetMoveDirection.x, targetMoveDirection.y);
-                    zero = GetGlobaleFacingVector3(resultAngle);
-                    var num6 = (vector8.magnitude <= 0.95f) ? ((vector8.magnitude >= 0.25f) ? vector8.magnitude : 0f) : 1f;
-                    zero = (zero * num6);
-                    zero = (zero * speed);
-                    if ((BuffTime > 0f) && (CurrentBuff == BUFF.SpeedUp))
-                    {
-                        zero = (zero * 4f);
-                    }
-                    if (targetMoveDirection.magnitude > 0f)
-                    {
-                        if (((!Animation.IsPlaying(HeroAnim.RUN_1) && !Animation.IsPlaying(HeroAnim.JUMP)) && !Animation.IsPlaying(HeroAnim.RUN_SASHA)) && (!Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || (Animation[HeroAnim.HORSE_GET_ON].normalizedTime >= 0.5f)))
+                        if ((HookRight != null) && HookRight.isHooked())
                         {
+                            IsRightHandHooked = true;
+                            Vector3 vector5 = HookRight.transform.position - transform.position;
+                            vector5.Normalize();
+                            vector5 = (vector5 * 10f);
+                            if (!IsLaunchLeft)
+                            {
+                                vector5 = (vector5 * 2f);
+                            }
+                            if ((Vector3.Angle(Rigidbody.velocity, vector5) > 90f) && InputManager.Key(InputHuman.Jump))
+                            {
+                                flag4 = true;
+                                flag2 = true;
+                            }
+                            if (!flag4)
+                            {
+                                Rigidbody.AddForce(vector5);
+                                if (Vector3.Angle(Rigidbody.velocity, vector5) > 90f)
+                                {
+                                    Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
+                                }
+                            }
+                        }
+                        LaunchElapsedTimeR += Time.deltaTime;
+                        if (RightHookHold && (CurrentGas > 0f))
+                        {
+                            UseGas(UseGasSpeed * Time.deltaTime);
+                        }
+                        else if (LaunchElapsedTimeR > 0.3f)
+                        {
+                            IsLaunchRight = false;
+                            if (HookRight != null)
+                            {
+                                HookRight.disable();
+                                ReleaseIfIHookSb();
+                                HookRight = null;
+                                flag4 = false;
+                            }
+                        }
+                    }
+                    if (grounded)
+                    {
+                        Vector3 vector7;
+                        Vector3 zero = Vector3.zero;
+                        if (State == HumanState.Attack)
+                        {
+                            if (AttackAnimation == HeroAnim.ATTACK5)
+                            {
+                                if ((Animation[AttackAnimation].normalizedTime > 0.4f) && (Animation[AttackAnimation].normalizedTime < 0.61f))
+                                {
+                                    Rigidbody.AddForce((gameObject.transform.forward * 200f));
+                                }
+                            }
+                            else if (Animation.IsPlaying(HeroAnim.ATTACK3_2))
+                            {
+                                zero = Vector3.zero;
+                            }
+                            else if (Animation.IsPlaying(HeroAnim.ATTACK1) || Animation.IsPlaying(HeroAnim.ATTACK2))
+                            {
+                                Rigidbody.AddForce((gameObject.transform.forward * 200f));
+                            }
+                            if (Animation.IsPlaying(HeroAnim.ATTACK3_2))
+                            {
+                                zero = Vector3.zero;
+                            }
+                        }
+                        if (JustGrounded)
+                        {
+                            //TODO: AttackAnimation conditions appear to be useless
+                            if ((State != HumanState.Attack) || (((AttackAnimation != HeroAnim.ATTACK3_1) && (AttackAnimation != HeroAnim.ATTACK5)) && (AttackAnimation != HeroAnim.SPECIAL_PETRA)))
+                            {
+                                if ((((State != HumanState.Attack) && (x == 0f)) && ((z == 0f) && (HookLeft == null))) && ((HookRight == null) && (State != HumanState.FillGas)))
+                                {
+                                    State = HumanState.Land;
+                                    CrossFade(HeroAnim.DASH_LAND, 0.01f);
+                                }
+                                else
+                                {
+                                    AttackReleased = true;
+                                    if (((State != HumanState.Attack) && (((Rigidbody.velocity.x * Rigidbody.velocity.x) + (Rigidbody.velocity.z * Rigidbody.velocity.z)) > ((speed * speed) * 1.5f))) && (State != HumanState.FillGas))
+                                    {
+                                        State = HumanState.Slide;
+                                        CrossFade(HeroAnim.SLIDE, 0.05f);
+                                        FacingDirection = Mathf.Atan2(Rigidbody.velocity.x, Rigidbody.velocity.z) * Mathf.Rad2Deg;
+                                        TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                                        SparksEM.enabled = true;
+                                    }
+                                }
+                            }
+                            JustGrounded = false;
+                            zero = Rigidbody.velocity;
+                        }
+                        if (State == HumanState.GroundDodge)
+                        {
+                            if ((Animation[HeroAnim.DODGE].normalizedTime >= 0.2f) && (Animation[HeroAnim.DODGE].normalizedTime < 0.8f))
+                            {
+                                zero = ((-transform.forward * 2.4f) * speed);
+                            }
+                            if (Animation[HeroAnim.DODGE].normalizedTime > 0.8f)
+                            {
+                                zero = (Rigidbody.velocity * 0.9f);
+                            }
+                        }
+                        else if (State == HumanState.Idle)
+                        {
+                            Vector3 vector8 = new Vector3(x, 0f, z);
+                            float resultAngle = GetGlobalFacingDirection(x, z);
+                            zero = GetGlobaleFacingVector3(resultAngle);
+                            float num6 = (vector8.magnitude <= 0.95f) ? ((vector8.magnitude >= 0.25f) ? vector8.magnitude : 0f) : 1f;
+                            zero = (zero * num6);
+                            zero = (zero * speed);
                             if ((BuffTime > 0f) && (CurrentBuff == BUFF.SpeedUp))
                             {
-                                CrossFade(HeroAnim.RUN_SASHA, 0.1f);
+                                zero = (zero * 4f);
+                            }
+                            if ((x != 0f) || (z != 0f))
+                            {
+                                if (((!Animation.IsPlaying(HeroAnim.RUN_1) && !Animation.IsPlaying(HeroAnim.JUMP)) && !Animation.IsPlaying(HeroAnim.RUN_SASHA)) && (!Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || (Animation[HeroAnim.HORSE_GET_ON].normalizedTime >= 0.5f)))
+                                {
+                                    if ((BuffTime > 0f) && (CurrentBuff == BUFF.SpeedUp))
+                                    {
+                                        CrossFade(HeroAnim.RUN_SASHA, 0.1f);
+                                    }
+                                    else
+                                    {
+                                        CrossFade(HeroAnim.RUN_1, 0.1f);
+                                    }
+                                }
                             }
                             else
                             {
-                                CrossFade(HeroAnim.RUN_1, 0.1f);
+                                if (!(((Animation.IsPlaying(StandAnimation) || (State == HumanState.Land)) || (Animation.IsPlaying(HeroAnim.JUMP) || Animation.IsPlaying(HeroAnim.HORSE_GET_ON))) || Animation.IsPlaying(HeroAnim.GRABBED)))
+                                {
+                                    CrossFade(StandAnimation, 0.1f);
+                                    zero = (zero * 0f);
+                                }
+                                resultAngle = -874f;
                             }
+                            if (resultAngle != -874f)
+                            {
+                                FacingDirection = resultAngle;
+                                TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                            }
+                        }
+                        else if (State == HumanState.Land)
+                        {
+                            zero = (Rigidbody.velocity * 0.96f);
+                        }
+                        else if (State == HumanState.Slide)
+                        {
+                            zero = (Rigidbody.velocity * 0.99f);
+                            if (currentSpeed < (speed * 1.2f))
+                            {
+                                Idle();
+                                SparksEM.enabled = false;
+                            }
+                        }
+                        Vector3 velocity = Rigidbody.velocity;
+                        Vector3 force = zero - velocity;
+                        force.x = Mathf.Clamp(force.x, -maxVelocityChange, maxVelocityChange);
+                        force.z = Mathf.Clamp(force.z, -maxVelocityChange, maxVelocityChange);
+                        force.y = 0f;
+                        if (Animation.IsPlaying(HeroAnim.JUMP) && (Animation[HeroAnim.JUMP].normalizedTime > 0.18f))
+                        {
+                            force.y += 8f;
+                        }
+                        if ((Animation.IsPlaying(HeroAnim.HORSE_GET_ON) && (Animation[HeroAnim.HORSE_GET_ON].normalizedTime > 0.18f)) && (Animation[HeroAnim.HORSE_GET_ON].normalizedTime < 1f))
+                        {
+                            float num7 = 6f;
+                            force = -Rigidbody.velocity;
+                            force.y = num7;
+                            float num8 = Vector3.Distance(Horse.transform.position, transform.position);
+                            float num9 = ((0.6f * Gravity) * num8) / 12f;
+                            vector7 = Horse.transform.position - transform.position;
+                            force += (num9 * vector7.normalized);
+                        }
+                        if (!(State == HumanState.Attack && useGun))
+                        {
+                            Rigidbody.AddForce(force, ForceMode.VelocityChange);
+                            Rigidbody.rotation = Quaternion.Lerp(gameObject.transform.rotation, Quaternion.Euler(0f, FacingDirection, 0f), Time.deltaTime * 10f);
                         }
                     }
                     else
                     {
-                        if (!(((Animation.IsPlaying(StandAnimation) || (State == HumanState.Land)) || (Animation.IsPlaying(HeroAnim.JUMP) || Animation.IsPlaying(HeroAnim.HORSE_GET_ON))) || Animation.IsPlaying(HeroAnim.GRABBED)))
+                        if (SparksEM.enabled)
                         {
-                            CrossFade(StandAnimation, 0.1f);
-                            zero = (zero * 0f);
+                            SparksEM.enabled = false;
                         }
-                        resultAngle = -874f;
+                        if ((Horse && (Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || Animation.IsPlaying(HeroAnim.AIR_FALL))) && ((Rigidbody.velocity.y < 0f) && (Vector3.Distance(Horse.transform.position + Vector3.up * 1.65f, transform.position) < 0.5f)))
+                        {
+                            transform.position = Horse.transform.position + Vector3.up * 1.65f;
+                            transform.rotation = Horse.transform.rotation;
+                            IsMounted = true;
+                            CrossFade(HeroAnim.HORSE_IDLE, 0.1f);
+                            Horse.Mount();
+                        }
+                        if (!((((((State != HumanState.Idle) || Animation.IsPlaying(HeroAnim.DASH)) ||
+                            (Animation.IsPlaying(HeroAnim.WALL_RUN) || Animation.IsPlaying(HeroAnim.TO_ROOF))) ||
+                            ((Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || Animation.IsPlaying(HeroAnim.HORSE_GET_OFF)) || (Animation.IsPlaying(HeroAnim.AIR_RELEASE) || IsMounted))) ||
+                            ((Animation.IsPlaying(HeroAnim.AIR_HOOK_L_JUST) && (Animation[HeroAnim.AIR_HOOK_L_JUST].normalizedTime < 1f)) ||
+                            (Animation.IsPlaying(HeroAnim.AIR_HOOK_R_JUST) && (Animation[HeroAnim.AIR_HOOK_R_JUST].normalizedTime < 1f)))) ? (Animation[HeroAnim.DASH].normalizedTime < 0.99f) : false))
+                        {
+                            if (((!IsLeftHandHooked && !IsRightHandHooked) && ((Animation.IsPlaying(HeroAnim.AIR_HOOK_L) || Animation.IsPlaying(HeroAnim.AIR_HOOK_R)) || Animation.IsPlaying(HeroAnim.AIR_HOOK))) && (Rigidbody.velocity.y > 20f))
+                            {
+                                Animation.CrossFade(HeroAnim.AIR_RELEASE);
+                            }
+                            else
+                            {
+                                bool flag5 = (Mathf.Abs(Rigidbody.velocity.x) + Mathf.Abs(Rigidbody.velocity.z)) > 25f;
+                                bool flag6 = Rigidbody.velocity.y < 0f;
+                                if (!flag5)
+                                {
+                                    if (flag6)
+                                    {
+                                        if (!Animation.IsPlaying(HeroAnim.AIR_FALL))
+                                        {
+                                            CrossFade(HeroAnim.AIR_FALL, 0.2f);
+                                        }
+                                    }
+                                    else if (!Animation.IsPlaying(HeroAnim.AIR_RISE))
+                                    {
+                                        CrossFade(HeroAnim.AIR_RISE, 0.2f);
+                                    }
+                                }
+                                else if (!IsLeftHandHooked && !IsRightHandHooked)
+                                {
+                                    float current = -Mathf.Atan2(Rigidbody.velocity.z, Rigidbody.velocity.x) * Mathf.Rad2Deg;
+                                    float num11 = -Mathf.DeltaAngle(current, transform.rotation.eulerAngles.y - 90f);
+                                    if (Mathf.Abs(num11) < 45f)
+                                    {
+                                        if (!Animation.IsPlaying(HeroAnim.AIR2))
+                                        {
+                                            CrossFade(HeroAnim.AIR2, 0.2f);
+                                        }
+                                    }
+                                    else if ((num11 < 135f) && (num11 > 0f))
+                                    {
+                                        if (!Animation.IsPlaying(HeroAnim.AIR2_RIGHT))
+                                        {
+                                            CrossFade(HeroAnim.AIR2_RIGHT, 0.2f);
+                                        }
+                                    }
+                                    else if ((num11 > -135f) && (num11 < 0f))
+                                    {
+                                        if (!Animation.IsPlaying(HeroAnim.AIR2_LEFT))
+                                        {
+                                            CrossFade(HeroAnim.AIR2_LEFT, 0.2f);
+                                        }
+                                    }
+                                    else if (!Animation.IsPlaying(HeroAnim.AIR2_BACKWARD))
+                                    {
+                                        CrossFade(HeroAnim.AIR2_BACKWARD, 0.2f);
+                                    }
+                                }
+
+                                else if (!IsRightHandHooked)
+                                {
+                                    TryCrossFade(Equipment.Weapon.HookForwardLeft, 0.1f);
+                                }
+                                else if (!IsLeftHandHooked)
+                                {
+                                    TryCrossFade(Equipment.Weapon.HookForwardRight, 0.1f);
+                                }
+                                else if (!Animation.IsPlaying(Equipment.Weapon.HookForward))
+                                {
+                                    TryCrossFade(Equipment.Weapon.HookForward, 0.1f);
+                                }
+                            }
+                        }
+                        if (((State == HumanState.Idle) && Animation.IsPlaying(HeroAnim.AIR_RELEASE)) && (Animation[HeroAnim.AIR_RELEASE].normalizedTime >= 1f))
+                        {
+                            CrossFade(HeroAnim.AIR_RISE, 0.2f);
+                        }
+                        if (Animation.IsPlaying(HeroAnim.HORSE_GET_OFF) && (Animation[HeroAnim.HORSE_GET_OFF].normalizedTime >= 1f))
+                        {
+                            CrossFade(HeroAnim.AIR_RISE, 0.2f);
+                        }
+                        if (Animation.IsPlaying(HeroAnim.TO_ROOF))
+                        {
+                            if (Animation[HeroAnim.TO_ROOF].normalizedTime < 0.22f)
+                            {
+                                Rigidbody.velocity = Vector3.zero;
+                                Rigidbody.AddForce(new Vector3(0f, Gravity * Rigidbody.mass, 0f));
+                            }
+                            else
+                            {
+                                if (!WallJump)
+                                {
+                                    WallJump = true;
+                                    Rigidbody.AddForce((Vector3.up * 8f), ForceMode.Impulse);
+                                }
+                                Rigidbody.AddForce((transform.forward * 0.05f), ForceMode.Impulse);
+                            }
+                            if (Animation[HeroAnim.TO_ROOF].normalizedTime >= 1f)
+                            {
+                                PlayAnimation(HeroAnim.AIR_RISE);
+                            }
+                        }
+                        else if (!(((((State != HumanState.Idle) || !IsPressDirectionTowardsHero(x, z)) ||
+                                     (InputManager.Key(InputHuman.Jump) ||
+                                      InputManager.Key(InputHuman.HookLeft))) ||
+                                    ((InputManager.Key(InputHuman.HookRight) ||
+                                      InputManager.Key(InputHuman.HookBoth)) ||
+                                     (!IsFrontGrounded() || Animation.IsPlaying(HeroAnim.WALL_RUN)))) ||
+                                   Animation.IsPlaying(HeroAnim.DODGE)))
+                        {
+                            CrossFade(HeroAnim.WALL_RUN, 0.1f);
+                            WallRunTime = 0f;
+                        }
+                        else if (Animation.IsPlaying(HeroAnim.WALL_RUN))
+                        {
+                            Rigidbody.AddForce(((Vector3.up * speed)) - Rigidbody.velocity, ForceMode.VelocityChange);
+                            WallRunTime += Time.deltaTime;
+                            if ((WallRunTime > 1f) || ((z == 0f) && (x == 0f)))
+                            {
+                                Rigidbody.AddForce(((-transform.forward * speed) * 0.75f), ForceMode.Impulse);
+                                Dodge(true);
+                            }
+                            else if (!IsUpFrontGrounded())
+                            {
+                                WallJump = false;
+                                CrossFade(HeroAnim.TO_ROOF, 0.1f);
+                            }
+                            else if (!IsFrontGrounded())
+                            {
+                                CrossFade(HeroAnim.AIR_FALL, 0.1f);
+                            }
+                        }
+                        // If we are using these skills, then we cannot use gas force
+                        else if ((!Animation.IsPlaying(HeroAnim.ATTACK5) && !Animation.IsPlaying(HeroAnim.SPECIAL_PETRA)) && (!Animation.IsPlaying(HeroAnim.DASH) && !Animation.IsPlaying(HeroAnim.JUMP)))
+                        {
+                            Vector3 vector11 = new Vector3(x, 0f, z);
+                            float num12 = GetGlobalFacingDirection(x, z);
+                            Vector3 vector12 = GetGlobaleFacingVector3(num12);
+                            float num13 = (vector11.magnitude <= 0.95f) ? ((vector11.magnitude >= 0.25f) ? vector11.magnitude : 0f) : 1f;
+                            vector12 = (vector12 * num13);
+                            //TODO: ACL
+                            vector12 = (vector12 * ((/*(float)setup.myCostume.stat.ACL) */ 125f / 10f) * 2f));
+                            if ((x == 0f) && (z == 0f))
+                            {
+                                if (State == HumanState.Attack)
+                                {
+                                    vector12 = (vector12 * 0f);
+                                }
+                                num12 = -874f;
+                            }
+                            if (num12 != -874f)
+                            {
+                                FacingDirection = num12;
+                                TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                            }
+                            if (((!flag3 && !flag4) && (!IsMounted && InputManager.Key(InputHuman.Jump))) && (CurrentGas > 0f))
+                            {
+                                if ((x != 0f) || (z != 0f))
+                                {
+                                    Rigidbody.AddForce(vector12, ForceMode.Acceleration);
+                                }
+                                else
+                                {
+                                    Rigidbody.AddForce((transform.forward * vector12.magnitude), ForceMode.Acceleration);
+                                }
+                                flag2 = true;
+                            }
+                        }
+                        if ((Animation.IsPlaying(HeroAnim.AIR_FALL) && (currentSpeed < 0.2f)) && IsFrontGrounded())
+                        {
+                            CrossFade(HeroAnim.ON_WALL, 0.3f);
+                        }
                     }
-                    if (resultAngle != -874f)
+                    spinning = false;
+                    if (flag3 && flag4)
                     {
-                        FacingDirection = resultAngle;
-                        TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                        float num14 = currentSpeed + 0.1f;
+                        AddRightForce();
+                        Vector3 vector13 = (((HookRight.transform.position + HookLeft.transform.position) * 0.5f)) - transform.position;
+                        float num15 = 0f;
+                        if (InputManager.Key(InputHuman.ReelIn))
+                        {
+                            num15 = -1f;
+                        }
+                        else if (InputManager.Key(InputHuman.ReelOut))
+                        {
+                            num15 = 1f;
+                        }
+                        else
+                        {
+                            num15 = UnityEngine.Input.GetAxis("Mouse ScrollWheel") * 5555f;
+                        }
+                        num15 = Mathf.Clamp(num15, -0.8f, 0.8f);
+                        float num16 = 1f + num15;
+                        Vector3 vector14 = Vector3.RotateTowards(vector13, Rigidbody.velocity, 1.53938f * num16, 1.53938f * num16);
+                        vector14.Normalize();
+                        spinning = true;
+                        Rigidbody.velocity = (vector14 * num14);
                     }
-                }
-                else if (State == HumanState.Land)
-                {
-                    zero = (Rigidbody.velocity * 0.96f);
-                }
-                else if (State == HumanState.Slide)
-                {
-                    zero = (Rigidbody.velocity * 0.99f);
-                    if (currentSpeed < (speed * 1.2f))
+                    else if (flag3)
                     {
-                        Idle();
-                        sparks_em.enabled = false;
+                        float num17 = currentSpeed + 0.1f;
+                        AddRightForce();
+                        Vector3 vector15 = HookLeft.transform.position - transform.position;
+                        float num18 = 0f;
+                        if (InputManager.Key(InputHuman.ReelIn))
+                        {
+                            num18 = -1f;
+                        }
+                        else if (InputManager.Key(InputHuman.ReelOut))
+                        {
+                            num18 = 1f;
+                        }
+                        else
+                        {
+                            num18 = UnityEngine.Input.GetAxis("Mouse ScrollWheel") * 5555f;
+                        }
+                        num18 = Mathf.Clamp(num18, -0.8f, 0.8f);
+                        float num19 = 1f + num18;
+                        Vector3 vector16 = Vector3.RotateTowards(vector15, Rigidbody.velocity, 1.53938f * num19, 1.53938f * num19);
+                        vector16.Normalize();
+                        spinning = true;
+                        Rigidbody.velocity = (vector16 * num17);
                     }
-                }
-                Vector3 velocity = Rigidbody.velocity;
-                Vector3 force = zero - velocity;
-                force.x = Mathf.Clamp(force.x, -maxVelocityChange, maxVelocityChange);
-                force.z = Mathf.Clamp(force.z, -maxVelocityChange, maxVelocityChange);
-                force.y = 0f;
-                if (Animation.IsPlaying(HeroAnim.JUMP) && (Animation[HeroAnim.JUMP].normalizedTime > 0.18f))
-                {
-                    force.y += 8f;
-                }
-                if ((Animation.IsPlaying(HeroAnim.HORSE_GET_ON) && (Animation[HeroAnim.HORSE_GET_ON].normalizedTime > 0.18f)) && (Animation[HeroAnim.HORSE_GET_ON].normalizedTime < 1f))
-                {
-                    float num7 = 6f;
-                    force = -Rigidbody.velocity;
-                    force.y = num7;
-                    float num8 = Vector3.Distance(MyHorse.transform.position, transform.position);
-                    float num9 = ((0.6f * Gravity) * num8) / 12f;
-                    vector7 = MyHorse.transform.position - transform.position;
-                    force += (num9 * vector7.normalized);
-                }
-                if (!(State == HumanState.Attack && useGun))
-                {
-                    Rigidbody.AddForce(force, ForceMode.VelocityChange);
-                    Rigidbody.rotation = Quaternion.Lerp(gameObject.transform.rotation, Quaternion.Euler(0f, FacingDirection, 0f), Time.deltaTime * 10f);
-                }
-            }
-            else
-            {
-                if (sparks_em.enabled)
-                {
-                    sparks_em.enabled = false;
-                }
-                if ((MyHorse && (Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || Animation.IsPlaying(HeroAnim.AIR_FALL))) && ((Rigidbody.velocity.y < 0f) && (Vector3.Distance(MyHorse.transform.position + Vector3.up * 1.65f, transform.position) < 0.5f)))
-                {
-                    transform.position = MyHorse.transform.position + Vector3.up * 1.65f;
-                    transform.rotation = MyHorse.transform.rotation;
-                    IsMounted = true;
-                    CrossFade(HeroAnim.HORSE_IDLE, 0.1f);
-                    MyHorse.Mount();
-                }
-                if (!((((((State != HumanState.Idle) || Animation.IsPlaying(HeroAnim.DASH)) ||
-                    (Animation.IsPlaying(HeroAnim.WALL_RUN) || Animation.IsPlaying(HeroAnim.TO_ROOF))) ||
-                    ((Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || Animation.IsPlaying(HeroAnim.HORSE_GET_OFF)) || (Animation.IsPlaying(HeroAnim.AIR_RELEASE) || IsMounted))) ||
-                    ((Animation.IsPlaying(HeroAnim.AIR_HOOK_L_JUST) && (Animation[HeroAnim.AIR_HOOK_L_JUST].normalizedTime < 1f)) ||
-                    (Animation.IsPlaying(HeroAnim.AIR_HOOK_R_JUST) && (Animation[HeroAnim.AIR_HOOK_R_JUST].normalizedTime < 1f)))) ? (Animation[HeroAnim.DASH].normalizedTime < 0.99f) : false))
-                {
-                    if (((!IsLeftHandHooked && !IsRightHandHooked) && ((Animation.IsPlaying(HeroAnim.AIR_HOOK_L) || Animation.IsPlaying(HeroAnim.AIR_HOOK_R)) || Animation.IsPlaying(HeroAnim.AIR_HOOK))) && (Rigidbody.velocity.y > 20f))
+                    else if (flag4)
                     {
-                        Animation.CrossFade(HeroAnim.AIR_RELEASE);
+                        float num20 = currentSpeed + 0.1f;
+                        AddRightForce();
+                        Vector3 vector17 = HookRight.transform.position - transform.position;
+                        float num21 = 0f;
+                        if (InputManager.Key(InputHuman.ReelIn))
+                        {
+                            num21 = -1f;
+                        }
+                        else if (InputManager.Key(InputHuman.ReelOut))
+                        {
+                            num21 = 1f;
+                        }
+                        else
+                        {
+                            num21 = UnityEngine.Input.GetAxis("Mouse ScrollWheel") * 5555f;
+                        }
+                        num21 = Mathf.Clamp(num21, -0.8f, 0.8f);
+                        float num22 = 1f + num21;
+                        Vector3 vector18 = Vector3.RotateTowards(vector17, Rigidbody.velocity, 1.53938f * num22, 1.53938f * num22);
+                        vector18.Normalize();
+                        spinning = true;
+                        Rigidbody.velocity = (vector18 * num20);
+                    }
+                    bool flag7 = false;
+                    if ((HookLeft != null) || (HookRight != null))
+                    {
+                        if (((HookLeft != null) && (HookLeft.transform.position.y > gameObject.transform.position.y)) && (IsLaunchLeft && HookLeft.isHooked()))
+                        {
+                            flag7 = true;
+                        }
+                        if (((HookRight != null) && (HookRight.transform.position.y > gameObject.transform.position.y)) && (IsLaunchRight && HookRight.isHooked()))
+                        {
+                            flag7 = true;
+                        }
+                    }
+                    if (flag7)
+                    {
+                        Rigidbody.AddForce(new Vector3(0f, -10f * Rigidbody.mass, 0f));
                     }
                     else
                     {
-                        bool flag5 = (Mathf.Abs(Rigidbody.velocity.x) + Mathf.Abs(Rigidbody.velocity.z)) > 25f;
-                        bool flag6 = Rigidbody.velocity.y < 0f;
-                        if (!flag5)
-                        {
-                            if (flag6)
-                            {
-                                if (!Animation.IsPlaying(HeroAnim.AIR_FALL))
-                                {
-                                    CrossFade(HeroAnim.AIR_FALL, 0.2f);
-                                }
-                            }
-                            else if (!Animation.IsPlaying(HeroAnim.AIR_RISE))
-                            {
-                                CrossFade(HeroAnim.AIR_RISE, 0.2f);
-                            }
-                        }
-                        else if (!IsLeftHandHooked && !IsRightHandHooked)
-                        {
-                            float current = -Mathf.Atan2(Rigidbody.velocity.z, Rigidbody.velocity.x) * Mathf.Rad2Deg;
-                            float num11 = -Mathf.DeltaAngle(current, transform.rotation.eulerAngles.y - 90f);
-                            if (Mathf.Abs(num11) < 45f)
-                            {
-                                if (!Animation.IsPlaying(HeroAnim.AIR2))
-                                {
-                                    CrossFade(HeroAnim.AIR2, 0.2f);
-                                }
-                            }
-                            else if ((num11 < 135f) && (num11 > 0f))
-                            {
-                                if (!Animation.IsPlaying(HeroAnim.AIR2_RIGHT))
-                                {
-                                    CrossFade(HeroAnim.AIR2_RIGHT, 0.2f);
-                                }
-                            }
-                            else if ((num11 > -135f) && (num11 < 0f))
-                            {
-                                if (!Animation.IsPlaying(HeroAnim.AIR2_LEFT))
-                                {
-                                    CrossFade(HeroAnim.AIR2_LEFT, 0.2f);
-                                }
-                            }
-                            else if (!Animation.IsPlaying(HeroAnim.AIR2_BACKWARD))
-                            {
-                                CrossFade(HeroAnim.AIR2_BACKWARD, 0.2f);
-                            }
-                        }
-
-                        else if (!IsRightHandHooked)
-                        {
-                            TryCrossFade(Equipment.Weapon.HookForwardLeft, 0.1f);
-                        }
-                        else if (!IsLeftHandHooked)
-                        {
-                            TryCrossFade(Equipment.Weapon.HookForwardRight, 0.1f);
-                        }
-                        else if (!Animation.IsPlaying(Equipment.Weapon.HookForward))
-                        {
-                            TryCrossFade(Equipment.Weapon.HookForward, 0.1f);
-                        }
+                        Rigidbody.AddForce(new Vector3(0f, -Gravity * Rigidbody.mass, 0f));
                     }
-                }
-                if (((State == HumanState.Idle) && Animation.IsPlaying(HeroAnim.AIR_RELEASE)) && (Animation[HeroAnim.AIR_RELEASE].normalizedTime >= 1f))
-                {
-                    CrossFade(HeroAnim.AIR_RISE, 0.2f);
-                }
-                if (Animation.IsPlaying(HeroAnim.HORSE_GET_OFF) && (Animation[HeroAnim.HORSE_GET_OFF].normalizedTime >= 1f))
-                {
-                    CrossFade(HeroAnim.AIR_RISE, 0.2f);
-                }
-                if (Animation.IsPlaying(HeroAnim.TO_ROOF))
-                {
-                    if (Animation[HeroAnim.TO_ROOF].normalizedTime < 0.22f)
+
+                    if (currentSpeed > 10f)
                     {
-                        Rigidbody.velocity = Vector3.zero;
-                        Rigidbody.AddForce(new Vector3(0f, Gravity * Rigidbody.mass, 0f));
+                        currentCamera.fieldOfView = Mathf.Lerp(currentCamera.fieldOfView, Mathf.Min((float) 100f, (float) (currentSpeed + 40f)), 0.1f);
                     }
                     else
                     {
-                        if (!WallJump)
+                        currentCamera.fieldOfView = Mathf.Lerp(currentCamera.fieldOfView, 50f, 0.1f);
+                    }
+                    if (flag2)
+                    {
+                        UseGas(UseGasSpeed * Time.deltaTime);
+                        if (!smoke_3dmg_em.enabled && photonView.isMine)
                         {
-                            WallJump = true;
-                            Rigidbody.AddForce((Vector3.up * 8f), ForceMode.Impulse);
+                            object[] parameters = new object[] { true };
+                            photonView.RPC(nameof(Net3DMGSMOKE), PhotonTargets.Others, parameters);
                         }
-                        Rigidbody.AddForce((transform.forward * 0.05f), ForceMode.Impulse);
+                        smoke_3dmg_em.enabled = true;
                     }
-                    if (Animation[HeroAnim.TO_ROOF].normalizedTime >= 1f)
+                    else
                     {
-                        PlayAnimation(HeroAnim.AIR_RISE);
-                    }
-                }
-                else if (!(((((State != HumanState.Idle) || !IsPressDirectionTowardsHero(targetMoveDirection.x, targetMoveDirection.y)) ||
-                             (InputManager.HumanJump ||
-                              InputManager.Key(InputHuman.HookLeft))) ||
-                            ((InputManager.Key(InputHuman.HookRight) ||
-                              InputManager.Key(InputHuman.HookBoth)) ||
-                             (!IsFrontGrounded() || Animation.IsPlaying(HeroAnim.WALL_RUN)))) ||
-                           Animation.IsPlaying(HeroAnim.DODGE)))
-                {
-                    CrossFade(HeroAnim.WALL_RUN, 0.1f);
-                    WallRunTime = 0f;
-                }
-                else if (Animation.IsPlaying(HeroAnim.WALL_RUN))
-                {
-                    Rigidbody.AddForce(((Vector3.up * speed)) - Rigidbody.velocity, ForceMode.VelocityChange);
-                    WallRunTime += Time.deltaTime;
-                    if ((WallRunTime > 1f) || (targetMoveDirection.magnitude == 0f))
-                    {
-                        Rigidbody.AddForce(((-transform.forward * speed) * 0.75f), ForceMode.Impulse);
-                        Dodge(true);
-                    }
-                    else if (!IsUpFrontGrounded())
-                    {
-                        WallJump = false;
-                        CrossFade(HeroAnim.TO_ROOF, 0.1f);
-                    }
-                    else if (!IsFrontGrounded())
-                    {
-                        CrossFade(HeroAnim.AIR_FALL, 0.1f);
-                    }
-                }
-                // If we are using these skills, then we cannot use gas force
-                else if ((!Animation.IsPlaying(HeroAnim.ATTACK5) && !Animation.IsPlaying(HeroAnim.SPECIAL_PETRA)) && (!Animation.IsPlaying(HeroAnim.DASH) && !Animation.IsPlaying(HeroAnim.JUMP)))
-                {
-                    Vector3 vector11 = new Vector3(targetMoveDirection.x, 0f, targetMoveDirection.y);
-                    float num12 = GetGlobalFacingDirection(targetMoveDirection.x, targetMoveDirection.y);
-                    Vector3 vector12 = GetGlobaleFacingVector3(num12);
-                    float num13 = (vector11.magnitude <= 0.95f) ? ((vector11.magnitude >= 0.25f) ? vector11.magnitude : 0f) : 1f;
-                    vector12 = (vector12 * num13);
-                    //TODO: ACL
-                    vector12 = (vector12 * ((/*(float)setup.myCostume.stat.ACL) */ 125f / 10f) * 2f));
-                    if (targetMoveDirection.magnitude == 0f)
-                    {
-                        if (State == HumanState.Attack)
+                        if (smoke_3dmg_em.enabled && photonView.isMine)
                         {
-                            vector12 = (vector12 * 0f);
+                            object[] objArray3 = new object[] { false };
+                            photonView.RPC(nameof(Net3DMGSMOKE), PhotonTargets.Others, objArray3);
                         }
-                        num12 = -874f;
+                        smoke_3dmg_em.enabled = false;
                     }
-                    if (num12 != -874f)
-                    {
-                        FacingDirection = num12;
-                        TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
-                    }
-                    flag2 = ProcessJump(flag2, flag3, flag4, vector12);
-                }
-                if ((Animation.IsPlaying(HeroAnim.AIR_FALL) && (currentSpeed < 0.2f)) && IsFrontGrounded())
-                {
-                    CrossFade(HeroAnim.ON_WALL, 0.3f);
-                }
-            }
-            spinning = false;
-            if (flag3 && flag4)
-            {
-                float num14 = currentSpeed + 0.1f;
-                AddRightForce();
-                Vector3 vector13 = (((HookRight.transform.position + HookLeft.transform.position) * 0.5f)) - transform.position;
-                float num15 = 0f;
-                if (InputManager.Key(InputHuman.ReelIn))
-                {
-                    num15 = -1f;
-                }
-                else if (InputManager.Key(InputHuman.ReelOut))
-                {
-                    num15 = 1f;
-                }
-                else
-                {
-                    num15 = UnityEngine.Input.GetAxis("Mouse ScrollWheel") * 5555f;
-                }
-                num15 = Mathf.Clamp(num15, -0.8f, 0.8f);
-                float num16 = 1f + num15;
-                Vector3 vector14 = Vector3.RotateTowards(vector13, Rigidbody.velocity, 1.53938f * num16, 1.53938f * num16);
-                vector14.Normalize();
-                spinning = true;
-                Rigidbody.velocity = (vector14 * num14);
-            }
-            else if (flag3)
-            {
-                float num17 = currentSpeed + 0.1f;
-                AddRightForce();
-                Vector3 vector15 = HookLeft.transform.position - transform.position;
-                float num18 = 0f;
-                if (InputManager.Key(InputHuman.ReelIn))
-                {
-                    num18 = -1f;
-                }
-                else if (InputManager.Key(InputHuman.ReelOut))
-                {
-                    num18 = 1f;
-                }
-                else
-                {
-                    num18 = UnityEngine.Input.GetAxis("Mouse ScrollWheel") * 5555f;
-                }
-                num18 = Mathf.Clamp(num18, -0.8f, 0.8f);
-                float num19 = 1f + num18;
-                Vector3 vector16 = Vector3.RotateTowards(vector15, Rigidbody.velocity, 1.53938f * num19, 1.53938f * num19);
-                vector16.Normalize();
-                spinning = true;
-                Rigidbody.velocity = (vector16 * num17);
-            }
-            else if (flag4)
-            {
-                float num20 = currentSpeed + 0.1f;
-                AddRightForce();
-                Vector3 vector17 = HookRight.transform.position - transform.position;
-                float num21 = 0f;
-                if (InputManager.Key(InputHuman.ReelIn))
-                {
-                    num21 = -1f;
-                }
-                else if (InputManager.Key(InputHuman.ReelOut))
-                {
-                    num21 = 1f;
-                }
-                else
-                {
-                    num21 = UnityEngine.Input.GetAxis("Mouse ScrollWheel") * 5555f;
-                }
-                num21 = Mathf.Clamp(num21, -0.8f, 0.8f);
-                float num22 = 1f + num21;
-                Vector3 vector18 = Vector3.RotateTowards(vector17, Rigidbody.velocity, 1.53938f * num22, 1.53938f * num22);
-                vector18.Normalize();
-                spinning = true;
-                Rigidbody.velocity = (vector18 * num20);
-            }
-            bool flag7 = false;
-            if ((HookLeft != null) || (HookRight != null))
-            {
-                if (((HookLeft != null) && (HookLeft.transform.position.y > gameObject.transform.position.y)) && (IsLaunchLeft && HookLeft.isHooked()))
-                {
-                    flag7 = true;
-                }
-                if (((HookRight != null) && (HookRight.transform.position.y > gameObject.transform.position.y)) && (IsLaunchRight && HookRight.isHooked()))
-                {
-                    flag7 = true;
-                }
-            }
-            if (flag7)
-            {
-                Rigidbody.AddForce(new Vector3(0f, -10f * Rigidbody.mass, 0f));
-            }
-            else
-            {
-                Rigidbody.AddForce(new Vector3(0f, -Gravity * Rigidbody.mass, 0f));
-            }
-
-            if (currentSpeed > 10f)
-            {
-                currentCamera.fieldOfView = Mathf.Lerp(currentCamera.fieldOfView, Mathf.Min((float) 100f, (float) (currentSpeed + 40f)), 0.1f);
-            }
-            else
-            {
-                currentCamera.fieldOfView = Mathf.Lerp(currentCamera.fieldOfView, 50f, 0.1f);
-            }
-            if (flag2)
-            {
-                UseGas(UseGasSpeed * Time.deltaTime);
-                if (!smoke_3dmg_em.enabled && photonView.isMine)
-                {
-                    object[] parameters = new object[] { true };
-                    photonView.RPC(nameof(Net3DMGSMOKE), PhotonTargets.Others, parameters);
-                }
-                smoke_3dmg_em.enabled = true;
-            }
-            else
-            {
-                if (smoke_3dmg_em.enabled && photonView.isMine)
-                {
-                    object[] objArray3 = new object[] { false };
-                    photonView.RPC(nameof(Net3DMGSMOKE), PhotonTargets.Others, objArray3);
-                }
-                smoke_3dmg_em.enabled = false;
-            }
-        }
-
-        private void UpdateRightLaunch(ref bool flag2, ref bool flag4)
-        {
-            if ((HookRight != null) && HookRight.isHooked())
-            {
-                UpdateRightHook(ref flag2, ref flag4);
-            }
-            LaunchElapsedTimeR += Time.deltaTime;
-            if (EHold && (CurrentGas > 0f))
-            {
-                UseGas(UseGasSpeed * Time.deltaTime);
-            }
-            else if (LaunchElapsedTimeR > 0.3f)
-            {
-                IsLaunchRight = false;
-                if (HookRight != null)
-                {
-                    HookRight.disable();
-                    ReleaseIfIHookSb();
-                    HookRight = null;
-                    flag4 = false;
                 }
             }
         }
-
-        private void UpdateRightHook(ref bool flag2, ref bool flag4)
-        {
-            IsRightHandHooked = true;
-            var vector5 = HookRight.transform.position - transform.position;
-            vector5.Normalize();
-            vector5 *= 10f;
-            if (!IsLaunchLeft)
-                vector5 *= 2f;
-
-            if ((Vector3.Angle(Rigidbody.velocity, vector5) > 90f) && InputManager.HumanJump)
-            {
-                flag4 = true;
-                flag2 = true;
-            }
-
-            if (!flag4)
-            {
-                Rigidbody.AddForce(vector5);
-                if (Vector3.Angle(Rigidbody.velocity, vector5) > 90f)
-                    Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
-            }
-        }
-
-        private void UpdateLeftLaunch(ref bool flag2, ref bool flag3)
-        {
-            if ((HookLeft != null) && HookLeft.isHooked())
-                UpdateLeftHook(ref flag2, ref flag3);
-
-            LaunchElapsedTimeL += Time.deltaTime;
-            if (QHold && (CurrentGas > 0f))
-                UseGas(UseGasSpeed * Time.deltaTime);
-            else if (LaunchElapsedTimeL > 0.3f)
-            {
-                IsLaunchLeft = false;
-                if (HookLeft != null)
-                {
-                    HookLeft.disable();
-                    ReleaseIfIHookSb();
-                    HookLeft = null;
-                    flag3 = false;
-                }
-            }
-        }
-
-        private void UpdateLeftHook(ref bool flag2, ref bool flag3)
-        {
-            IsLeftHandHooked = true;
-            var to = HookLeft.transform.position - transform.position;
-            to.Normalize();
-            to *= 10f;
-            if (!IsLaunchRight)
-            {
-                to *= 2f;
-            }
-            if ((Vector3.Angle(Rigidbody.velocity, to) > 90f) && InputManager.HumanJump)
-            {
-                flag3 = true;
-                flag2 = true;
-            }
-            if (!flag3)
-            {
-                Rigidbody.AddForce(to);
-                if (Vector3.Angle(Rigidbody.velocity, to) > 90f)
-                    Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
-            }
-        }
-
-        private void UpdateHookedBySomeone()
-        {
-            if (BadGuy != null)
-            {
-                Vector3 vector3 = BadGuy.transform.position - transform.position;
-                float f = vector3.magnitude;
-                if (f > 5f)
-                {
-                    Rigidbody.AddForce(((vector3.normalized * Mathf.Pow(f, 0.15f)) * 0.2f), ForceMode.Impulse);
-                }
-            }
-            else
-            {
-                HookBySomeOne = false;
-            }
-        }
-
-        private void UpdateHookedSomeone()
-        {
-            if (HookTarget != null)
-            {
-                Vector3 vector2 = HookTarget.transform.position - transform.position;
-                float magnitude = vector2.magnitude;
-                if (magnitude > 2f)
-                    Rigidbody.AddForce((((vector2.normalized * Mathf.Pow(magnitude, 0.15f)) * 30f) - (Rigidbody.velocity * 0.95f)), ForceMode.VelocityChange);
-            }
-            else
-            {
-                HookSomeone = false;
-            }
-        }
-
         #endregion
 
+        #region OnDestroy
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (MyNetWorkName != null)
+            {
+                Destroy(MyNetWorkName);
+            }
+            if (GunDummy != null)
+            {
+                Destroy(GunDummy);
+            }
+            ReleaseIfIHookSb();
 
+        }
+        #endregion
 
+        #region Other
         public void Initialize(CharacterPreset preset)
         {
             //TODO: Remove hack
@@ -2018,7 +2376,7 @@ namespace Assets.Scripts.Characters.Humans
                 StandAnimation = HeroAnim.AHSS_STAND_GUN;
                 useGun = true;
                 GunDummy = new GameObject();
-                GunDummy.name = "gunDummy";
+                GunDummy.name = "GunDummy";
                 GunDummy.transform.position = transform.position;
                 GunDummy.transform.rotation = transform.rotation;
             }
@@ -2038,7 +2396,7 @@ namespace Assets.Scripts.Characters.Humans
         {
             if (photonView.isMine)
             {
-                //TODO: Handle Abusive RPC
+                //TODO: HandLe Abusive RPC
                 return;
             }
 
@@ -2057,7 +2415,7 @@ namespace Assets.Scripts.Characters.Humans
 
         #region Animation
 
-        private void SetAnimationSpeed(string animationName, float animationSpeed = 1f)
+        public void SetAnimationSpeed(string animationName, float animationSpeed = 1f)
         {
             Debug.Log($"Calling SetSpeed: {animationName}");
             Animation[animationName].speed = animationSpeed;
@@ -2150,7 +2508,7 @@ namespace Assets.Scripts.Characters.Humans
             }
         }
 
-        private void PlayAnimationAt(string aniName, float normalizedTime)
+        public void PlayAnimationAt(string aniName, float normalizedTime)
         {
             CurrentAnimation = aniName;
             Animation.Play(aniName);
@@ -2200,7 +2558,7 @@ namespace Assets.Scripts.Characters.Humans
             SmoothSync.disabled = false;
             Rigidbody.velocity = Vector3.zero;
             titanForm = false;
-            Ungrabbed();
+            BreakFreeFromGrab();
             FalseAttack();
             skillCDDuration = skillCDLast;
             currentInGameCamera.SetMainObject(gameObject, true, false);
@@ -2218,7 +2576,7 @@ namespace Assets.Scripts.Characters.Humans
         [PunRPC]
         public void BadGuyReleaseMe()
         {
-            HookBySomeOne = false;
+            HookedBySomeone = false;
             BadGuy = null;
         }
 
@@ -2393,23 +2751,11 @@ namespace Assets.Scripts.Characters.Humans
             }
         }
 
-        private void CalcSkillCD()
-        {
-            if (skillCDDuration > 0f)
-            {
-                skillCDDuration -= Time.deltaTime;
-                if (skillCDDuration < 0f)
-                {
-                    skillCDDuration = 0f;
-                }
-            }
-        }
-
-        private void ChangeBlade()
+        public void Reload()
         {
             if ((!useGun || grounded) || GameSettings.PvP.AhssAirReload.Value)
             {
-                state = HumanState.ChangeBlade;
+                State = HumanState.ChangeBlade;
                 throwedBlades = false;
                 Equipment.Weapon.PlayReloadAnimation();
             }
@@ -2591,7 +2937,7 @@ namespace Assets.Scripts.Characters.Humans
                 DashTime = 0.5f;
                 CrossFade(HeroAnim.DASH, 0.1f);
                 Animation[HeroAnim.DASH].time = 0.1f;
-                state = HumanState.AirDodge;
+                State = HumanState.AirDodge;
                 FalseAttack();
                 Rigidbody.AddForce((DashV * 40f), ForceMode.VelocityChange);
             }
@@ -2645,13 +2991,13 @@ namespace Assets.Scripts.Characters.Humans
 
         private void Dodge(bool offTheWall = false)
         {
-            if (((!InputManager.Key(InputHorse.Mount) || !MyHorse) || IsMounted) || (Vector3.Distance(MyHorse.transform.position, transform.position) >= 15f))
+            if (((!InputManager.Key(InputHorse.Mount) || !Horse) || IsMounted) || (Vector3.Distance(Horse.transform.position, transform.position) >= 15f))
             {
-                state = HumanState.GroundDodge;
+                State = HumanState.GroundDodge;
                 if (!offTheWall)
                 {
-                    float num3 = GetGlobalFacingDirection(targetMoveDirection.x, targetMoveDirection.y);
-                    if (targetMoveDirection.magnitude > 0f)
+                    float num3 = GetGlobalFacingDirection(TargetMoveDirection.x, TargetMoveDirection.y);
+                    if (TargetMoveDirection.magnitude > 0f)
                     {
                         FacingDirection = num3 + 180f;
                         TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
@@ -2663,7 +3009,7 @@ namespace Assets.Scripts.Characters.Humans
                     PlayAnimation(HeroAnim.DODGE);
                     PlayAnimationAt(HeroAnim.DODGE, 0.2f);
                 }
-                sparks_em.enabled = false;
+                SparksEM.enabled = false;
             }
         }
 
@@ -2731,7 +3077,7 @@ namespace Assets.Scripts.Characters.Humans
             CurrentGas = totalGas;
         }
 
-        private GameObject FindNearestTitan()
+        public GameObject FindNearestTitan()
         {
             GameObject[] objArray = GameObject.FindGameObjectsWithTag("titan");
             GameObject obj2 = null;
@@ -2822,17 +3168,17 @@ namespace Assets.Scripts.Characters.Humans
             return (a * ((num6 >= 0f) ? num7 : -num7));
         }
 
-        private void GetOffHorse()
+        public void GetOffHorse()
         {
             PlayAnimation(HeroAnim.HORSE_GET_OFF);
             Rigidbody.AddForce((((Vector3.up * 10f) - (transform.forward * 2f)) - (transform.right * 1f)), ForceMode.VelocityChange);
             Unmounted();
         }
 
-        private void GetOnHorse()
+        public void GetOnHorse()
         {
             PlayAnimation(HeroAnim.HORSE_GET_ON);
-            FacingDirection = MyHorse.transform.rotation.eulerAngles.y;
+            FacingDirection = Horse.transform.rotation.eulerAngles.y;
             TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
         }
 
@@ -2843,7 +3189,7 @@ namespace Assets.Scripts.Characters.Humans
                  || Animation.IsPlaying(HeroAnim.RUN_SASHA))
                 && (currentBladeSta != totalBladeSta || CurrentGas != totalGas || Equipment.Weapon.CanReload))
             {
-                state = HumanState.FillGas;
+                State = HumanState.FillGas;
                 CrossFade(HeroAnim.SUPPLY, 0.1f);
             }
         }
@@ -2854,7 +3200,7 @@ namespace Assets.Scripts.Characters.Humans
             {
                 Unmounted();
             }
-            state = HumanState.Grab;
+            State = HumanState.Grab;
             GetComponent<CapsuleCollider>().isTrigger = true;
             FalseAttack();
             TitanWhoGrabMe = titan;
@@ -2863,7 +3209,7 @@ namespace Assets.Scripts.Characters.Humans
                 ErenTitan.lifeTime = 0.1f;
             }
             smoke_3dmg_em.enabled = false;
-            sparks_em.enabled = false;
+            SparksEM.enabled = false;
         }
 
         public bool HasDiedOrInvincible()
@@ -2920,13 +3266,13 @@ namespace Assets.Scripts.Characters.Humans
             Rigidbody.AddForce(((LaunchForce * num) * 0.1f), ForceMode.Impulse);
         }
 
-        private void Idle()
+        public void Idle()
         {
             if (State == HumanState.Attack)
             {
                 FalseAttack();
             }
-            state = HumanState.Idle;
+            State = HumanState.Idle;
             CrossFade(StandAnimation, 0.1f);
         }
 
@@ -3068,7 +3414,7 @@ namespace Assets.Scripts.Characters.Humans
                     ReleaseIfIHookSb();
                 }
             }
-            sparks_em.enabled = false;
+            SparksEM.enabled = false;
         }
 
         public void LaunchLeftRope(float distance, Vector3 point, bool single, int mode = 0)
@@ -3133,7 +3479,7 @@ namespace Assets.Scripts.Characters.Humans
         public void MarkDie()
         {
             HasDied = true;
-            state = HumanState.Die;
+            State = HumanState.Die;
         }
 
         [PunRPC]
@@ -3496,7 +3842,7 @@ namespace Assets.Scripts.Characters.Humans
         }
 
         [PunRPC]
-        private void NetlaughAttack()
+        public void NetlaughAttack()
         {
             throw new NotImplementedException("Titan laugh attack is not implemented yet");
             //foreach (GameObject obj2 in GameObject.FindGameObjectsWithTag("titan"))
@@ -3509,13 +3855,10 @@ namespace Assets.Scripts.Characters.Humans
         }
 
         [PunRPC]
-        private void NetSetIsGrabbedFalse()
-        {
-            state = HumanState.Idle;
-        }
+        public void NetSetIsGrabbedFalse() => State = HumanState.Idle;
 
         [PunRPC]
-        private void NetTauntAttack(float tauntTime, float distance = 100f)
+        public void NetTauntAttack(float tauntTime, float distance = 100f)
         {
             throw new NotImplementedException("Titan taunt behavior is not yet implemented");
         }
@@ -3523,7 +3866,7 @@ namespace Assets.Scripts.Characters.Humans
         [PunRPC]
         public void NetUngrabbed()
         {
-            Ungrabbed();
+            BreakFreeFromGrab();
             NetPlayAnimation(StandAnimation);
             FalseAttack();
         }
@@ -3595,7 +3938,7 @@ namespace Assets.Scripts.Characters.Humans
         [PunRPC]
         private void RPCHookedByHuman(int hooker, Vector3 hookPosition)
         {
-            HookBySomeOne = true;
+            HookedBySomeone = true;
             BadGuy = PhotonView.Find(hooker).gameObject;
             if (Vector3.Distance(hookPosition, transform.position) < 15f)
             {
@@ -3612,7 +3955,7 @@ namespace Assets.Scripts.Characters.Humans
                     DashTime = 1f;
                     CrossFade(HeroAnim.DASH, 0.05f);
                     Animation[HeroAnim.DASH].time = 0.1f;
-                    state = HumanState.AirDodge;
+                    State = HumanState.AirDodge;
                     FalseAttack();
                     FacingDirection = Mathf.Atan2(LaunchForce.x, LaunchForce.z) * Mathf.Rad2Deg;
                     Quaternion quaternion = Quaternion.Euler(0f, FacingDirection, 0f);
@@ -3623,15 +3966,15 @@ namespace Assets.Scripts.Characters.Humans
             }
             else
             {
-                HookBySomeOne = false;
+                HookedBySomeone = false;
                 BadGuy = null;
                 PhotonView.Find(hooker).RPC(nameof(HookFail), PhotonView.Find(hooker).owner, new object[0]);
             }
         }
 
-        private void Salute()
+        public void Salute()
         {
-            state = HumanState.Salute;
+            State = HumanState.Salute;
             CrossFade(HeroAnim.SALUTE, 0.1f);
         }
 
@@ -3912,20 +4255,12 @@ namespace Assets.Scripts.Characters.Humans
             Equipment.Weapon.UpdateSupplyUi(InGameUI);
         }
 
-        private void ShowSkillCD()
-        {
-            if (SkillCD != null)
-            {
-                //skillCD.GetComponent<UISprite>().fillAmount = (skillCDLast - skillCDDuration) / skillCDLast;
-            }
-        }
-
         [PunRPC]
         public void SpawnCannonRPC(string settings, PhotonMessageInfo info)
         {
             if (info.sender.isMasterClient && photonView.isMine && !myCannon)
             {
-                if (MyHorse && IsMounted)
+                if (Horse && IsMounted)
                     GetOffHorse();
 
                 Idle();
@@ -3969,16 +4304,16 @@ namespace Assets.Scripts.Characters.Humans
         public void SetHorse()
         {
             if (!photonView.isMine) return;
-            if (GameSettings.Horse.Enabled.Value && MyHorse == null)
+            if (GameSettings.Horse.Enabled.Value && Horse == null)
             {
                 var position = transform.position + Vector3.up * 5f;
                 var rotation = transform.rotation;
-                MyHorse = Horse.Create(this, position, rotation);
+                Horse = Horse.Create(this, position, rotation);
             }
 
-            if (!GameSettings.Horse.Enabled.Value && MyHorse != null)
+            if (!GameSettings.Horse.Enabled.Value && Horse != null)
             {
-                PhotonNetwork.Destroy(MyHorse);
+                PhotonNetwork.Destroy(Horse);
             }
         }
 
@@ -3994,13 +4329,13 @@ namespace Assets.Scripts.Characters.Humans
             FengGameManagerMKII.instance.needChooseSide = true;
         }
 
-        public void Ungrabbed()
+        public void BreakFreeFromGrab()
         {
             FacingDirection = 0f;
             TargetRotation = Quaternion.Euler(0f, 0f, 0f);
             transform.parent = null;
             GetComponent<CapsuleCollider>().isTrigger = false;
-            state = HumanState.Idle;
+            State = HumanState.Idle;
             photonView.RPC(nameof(NetSetIsGrabbedFalse), PhotonTargets.All, new object[0]);
             if (PhotonNetwork.isMasterClient)
             {
@@ -4014,7 +4349,7 @@ namespace Assets.Scripts.Characters.Humans
 
         private void Unmounted()
         {
-            MyHorse.GetComponent<Horse>().Unmount();
+            Horse.GetComponent<Horse>().Unmount();
             IsMounted = false;
         }
 
@@ -4101,5 +4436,6 @@ namespace Assets.Scripts.Characters.Humans
             ErenTitan = PhotonView.Find(id).gameObject.GetComponent<ErenTitan>();
             titanForm = true;
         }
+        #endregion
     }
 }

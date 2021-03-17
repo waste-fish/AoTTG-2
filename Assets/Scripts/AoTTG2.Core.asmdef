@@ -1,6 +1,6 @@
 {
     "name": "AoTTG2.Core",
-    "rootNamespace": "",
+    "rootNamespace": "Assets.Scripts",
     "references": [
         "PhotonUnityNetworking",
         "Discord",

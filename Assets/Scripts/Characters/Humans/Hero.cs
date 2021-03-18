@@ -480,18 +480,14 @@ namespace Assets.Scripts.Characters.Humans
                     LeftHookHold = true;
                 else
                 {
-                    RaycastHit hit4;
-                    Ray ray4 = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+                    var ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
                     LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
 
-                    if (Physics.Raycast(ray4, out hit4, HookRaycastDistance, mask.value))
-                    {
-                        LaunchLeftRope(hit4.distance, hit4.point, true);
-                    }
+                    if (Physics.Raycast(ray, out var hitInfo, HookRaycastDistance, mask.value))
+                        LaunchLeftRope(hitInfo.distance, hitInfo.point, true);
                     else
-                    {
-                        LaunchLeftRope(HookRaycastDistance, ray4.GetPoint(HookRaycastDistance), true);
-                    }
+                        LaunchLeftRope(HookRaycastDistance, ray.GetPoint(HookRaycastDistance), true);
+
                     rope.Play();
                 }
             }
@@ -505,18 +501,14 @@ namespace Assets.Scripts.Characters.Humans
                     RightHookHold = true;
                 else
                 {
-                    RaycastHit hit5;
-                    Ray ray5 = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+                    var ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
                     LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
 
-                    if (Physics.Raycast(ray5, out hit5, HookRaycastDistance, mask.value))
-                    {
-                        LaunchRightRope(hit5.distance, hit5.point, true);
-                    }
+                    if (Physics.Raycast(ray, out var hitInfo, HookRaycastDistance, mask.value))
+                        LaunchRightRope(hitInfo.distance, hitInfo.point, true);
                     else
-                    {
-                        LaunchRightRope(HookRaycastDistance, ray5.GetPoint(HookRaycastDistance), true);
-                    }
+                        LaunchRightRope(HookRaycastDistance, ray.GetPoint(HookRaycastDistance), true);
+
                     rope.Play();
                 }
             }
@@ -529,20 +521,20 @@ namespace Assets.Scripts.Characters.Humans
                 RightHookHold = true;
                 if ((HookLeft == null) && (HookRight == null))
                 {
-                    RaycastHit hit6;
-                    Ray ray6 = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
+                    var ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
                     LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
 
-                    if (Physics.Raycast(ray6, out hit6, HookRaycastDistance, mask.value))
+                    if (Physics.Raycast(ray, out var hitInfo, HookRaycastDistance, mask.value))
                     {
-                        LaunchLeftRope(hit6.distance, hit6.point, false);
-                        LaunchRightRope(hit6.distance, hit6.point, false);
+                        LaunchLeftRope(hitInfo.distance, hitInfo.point, false);
+                        LaunchRightRope(hitInfo.distance, hitInfo.point, false);
                     }
                     else
                     {
-                        LaunchLeftRope(HookRaycastDistance, ray6.GetPoint(HookRaycastDistance), false);
-                        LaunchRightRope(HookRaycastDistance, ray6.GetPoint(HookRaycastDistance), false);
+                        LaunchLeftRope(HookRaycastDistance, ray.GetPoint(HookRaycastDistance), false);
+                        LaunchRightRope(HookRaycastDistance, ray.GetPoint(HookRaycastDistance), false);
                     }
+
                     rope.Play();
                 }
             }

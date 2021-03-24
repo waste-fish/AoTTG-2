@@ -8,7 +8,8 @@
         "UnityEditor.UI",
         "UnityEngine.UI",
         "Toorah.ScribtableVariables",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Unity.RenderPipelines.Universal.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -12,7 +12,7 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override bool Use()
         {
-            Hero.Transform();
+            hero.Transform();
             return true;
         }
 

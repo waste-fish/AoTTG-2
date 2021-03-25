@@ -49,7 +49,7 @@ public class AHSSShotGunCollider : MonoBehaviour
                     float b = 1f - (Vector3.Distance(other.gameObject.transform.position, base.transform.position) * 0.05f);
                     b = Mathf.Min(1f, b);
                     HitBox component = other.gameObject.GetComponent<HitBox>();
-                    if ((((component != null) && (component.transform.root != null)) && (component.transform.root.GetComponent<Hero>().myTeam != this.myTeam)) && !component.transform.root.GetComponent<Hero>().IsInvincible)
+                    if ((((component != null) && (component.transform.root != null)) && (component.transform.root.GetComponent<Hero>().MyTeam != this.myTeam)) && !component.transform.root.GetComponent<Hero>().IsInvincible)
                     {
                         if ((!component.transform.root.GetComponent<Hero>().HasDiedOrInvincible()) && !component.transform.root.GetComponent<Hero>().IsGrabbed)
                         {
@@ -251,7 +251,7 @@ public class AHSSShotGunCollider : MonoBehaviour
         {
             this.viewID = base.transform.root.gameObject.GetComponent<EnemyfxIDcontainer>().myOwnerViewID;
             this.ownerName = base.transform.root.gameObject.GetComponent<EnemyfxIDcontainer>().titanName;
-            this.myTeam = PhotonView.Find(this.viewID).gameObject.GetComponent<Hero>().myTeam;
+            this.myTeam = PhotonView.Find(this.viewID).gameObject.GetComponent<Hero>().MyTeam;
         }
         this.active_me = true;
         this.count = 0;

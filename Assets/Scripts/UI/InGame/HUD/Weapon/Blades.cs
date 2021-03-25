@@ -1,16 +1,20 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Characters.Humans;
+using UnityEngine;
 
 namespace Assets.Scripts.UI.InGame.Weapon
 {
-    public class Blades : MonoBehaviour
+    public class Blades : UiElement
     {
-        public GameObject BladeLeft;
-        public GameObject BladeRight;
+        [SerializeField] private GameObject BladeLeft;
+        [SerializeField] private GameObject BladeRight;
 
-        public GameObject BladeLeftSprite;
-        public GameObject BladeRightSprite;
+        [SerializeField] private GameObject BladeLeftSpritePrefab;
+        [SerializeField] private GameObject BladeRightSpritePrefab;
+
         private int distance = 18;
         private int previousBlades;
+
+        private Hero hero;
 
         public void SetBlades(int blades)
         {
@@ -32,12 +36,12 @@ namespace Assets.Scripts.UI.InGame.Weapon
             {
                 var cordsLeft = previousLeftBlade.transform.position;
                 cordsLeft.x -= distance;
-                previousLeftBlade = Instantiate(BladeLeftSprite, cordsLeft, previousLeftBlade.transform.rotation, BladeLeft.transform);
+                previousLeftBlade = Instantiate(BladeLeftSpritePrefab, cordsLeft, previousLeftBlade.transform.rotation, BladeLeft.transform);
                 previousLeftBlade.transform.position = cordsLeft;
 
                 var cordsRight = previousRightBlade.transform.position;
                 cordsRight.x += distance;
-                previousRightBlade = Instantiate(BladeRightSprite, cordsRight, previousRightBlade.transform.rotation, BladeRight.transform);
+                previousRightBlade = Instantiate(BladeRightSpritePrefab, cordsRight, previousRightBlade.transform.rotation, BladeRight.transform);
                 previousRightBlade.transform.position = cordsRight;
             }
         }

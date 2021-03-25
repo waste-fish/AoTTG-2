@@ -48,7 +48,7 @@ namespace Assets.Scripts.Characters.Humans
         private void HeroHit(Hero hero, HitBox hitbox, float distance)
         {
             Service.Player.HeroHit(new HeroHitEvent(hero, hero));
-            if (hero.myTeam != myTeam && !hero.IsInvincible&& hero.HasDiedOrInvincible() && !hero.IsGrabbed)
+            if (hero.MyTeam != myTeam && !hero.IsInvincible&& hero.HasDiedOrInvincible() && !hero.IsGrabbed)
             {
                 // I honestly don't have a clue as to what this does
                 float b = Mathf.Min(1f, 1f - (distance * 0.05f));

@@ -2,22 +2,22 @@ namespace Assets.Scripts.Characters.Humans.Constants
 {
     public static class HeroAnim
     {
-        public const string ATTACK1         = "attack1";
+        public const string ATTACK1 = "attack1";
         public const string ATTACK1_HOOK_L1 = "attack1_hook_l1";
         public const string ATTACK1_HOOK_L2 = "attack1_hook_l2";
         public const string ATTACK1_HOOK_R1 = "attack1_hook_r1";
         public const string ATTACK1_HOOK_R2 = "attack1_hook_r2";
-        public const string ATTACK2         = "attack2";
-        public const string ATTACK3_1       = "attack3_1";
-        public const string ATTACK3_2       = "attack3_2";
-        public const string ATTACK4         = "attack4";
-        public const string ATTACK5         = "attack5";
+        public const string ATTACK2 = "attack2";
+        public const string SPECIAL_MIKASA_0 = "attack3_1";
+        public const string SPECIAL_MIKASA_1 = "attack3_2";
+        public const string ATTACK4 = "attack4";
+        public const string SPECIAL_LEVI = "attack5";
 
-        public const string SPECIAL_ARMIN   = "special_armin";
+        public const string SPECIAL_ARMIN = "special_armin";
         public const string SPECIAL_MARCO_0 = "special_marco_0";
         public const string SPECIAL_MARCO_1 = "special_marco_1";
-        public const string SPECIAL_PETRA   = "special_petra";
-        public const string SPECIAL_SASHA   = "special_sasha";
+        public const string SPECIAL_PETRA = "special_petra";
+        public const string SPECIAL_SASHA = "special_sasha";
 
 
         public const string SALUTE = "salute";

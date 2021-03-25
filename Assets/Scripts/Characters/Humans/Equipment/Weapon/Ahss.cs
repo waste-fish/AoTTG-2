@@ -19,60 +19,60 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
 
         public override void PlayReloadAnimation()
         {
-            if (!Hero.leftGunHasBullet && !Hero.rightGunHasBullet)
+            if (!Hero.LeftGunHasBullet && !Hero.RightGunHasBullet)
             {
-                if (Hero.grounded)
+                if (Hero.Grounded)
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_both";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_both";
                 }
                 else
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_both_air";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_both_air";
                 }
             }
-            else if (!Hero.leftGunHasBullet)
+            else if (!Hero.LeftGunHasBullet)
             {
-                if (Hero.grounded)
+                if (Hero.Grounded)
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_l";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_l";
                 }
                 else
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_l_air";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_l_air";
                 }
             }
-            else if (!Hero.rightGunHasBullet)
+            else if (!Hero.RightGunHasBullet)
             {
-                if (Hero.grounded)
+                if (Hero.Grounded)
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_r";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_r";
                 }
                 else
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_r_air";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_r_air";
                 }
             }
             else
             {
-                if (Hero.grounded)
+                if (Hero.Grounded)
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_both";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_both";
                 }
                 else
                 {
-                    Hero.reloadAnimation = "AHSS_gun_reload_both_air";
+                    Hero.ReloadAnimation = "AHSS_gun_reload_both_air";
                 }
-                Hero.rightGunHasBullet = false;
-                Hero.leftGunHasBullet = false;
+                Hero.RightGunHasBullet = false;
+                Hero.LeftGunHasBullet = false;
             }
-            Hero.CrossFade(Hero.reloadAnimation, 0.05f);
+            Hero.CrossFade(Hero.ReloadAnimation, 0.05f);
         }
 
         public override void Reload()
         {
-            if (Hero.Animation[Hero.reloadAnimation].normalizedTime > 0.22f)
+            if (Hero.Animation[Hero.ReloadAnimation].normalizedTime > 0.22f)
             {
-                if (!(Hero.leftGunHasBullet || !WeaponLeft.activeSelf))
+                if (!(Hero.LeftGunHasBullet || !WeaponLeft.activeSelf))
                 {
                     WeaponLeft.SetActive(false);
                     Transform transform = WeaponLeft.transform;
@@ -83,7 +83,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
                     Vector3 torque = new Vector3(UnityEngine.Random.Range(-100, 100), UnityEngine.Random.Range(-100, 100), UnityEngine.Random.Range(-100, 100));
                     obj5.GetComponent<Rigidbody>().AddTorque(torque, ForceMode.Acceleration);
                 }
-                if (!(Hero.rightGunHasBullet || !WeaponRight.activeSelf))
+                if (!(Hero.RightGunHasBullet || !WeaponRight.activeSelf))
                 {
                     WeaponRight.SetActive(false);
                     Transform transform5 = WeaponRight.transform;
@@ -95,22 +95,22 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
                     obj6.GetComponent<Rigidbody>().AddTorque(vector4, ForceMode.Acceleration);
                 }
             }
-            if ((Hero.Animation[Hero.reloadAnimation].normalizedTime > 0.62f) && !Hero.throwedBlades)
+            if ((Hero.Animation[Hero.ReloadAnimation].normalizedTime > 0.62f) && !Hero.BladesThrown)
             {
-                Hero.throwedBlades = true;
-                if (!((Hero.leftBulletLeft <= 0) || Hero.leftGunHasBullet))
+                Hero.BladesThrown = true;
+                if (!((Hero.LeftBulletRemaining <= 0) || Hero.LeftGunHasBullet))
                 {
                     AmountLeft--;
-                    Hero.leftBulletLeft--;
+                    Hero.LeftBulletRemaining--;
                     WeaponLeft.SetActive(true);
-                    Hero.leftGunHasBullet = true;
+                    Hero.LeftGunHasBullet = true;
                 }
-                if (!((Hero.rightBulletLeft <= 0) || Hero.rightGunHasBullet))
+                if (!((Hero.RightBulletRemaining <= 0) || Hero.RightGunHasBullet))
                 {
                     WeaponRight.SetActive(true);
                     AmountRight--;
-                    Hero.rightBulletLeft--;
-                    Hero.rightGunHasBullet = true;
+                    Hero.RightBulletRemaining--;
+                    Hero.RightGunHasBullet = true;
                 }
             }
         }

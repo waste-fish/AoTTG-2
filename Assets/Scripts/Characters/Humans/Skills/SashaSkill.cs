@@ -11,12 +11,12 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override bool Use()
         {
-            if (!Hero.IsGrounded())
+            if (!hero.IsGrounded())
                 return false;
 
-            Hero.AttackAnimation = HeroAnim.SPECIAL_SASHA;
-            Hero.PlayAnimation(HeroAnim.SPECIAL_SASHA);
-            Hero.ApplyBuff(BUFF.SpeedUp, 10f);
+            hero.AttackAnimation = HeroAnim.SPECIAL_SASHA;
+            hero.PlayAnimation(HeroAnim.SPECIAL_SASHA);
+            hero.ApplyBuff(BUFF.SpeedUp, 10f);
 
             return true;
         }

@@ -66,7 +66,7 @@ public class Cannon : Photon.MonoBehaviour
 
     public void Fire()
     {
-        if (this.myHero.skillCDDuration <= 0f)
+        if (this.myHero.SkillCDDuration <= 0f)
         {
             foreach (EnemyCheckCollider collider in PhotonNetwork.Instantiate("FX/boom2", this.firingPoint.position, this.firingPoint.rotation, 0).GetComponentsInChildren<EnemyCheckCollider>())
             {
@@ -75,7 +75,7 @@ public class Cannon : Photon.MonoBehaviour
             this.myCannonBall = PhotonNetwork.Instantiate("RCAsset/CannonBallObject", this.ballPoint.position, this.firingPoint.rotation, 0);
             this.myCannonBall.GetComponent<Rigidbody>().velocity = (Vector3) (this.firingPoint.forward * 300f);
             this.myCannonBall.GetComponent<CannonBall>().myHero = this.myHero;
-            this.myHero.skillCDDuration = 3.5f;
+            this.myHero.SkillCDDuration = 3.5f;
         }
     }
 
@@ -266,13 +266,13 @@ public class Cannon : Photon.MonoBehaviour
             {
                 if (this.myHero != null)
                 {
-                    this.myHero.isCannon = false;
-                    this.myHero.myCannonRegion = null;
+                    this.myHero.IsCannon = false;
+                    this.myHero.MyCannonRegion = null;
                     Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().SetMainObject(this.myHero.gameObject, true, false);
                     this.myHero.Rigidbody.velocity = Vector3.zero;
                     this.myHero.photonView.RPC(nameof(Hero.ReturnFromCannon), PhotonTargets.Others, new object[0]);
-                    this.myHero.skillCDLast = this.myHero.skillCDLastCannon;
-                    this.myHero.skillCDDuration = this.myHero.skillCDLast;
+                    this.myHero.SkillCDLast = this.myHero.SkillCDLastCannon;
+                    this.myHero.SkillCDDuration = this.myHero.SkillCDLast;
                 }
                 PhotonNetwork.Destroy(base.gameObject);
             }

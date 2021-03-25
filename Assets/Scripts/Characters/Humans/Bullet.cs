@@ -112,12 +112,12 @@ namespace Assets.Scripts.Characters.Humans
                     {
                         object[] parameters = { hit.collider.transform.root.gameObject.GetPhotonView().viewID };
                         base.photonView.RPC(nameof(tieMeToOBJ), PhotonTargets.Others, parameters);
-                        this.master.GetComponent<Hero>().lastHook = hit.collider.transform.root;
+                        this.master.GetComponent<Hero>().LastHook = hit.collider.transform.root;
                         base.transform.parent = hit.collider.transform;
                     }
                     else if (hit.collider.transform.gameObject.layer == LayerMask.NameToLayer("Ground"))
                     {
-                        this.master.GetComponent<Hero>().lastHook = null;
+                        this.master.GetComponent<Hero>().LastHook = null;
                     }
                     else if (((hit.collider.transform.gameObject.layer == LayerMask.NameToLayer("NetworkObject")) && (hit.collider.transform.gameObject.tag == "Player")) && !this.leviMode)
                     {
@@ -125,7 +125,7 @@ namespace Assets.Scripts.Characters.Humans
                         base.photonView.RPC(nameof(tieMeToOBJ), PhotonTargets.Others, objArray3);
                         this.master.GetComponent<Hero>().HookToHuman(hit.collider.transform.root.gameObject, base.transform.position);
                         base.transform.parent = hit.collider.transform;
-                        this.master.GetComponent<Hero>().lastHook = null;
+                        this.master.GetComponent<Hero>().LastHook = null;
                     }
                     else
                     {

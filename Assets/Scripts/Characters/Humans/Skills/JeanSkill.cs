@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Characters.Humans.Constants;
+using Assets.Scripts.Characters.Humans.States;
 using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Skills
@@ -15,11 +16,12 @@ namespace Assets.Scripts.Characters.Humans.Skills
         
         public override bool Use()
         {
-            if (Hero.State != HumanState.Grab || IsActive) return false;
+            if (!(hero.SquidState is HumanGrabState) || IsActive)
+                return false;
 
-            if (TimesUsed < TimesAllowed && !Hero.Animation.IsPlaying(HeroAnim.GRABBED_JEAN))
+            if (TimesUsed < TimesAllowed && !hero.Animation.IsPlaying(HeroAnim.GRABBED_JEAN))
             {
-                Hero.PlayAnimation(HeroAnim.GRABBED_JEAN);
+                hero.PlayAnimation(HeroAnim.GRABBED_JEAN);
                 TimesUsed++;
                 IsActive = true;
                 return true;
@@ -30,10 +32,10 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override void OnUpdate()
         {
-            if (Hero.Animation.IsPlaying(HeroAnim.GRABBED_JEAN) && Hero.Animation[HeroAnim.GRABBED_JEAN].normalizedTime > 0.64f)
+            if (hero.Animation.IsPlaying(HeroAnim.GRABBED_JEAN) && hero.Animation[HeroAnim.GRABBED_JEAN].normalizedTime > 0.64f)
             {
-                Hero.BreakFreeFromGrab();
-                Hero.Rigidbody.velocity = Vector3.up * 30f;
+                hero.BreakFreeFromGrab();
+                hero.Rigidbody.velocity = Vector3.up * 30f;
                 IsActive = false;
             }
             else

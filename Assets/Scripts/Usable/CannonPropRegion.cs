@@ -20,7 +20,7 @@ public class CannonPropRegion : Photon.MonoBehaviour
     {
         if (this.storedHero != null)
         {
-            this.storedHero.myCannonRegion = null;
+            this.storedHero.MyCannonRegion = null;
             UiService.ResetMessage(LabelPosition.Center);
         }
     }
@@ -31,13 +31,13 @@ public class CannonPropRegion : Photon.MonoBehaviour
         if ((gameObject.layer == 8) && gameObject.GetPhotonView().isMine)
         {
             Hero component = gameObject.GetComponent<Hero>();
-            if ((component != null) && !component.isCannon)
+            if ((component != null) && !component.IsCannon)
             {
-                if (component.myCannonRegion != null)
+                if (component.MyCannonRegion != null)
                 {
-                    component.myCannonRegion.storedHero = null;
+                    component.MyCannonRegion.storedHero = null;
                 }
-                component.myCannonRegion = this;
+                component.MyCannonRegion = this;
                 this.storedHero = component;
             }
         }
@@ -51,7 +51,7 @@ public class CannonPropRegion : Photon.MonoBehaviour
             Hero component = gameObject.GetComponent<Hero>();
             if (((component != null) && (this.storedHero != null)) && (component == this.storedHero))
             {
-                component.myCannonRegion = null;
+                component.MyCannonRegion = null;
                 UiService.ResetMessage(LabelPosition.Center);
                 this.storedHero = null;
             }

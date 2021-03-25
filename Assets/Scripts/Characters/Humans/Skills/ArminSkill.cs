@@ -11,11 +11,11 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override bool Use()
         {
-            if (!Hero.IsGrounded())
+            if (!hero.IsGrounded())
                 return false;
 
-            Hero.AttackAnimation = HeroAnim.SPECIAL_ARMIN;
-            Hero.PlayAnimation(HeroAnim.SPECIAL_ARMIN);
+            hero.AttackAnimation = HeroAnim.SPECIAL_ARMIN;
+            hero.PlayAnimation(HeroAnim.SPECIAL_ARMIN);
             return true;
         }
 

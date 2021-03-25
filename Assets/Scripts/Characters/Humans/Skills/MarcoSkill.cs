@@ -11,14 +11,14 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override bool Use()
         {
-            if (!Hero.IsGrounded())
+            if (!hero.IsGrounded())
             {
-                Hero.skillCDDuration = 0f;
+                hero.SkillCDDuration = 0f;
                 return false;
             }
 
-            Hero.AttackAnimation = (UnityEngine.Random.Range(0, 2) != 0) ? HeroAnim.SPECIAL_MARCO_1 : HeroAnim.SPECIAL_MARCO_0;
-            Hero.PlayAnimation(Hero.AttackAnimation);
+            hero.AttackAnimation = (UnityEngine.Random.Range(0, 2) != 0) ? HeroAnim.SPECIAL_MARCO_1 : HeroAnim.SPECIAL_MARCO_0;
+            hero.PlayAnimation(hero.AttackAnimation);
 
             return true;
         }

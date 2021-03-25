@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Characters.Humans.Constants;
+using Assets.Scripts.Characters.Humans.States;
 using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Skills
@@ -11,11 +12,12 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override bool Use()
         {
-            if (Hero.State != HumanState.Idle) return false;
+            if (!(hero.SquidState is HumanIdleState))
+                return false;
 
-            Hero.AttackAnimation = HeroAnim.ATTACK3_1;
-            Hero.PlayAnimation(HeroAnim.ATTACK3_1);
-            Hero.Rigidbody.velocity = Vector3.up * 10f;
+            hero.AttackAnimation = HeroAnim.SPECIAL_MIKASA_0;
+            hero.PlayAnimation(HeroAnim.SPECIAL_MIKASA_0);
+            hero.Rigidbody.velocity = Vector3.up * 10f;
             IsActive = true;
             return true;
         }
@@ -27,15 +29,16 @@ namespace Assets.Scripts.Characters.Humans.Skills
 
         public override void OnFixedUpdate()
         {
-            if (!Hero.grounded) return;
+            if (!hero.Grounded)
+                return;
 
-            if (Hero.State == HumanState.Attack && Hero.AttackAnimation == HeroAnim.ATTACK3_1 &&
-                Hero.Animation[Hero.AttackAnimation].normalizedTime >= 1f)
+            if (hero.SquidState is HumanAttackState && hero.AttackAnimation == HeroAnim.SPECIAL_MIKASA_0 &&
+                hero.Animation[hero.AttackAnimation].normalizedTime >= 1f)
             {
-                Hero.PlayAnimation(HeroAnim.ATTACK3_2);
-                Hero.ResetAnimationSpeed();
-                Hero.Rigidbody.velocity = Vector3.zero;
-                Hero.currentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().StartShake(0.2f, 0.3f, 0.95f);
+                hero.PlayAnimation(HeroAnim.SPECIAL_MIKASA_1);
+                hero.ResetAnimationSpeed();
+                hero.Rigidbody.velocity = Vector3.zero;
+                hero.CurrentCamera.GetComponent<IN_GAME_MAIN_CAMERA>().StartShake(0.2f, 0.3f, 0.95f);
                 IsActive = false;
             }
         }

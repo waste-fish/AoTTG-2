@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Characters.Humans;
+using Assets.Scripts.Characters.Humans.States;
 using Assets.Scripts.Services;
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,8 @@ namespace Assets.Scripts.Characters.Titan.Attacks
                     }
                 }
                 else if ((gameObject.GetComponent<Hero>() != null) 
-                         && !gameObject.GetComponent<Hero>().IsInvincible                         && gameObject.GetComponent<Hero>().State != HumanState.Grab)
+                         && !gameObject.GetComponent<Hero>().IsInvincible
+                         && !(gameObject.GetComponent<Hero>().SquidState is HumanGrabState))
                 {
                     return gameObject;
                 }

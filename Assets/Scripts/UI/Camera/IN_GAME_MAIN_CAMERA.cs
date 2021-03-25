@@ -547,7 +547,7 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
                         }
                     }
                     Hero component = main_object.GetComponent<Hero>();
-                    if ((((component != null) && (((int) FengGameManagerMKII.settings[0x107]) == 1)) && component.GetComponent<SmoothSyncMovement>().enabled) && component.isPhotonCamera)
+                    if ((((component != null) && (((int) FengGameManagerMKII.settings[0x107]) == 1)) && component.GetComponent<SmoothSyncMovement>().enabled) && component.IsPhotonCamera)
                     {
                         CameraMovementLive(component);
                     }

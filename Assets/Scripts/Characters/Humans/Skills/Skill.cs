@@ -6,12 +6,12 @@ namespace Assets.Scripts.Characters.Humans.Skills
 {
     public abstract class Skill
     {
-        protected readonly Hero Hero;
+        protected readonly Hero hero;
         public virtual bool CanUseWhileGrabbed { get; protected set; } = false;
 
         protected Skill(Hero hero)
         {
-            Hero = hero;
+            this.hero = hero;
         }
 
         public List<EquipmentType> CompatibleEquipmentTypes = new List<EquipmentType>();

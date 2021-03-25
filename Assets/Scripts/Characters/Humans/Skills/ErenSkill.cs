@@ -1,18 +1,13 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Skills
 {
     public class ErenSkill : Skill
     {
-        public override bool CanUseWhileGrabbed => true;
-
-        public ErenSkill(Hero hero) : base(hero)
-        {
-        }
-
         public override bool Use()
         {
-            hero.Transform();
+            Hero.Transform();
             return true;
         }
 

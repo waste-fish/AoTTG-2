@@ -9,7 +9,7 @@ namespace Assets.Scripts.Characters.Humans.States
 {
     public class HumanIdleState : BaseHumanState
     {
-        private bool skillFailed;
+        private bool? skillFailed;
         private bool bothGunsHaveBullet;
         private bool noBulletsInEitherGun;
         private bool gunsHaveABullet;
@@ -17,72 +17,99 @@ namespace Assets.Scripts.Characters.Humans.States
         public override void OnEnter()
         {
             if (_previous is HumanAttackState)
-                _hero.FalseAttack();
+                Hero.FalseAttack();
 
-            _hero.CrossFade(_hero.StandAnimation, 0.1f);
-        }
-
-        public override void OnUpdate()
-        {
-            if (!_hero.TitanForm && !_hero.IsCannon)
-            {
-                if (_hero.Grounded)
-                {
-                    if (!_hero.Animation.IsPlaying(HeroAnim.JUMP) && !_hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))
-                    {
-                        _hero.SetState<HumanIdleState>();
-                        _hero.CrossFade(HeroAnim.JUMP, 0.1f);
-                        _hero.SparksEM.enabled = false;
-
-                        if (_hero.Horse != null && !_hero.IsMounted && Vector3.Distance(_hero.Horse.transform.position, _hero.transform.position) < 15f)
-                            _hero.GetOnHorse();
-                    }
-                }
-            }
+            Hero.CrossFade(Hero.StandAnimation, 0.1f);
+            Hero.Rigidbody.useGravity = true;
         }
 
         public override void OnFixedUpdate()
         {
-            if (!skillFailed)
+            if (skillFailed.HasValue && !skillFailed.Value)
             {
-                _hero.checkBoxLeft.ClearHits();
-                _hero.checkBoxRight.ClearHits();
-                if (_hero.Grounded)
+                Hero.checkBoxLeft.ClearHits();
+                Hero.checkBoxRight.ClearHits();
+                if (Hero.IsGrounded)
                 {
-                    _hero.Rigidbody.AddForce((_hero.transform.forward * 200f));
+                    Debug.Log("Force Added");
+                    Hero.Rigidbody.AddForce(Hero.transform.forward * 200f);
                 }
-                _hero.PlayAnimation(_hero.AttackAnimation);
-                _hero.Animation[_hero.AttackAnimation].time = 0f;
-                _hero.SetState<HumanAttackState>();
-                if (_hero.Grounded || _hero.AttackAnimation == HeroAnim.SPECIAL_MIKASA_0 || _hero.AttackAnimation == HeroAnim.SPECIAL_LEVI || _hero.AttackAnimation == HeroAnim.SPECIAL_PETRA)
-                    _hero.AttackReleased = true;
-                else
-                    _hero.AttackReleased = false;
-                _hero.SparksEM.enabled = false;
+                Hero.PlayAnimation(Hero.AttackAnimation);
+                Hero.Animation[Hero.AttackAnimation].time = 0f;
+                Hero.SetState<HumanAttackState>();
+                //if (Hero.IsGrounded || Hero.AttackAnimation == HeroAnim.SPECIAL_MIKASA_0 || Hero.AttackAnimation == HeroAnim.SPECIAL_LEVI || Hero.AttackAnimation == HeroAnim.SPECIAL_PETRA)
+                //    Hero.AttackReleased = true;
+                //else
+                //    Hero.AttackReleased = false;
+                Hero.SparksEM.enabled = false;
             }
 
             if (bothGunsHaveBullet)
             {
-                _hero.SetState<HumanAttackState>();
-                _hero.CrossFade(_hero.AttackAnimation, 0.05f);
-                _hero.GunDummy.transform.position = _hero.transform.position;
-                _hero.GunDummy.transform.rotation = _hero.transform.rotation;
-                _hero.GunDummy.transform.LookAt(_hero.GunTarget);
-                _hero.AttackReleased = false;
-                _hero.FacingDirection = _hero.GunDummy.transform.rotation.eulerAngles.y;
-                _hero.TargetRotation = Quaternion.Euler(0f, _hero.FacingDirection, 0f);
+                Hero.SetState<HumanAttackState>();
+                Hero.CrossFade(Hero.AttackAnimation, 0.05f);
+                Hero.GunDummy.transform.position = Hero.transform.position;
+                Hero.GunDummy.transform.rotation = Hero.transform.rotation;
+                Hero.GunDummy.transform.LookAt(Hero.GunTarget);
+                //Hero.AttackReleased = false;
+                Hero.FacingDirection = Hero.GunDummy.transform.rotation.eulerAngles.y;
+                Hero.TargetRotation = Quaternion.Euler(0f, Hero.FacingDirection, 0f);
             }
-            else if (noBulletsInEitherGun && (_hero.Grounded || (GameSettings.PvP.AhssAirReload.Value)))
-                _hero.Reload();
+            else if (noBulletsInEitherGun && (Hero.IsGrounded || (GameSettings.PvP.AhssAirReload.Value)))
+                Hero.Reload();
 
             bothGunsHaveBullet = false;
             noBulletsInEitherGun = false;
             gunsHaveABullet = false;
+
+            FixedUpdateGrounded();
+        }
+
+        private void FixedUpdateGrounded()
+        {
+            if (!Hero.IsGrounded)
+                return;
+
+            var vector8 = new Vector3(Hero.TargetMoveDirection.x, 0f, Hero.TargetMoveDirection.y);
+            var resultAngle = Hero.GetGlobalFacingDirection(Hero.TargetMoveDirection.x, Hero.TargetMoveDirection.y);
+            Hero.Zero = Hero.GetGlobaleFacingVector3(resultAngle);
+            var num6 = (vector8.magnitude <= 0.95f) ? ((vector8.magnitude >= 0.25f) ? vector8.magnitude : 0f) : 1f;
+            Hero.Zero *= num6;
+            Hero.Zero *= Hero.Speed;
+
+            if ((Hero.BuffTime > 0f) && (Hero.CurrentBuff == BUFF.SpeedUp))
+                Hero.Zero *= 4f;
+
+            if (Hero.TargetMoveDirection != Vector2.zero)
+            {
+                if (((!Hero.Animation.IsPlaying(HeroAnim.RUN_1) && !Hero.Animation.IsPlaying(HeroAnim.JUMP)) && !Hero.Animation.IsPlaying(HeroAnim.RUN_SASHA)) && (!Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || (Hero.Animation[HeroAnim.HORSE_GET_ON].normalizedTime >= 0.5f)))
+                {
+                    if ((Hero.BuffTime > 0f) && (Hero.CurrentBuff == BUFF.SpeedUp))
+                        Hero.CrossFade(HeroAnim.RUN_SASHA, 0.1f);
+                    else
+                        Hero.CrossFade(HeroAnim.RUN_1, 0.1f);
+                }
+            }
+            else
+            {
+                if (!(((Hero.Animation.IsPlaying(Hero.StandAnimation) || (Hero.State is HumanLandState)) || (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))) || Hero.Animation.IsPlaying(HeroAnim.GRABBED)))
+                {
+                    Hero.CrossFade(Hero.StandAnimation, 0.1f);
+                    Hero.Zero *= 0f;
+                }
+                resultAngle = -874f;
+            }
+
+            if (resultAngle != -874f)
+            {
+                Hero.FacingDirection = resultAngle;
+                Hero.TargetRotation = Quaternion.Euler(0f, Hero.FacingDirection, 0f);
+            }
         }
 
         public override void OnAttack()
         {
-            if (!_hero.UseGun)
+            if (!Hero.UseGun)
                 ProcessBladeAttack();
             else
                 ProcessGunAttack();
@@ -90,37 +117,37 @@ namespace Assets.Scripts.Characters.Humans.States
 
         public override void OnAttackRelease()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
-                if (_hero.UseGun)
+            if (!Hero.TitanForm && !Hero.IsCannon)
+                if (Hero.UseGun)
                     if (gunsHaveABullet)
                     {
-                        if (_hero.Grounded)
+                        if (Hero.IsGrounded)
                         {
-                            if (_hero.LeftGunHasBullet && _hero.RightGunHasBullet)
+                            if (Hero.LeftGunHasBullet && Hero.RightGunHasBullet)
                             {
-                                if (_hero.IsLeftHandHooked)
-                                    _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R;
+                                if (Hero.IsLeftHandHooked)
+                                    Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R;
                                 else
-                                    _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L;
+                                    Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L;
                             }
-                            else if (_hero.LeftGunHasBullet)
-                                _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L;
-                            else if (_hero.RightGunHasBullet)
-                                _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R;
+                            else if (Hero.LeftGunHasBullet)
+                                Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L;
+                            else if (Hero.RightGunHasBullet)
+                                Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R;
                         }
-                        else if (_hero.LeftGunHasBullet && _hero.RightGunHasBullet)
+                        else if (Hero.LeftGunHasBullet && Hero.RightGunHasBullet)
                         {
-                            if (_hero.IsLeftHandHooked)
-                                _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R_AIR;
+                            if (Hero.IsLeftHandHooked)
+                                Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R_AIR;
                             else
-                                _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L_AIR;
+                                Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L_AIR;
                         }
-                        else if (_hero.LeftGunHasBullet)
-                            _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L_AIR;
-                        else if (_hero.RightGunHasBullet)
-                            _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R_AIR;
+                        else if (Hero.LeftGunHasBullet)
+                            Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_L_AIR;
+                        else if (Hero.RightGunHasBullet)
+                            Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_R_AIR;
 
-                        if (_hero.LeftGunHasBullet || _hero.RightGunHasBullet)
+                        if (Hero.LeftGunHasBullet || Hero.RightGunHasBullet)
                             bothGunsHaveBullet = true;
                         else
                             noBulletsInEitherGun = true;
@@ -129,134 +156,134 @@ namespace Assets.Scripts.Characters.Humans.States
 
         private void ProcessBladeAttack()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
+            if (!Hero.TitanForm && !Hero.IsCannon)
             {
-                bool left = _hero.TargetMoveDirection.x < 0f;
-                bool right = _hero.TargetMoveDirection.x > 0f;
-                if (_hero.NeedLean)
+                bool left = Hero.TargetMoveDirection.x < 0f;
+                bool right = Hero.TargetMoveDirection.x > 0f;
+                if (Hero.NeedLean)
                 {
                     bool rand = Random.value <= 0.5f;
 
                     if (left)
-                        _hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
+                        Hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
                     else if (right)
-                        _hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
-                    else if (_hero.LeanLeft)
-                        _hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
+                        Hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
+                    else if (Hero.LeanLeft)
+                        Hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
                     else
-                        _hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
+                        Hero.AttackAnimation = rand ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
                 }
                 else if (left)
-                    _hero.AttackAnimation = HeroAnim.ATTACK2;
+                    Hero.AttackAnimation = HeroAnim.ATTACK2;
                 else if (right)
-                    _hero.AttackAnimation = HeroAnim.ATTACK1;
-                else if (_hero.LastHook != null && _hero.LastHook.TryGetComponent<TitanBase>(out var titan))
+                    Hero.AttackAnimation = HeroAnim.ATTACK1;
+                else if (Hero.LastHook != null && Hero.LastHook.TryGetComponent<TitanBase>(out var titan))
                 {
                     if (titan.Body.Neck != null)
-                        _hero.AttackAccordingToTarget(titan.Body.Neck);
+                        Hero.AttackAccordingToTarget(titan.Body.Neck);
                     else
                         skillFailed = true;
                 }
-                else if ((_hero.HookLeft != null) && (_hero.HookLeft.transform.parent != null))
+                else if ((Hero.HookLeft != null) && (Hero.HookLeft.transform.parent != null))
                 {
-                    var neck = _hero.HookLeft.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
+                    var neck = Hero.HookLeft.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
                     if (neck != null)
-                        _hero.AttackAccordingToTarget(neck);
+                        Hero.AttackAccordingToTarget(neck);
                     else
-                        _hero.AttackAccordingToMouse();
+                        Hero.AttackAccordingToMouse();
                 }
-                else if ((_hero.HookRight != null) && (_hero.HookRight.transform.parent != null))
+                else if ((Hero.HookRight != null) && (Hero.HookRight.transform.parent != null))
                 {
-                    var transform2 = _hero.HookRight.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
+                    var transform2 = Hero.HookRight.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
                     if (transform2 != null)
-                        _hero.AttackAccordingToTarget(transform2);
+                        Hero.AttackAccordingToTarget(transform2);
                     else
-                        _hero.AttackAccordingToMouse();
+                        Hero.AttackAccordingToMouse();
                 }
                 else
                 {
-                    var nearestTitan = _hero.FindNearestTitan();
+                    var nearestTitan = Hero.FindNearestTitan();
                     if (nearestTitan != null)
                     {
                         var neck = nearestTitan.transform.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
                         if (neck != null)
-                            _hero.AttackAccordingToTarget(neck);
+                            Hero.AttackAccordingToTarget(neck);
                         else
-                            _hero.AttackAccordingToMouse();
+                            Hero.AttackAccordingToMouse();
                     }
                     else
-                        _hero.AttackAccordingToMouse();
+                        Hero.AttackAccordingToMouse();
                 }
             }
         }
 
         private void ProcessGunAttack()
         {
-            if (_hero.LeftGunHasBullet)
+            if (Hero.LeftGunHasBullet)
             {
-                _hero.LeftArmAim = true;
-                _hero.RightArmAim = false;
+                Hero.LeftArmAim = true;
+                Hero.RightArmAim = false;
             }
             else
             {
-                _hero.LeftArmAim = false;
+                Hero.LeftArmAim = false;
 
-                if (_hero.RightGunHasBullet)
-                    _hero.RightArmAim = true;
+                if (Hero.RightGunHasBullet)
+                    Hero.RightArmAim = true;
                 else
-                    _hero.RightArmAim = false;
+                    Hero.RightArmAim = false;
             }
         }
 
-        public override void OnSpecialAttack()
+        public override void OnSkill()
         {
-            if (!_hero.UseGun)
+            if (!Hero.UseGun)
                 ProcessBladeSpecialAttack();
             else
                 ProcessGunSpecialAttack();
 
             ProcessGun();
 
-            if (_hero.Skill != null)
+            if (Hero.Skill != null)
             {
-                if (!_hero.Skill.IsActive)
+                if (!Hero.Skill.IsActive)
                 {
-                    if (!_hero.Skill.Use())
+                    if (!Hero.Skill.Use())
                     {
-                        if (_hero.NeedLean)
+                        if (Hero.NeedLean)
                         {
-                            if (_hero.LeanLeft)
-                                _hero.AttackAnimation = (Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
+                            if (Hero.LeanLeft)
+                                Hero.AttackAnimation = (Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_L1 : HeroAnim.ATTACK1_HOOK_L2;
                             else
-                                _hero.AttackAnimation = (Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
+                                Hero.AttackAnimation = (Random.Range(0, 100) >= 50) ? HeroAnim.ATTACK1_HOOK_R1 : HeroAnim.ATTACK1_HOOK_R2;
                         }
                         else
-                            _hero.AttackAnimation = HeroAnim.ATTACK1;
+                            Hero.AttackAnimation = HeroAnim.ATTACK1;
 
-                        _hero.PlayAnimation(_hero.AttackAnimation);
+                        Hero.PlayAnimation(Hero.AttackAnimation);
                     }
                 }
             }
         }
 
-        public override void OnSpecialAttackRelease()
+        public override void OnSkillRelease()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
+            if (!Hero.TitanForm && !Hero.IsCannon)
             {
-                if (_hero.UseGun)
+                if (Hero.UseGun)
                 {
-                    if (!(_hero.Skill is BombPvpSkill))
+                    if (!(Hero.Skill is BombPvpSkill))
                     {
-                        if (_hero.LeftGunHasBullet && _hero.RightGunHasBullet)
+                        if (Hero.LeftGunHasBullet && Hero.RightGunHasBullet)
                         {
-                            if (_hero.Grounded)
-                                _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_BOTH;
+                            if (Hero.IsGrounded)
+                                Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_BOTH;
                             else
-                                _hero.AttackAnimation = HeroAnim.AHSS_SHOOT_BOTH_AIR;
+                                Hero.AttackAnimation = HeroAnim.AHSS_SHOOT_BOTH_AIR;
 
                             bothGunsHaveBullet = true;
                         }
-                        else if (!_hero.LeftGunHasBullet && !_hero.RightGunHasBullet)
+                        else if (!Hero.LeftGunHasBullet && !Hero.RightGunHasBullet)
                             noBulletsInEitherGun = true;
                         else
                             gunsHaveABullet = true;
@@ -267,15 +294,15 @@ namespace Assets.Scripts.Characters.Humans.States
 
         private void ProcessBladeSpecialAttack()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
+            if (!Hero.TitanForm && !Hero.IsCannon)
             {
                 skillFailed = false;
-                if (_hero.SkillCDDuration > 0f)
+                if (Hero.SkillCDDuration > 0f)
                     skillFailed = true;
                 else
                 {
-                    _hero.SkillCDDuration = _hero.SkillCDLast;
-                    var skillSuccess = !_hero.Skill.Use();
+                    Hero.SkillCDDuration = Hero.SkillCDLast;
+                    var skillSuccess = !Hero.Skill.Use();
                     if (!skillSuccess)
                         skillFailed = true;
                 }
@@ -283,45 +310,85 @@ namespace Assets.Scripts.Characters.Humans.States
         }
         private void ProcessGunSpecialAttack()
         {
-            _hero.LeftArmAim = true;
-            _hero.RightArmAim = true;
+            Hero.LeftArmAim = true;
+            Hero.RightArmAim = true;
         }
 
         private void ProcessGun()
         {
-            if (_hero.LeftArmAim || _hero.RightArmAim)
+            if (Hero.LeftArmAim || Hero.RightArmAim)
             {
                 RaycastHit hit3;
                 Ray ray3 = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
                 LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
                 if (Physics.Raycast(ray3, out hit3, Hero.HOOK_RAYCAST_MAX_DISTANCE, mask.value))
-                    _hero.GunTarget = hit3.point;
+                    Hero.GunTarget = hit3.point;
             }
         }
 
         public override void OnReload()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
-                if (_hero.Animation.IsPlaying(_hero.StandAnimation) || !_hero.Grounded)
-                    _hero.Reload();
+            if (!Hero.TitanForm && !Hero.IsCannon)
+                if (Hero.Animation.IsPlaying(Hero.StandAnimation) || !Hero.IsGrounded)
+                    Hero.Reload();
         }
 
         public override void OnSalute()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
-                if (_hero.Animation.IsPlaying(_hero.StandAnimation))
-                    _hero.SetState<HumanIdleState>();
+            if (!Hero.TitanForm && !Hero.IsCannon)
+                if (Hero.Animation.IsPlaying(Hero.StandAnimation))
+                    Hero.SetState<HumanIdleState>();
         }
 
-        public override void OnItem1() => _hero.ShootFlare(1);
-        public override void OnItem2() => _hero.ShootFlare(2);
-        public override void OnItem3() => _hero.ShootFlare(3);
+        public override void OnItem1() => Hero.ShootFlare(1);
+        public override void OnItem2() => Hero.ShootFlare(2);
+        public override void OnItem3() => Hero.ShootFlare(3);
+
+        public override void OnJump()
+        {
+            if (Hero.TitanForm || Hero.IsCannon)
+                return;
+            if (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))
+                return;
+
+            if (!Hero.IsGrounded)
+                return;
+
+            Debug.Log("Jump from idle");
+
+            Hero.SetState<HumanIdleState>();
+            Hero.CrossFade(HeroAnim.JUMP, 0.1f);
+            Hero.SparksEM.enabled = false;
+        }
+
+        public override void OnDodge()
+        {
+            if (Hero.TitanForm || Hero.IsCannon)
+                return;
+
+            if (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))
+                return;
+
+            Hero.Dodge(false);
+        }
 
         public override void OnMount()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
-                if (_hero.Horse != null && _hero.IsMounted)
-                    _hero.GetOffHorse();
+            if (Hero.TitanForm || Hero.IsCannon)
+                return;
+
+            if (Hero.IsMounted)
+            {
+                Hero.GetOffHorse();
+                return;
+            }
+
+            if (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))
+                return;
+            if (Hero.Horse == null || Hero.IsMounted || Vector3.Distance(Hero.Horse.transform.position, Hero.transform.position) > 15f)
+                return;
+
+            Hero.GetOnHorse();
         }
     }
 }

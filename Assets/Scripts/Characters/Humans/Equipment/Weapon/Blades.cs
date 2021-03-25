@@ -19,7 +19,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
 
         public override void PlayReloadAnimation()
         {
-            Hero.ReloadAnimation = Hero.Grounded
+            Hero.ReloadAnimation = Hero.IsGrounded
                 ? "changeBlade"
                 : "changeBlade_air";
             Hero.CrossFade(Hero.ReloadAnimation, 0.1f);
@@ -27,7 +27,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
 
         public override void Reload()
         {
-            if (!Hero.Grounded)
+            if (!Hero.IsGrounded)
             {
                 if (!(Hero.Animation[Hero.ReloadAnimation].normalizedTime < 0.2f || Hero.BladesThrown))
                 {

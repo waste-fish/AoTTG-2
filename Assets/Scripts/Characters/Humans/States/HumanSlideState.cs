@@ -1,12 +1,63 @@
+using Assets.Scripts.Characters.Humans.Constants;
+using UnityEngine;
+
 namespace Assets.Scripts.Characters.Humans.States
 {
     public class HumanSlideState : BaseHumanState
     {
         public override void OnUpdate()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
-                if (!_hero.Grounded)
-                    _hero.SetState<HumanIdleState>(true);
+            if (!Hero.TitanForm && !Hero.IsCannon)
+                if (!Hero.IsGrounded)
+                    Hero.SetState<HumanIdleState>(true);
+        }
+
+        public override void OnFixedUpdate()
+        {
+            if (Hero.IsGrounded)
+            {
+                Hero.Zero = (Hero.Rigidbody.velocity * 0.99f);
+                if (Hero.CurrentSpeed < (Hero.Speed * 1.2f))
+                {
+                    Hero.SetState<HumanIdleState>();
+                    Hero.SparksEM.enabled = false;
+                }
+            }
+        }
+
+        public override void OnJump()
+        {
+            if (Hero.TitanForm || Hero.IsCannon)
+                return;
+            if (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))
+                return;
+
+            Hero.SetState<HumanIdleState>();
+            Hero.CrossFade(HeroAnim.JUMP, 0.1f);
+            Hero.SparksEM.enabled = false;
+        }
+
+        public override void OnDodge()
+        {
+            if (Hero.TitanForm || Hero.IsCannon)
+                return;
+
+            if (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))
+                return;
+
+            Hero.Dodge(false);
+        }
+
+        public override void OnMount()
+        {
+            if (Hero.TitanForm || Hero.IsCannon)
+                return;
+            if (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))
+                return;
+            if (Hero.Horse == null || Hero.IsMounted || Vector3.Distance(Hero.Horse.transform.position, Hero.transform.position) > 15f)
+                return;
+
+            Hero.GetOnHorse();
         }
     }
 }

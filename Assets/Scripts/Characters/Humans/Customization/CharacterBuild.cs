@@ -13,6 +13,6 @@ namespace Assets.Scripts.Characters.Humans.Customization
         [SerializeField] public EquipmentType Equipment;
         [SerializeField] public EquipmentComponent EquipmentComponent;
         [SerializeField] public HeroStats Stats;
-        [SerializeField] public HeroSkill Skill;
+        [SerializeField] public Skill Skill;
     }
 }

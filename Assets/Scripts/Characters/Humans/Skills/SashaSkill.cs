@@ -1,22 +1,19 @@
 ﻿using System;
 using Assets.Scripts.Characters.Humans.Constants;
+using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Skills
 {
     public class SashaSkill : Skill
     {
-        public SashaSkill(Hero hero) : base(hero)
-        {
-        }
-
         public override bool Use()
         {
-            if (!hero.IsGrounded())
+            if (!Hero.IsGrounded)
                 return false;
 
-            hero.AttackAnimation = HeroAnim.SPECIAL_SASHA;
-            hero.PlayAnimation(HeroAnim.SPECIAL_SASHA);
-            hero.ApplyBuff(BUFF.SpeedUp, 10f);
+            Hero.AttackAnimation = HeroAnim.SPECIAL_SASHA;
+            Hero.PlayAnimation(HeroAnim.SPECIAL_SASHA);
+            Hero.ApplyBuff(BUFF.SpeedUp, 10f);
 
             return true;
         }

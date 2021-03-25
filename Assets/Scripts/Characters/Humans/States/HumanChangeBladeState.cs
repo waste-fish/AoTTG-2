@@ -4,11 +4,11 @@ namespace Assets.Scripts.Characters.Humans.States
     {
         public override void OnUpdate()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
+            if (!Hero.TitanForm && !Hero.IsCannon)
             {
-                _hero.Equipment.Weapon.Reload();
-                if (_hero.Animation[_hero.ReloadAnimation].normalizedTime >= 1f)
-                    _hero.SetState<HumanIdleState>();
+                Hero.Equipment.Weapon.Reload();
+                if (Hero.Animation[Hero.ReloadAnimation].normalizedTime >= 1f)
+                    Hero.SetState<HumanIdleState>();
             }
         }
     }

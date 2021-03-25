@@ -836,7 +836,7 @@ namespace Assets.Scripts.Input
                 {
                     ""name"": """",
                     ""id"": ""3b247615-1339-4dcb-be05-12bfc667965d"",
-                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""path"": ""<Gamepad>/dpad/up"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
@@ -858,7 +858,7 @@ namespace Assets.Scripts.Input
                 {
                     ""name"": """",
                     ""id"": ""f131b2cd-70da-4737-b932-f1059f9d30cb"",
-                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",

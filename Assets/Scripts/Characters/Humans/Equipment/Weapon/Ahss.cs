@@ -21,7 +21,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
         {
             if (!Hero.LeftGunHasBullet && !Hero.RightGunHasBullet)
             {
-                if (Hero.Grounded)
+                if (Hero.IsGrounded)
                 {
                     Hero.ReloadAnimation = "AHSS_gun_reload_both";
                 }
@@ -32,7 +32,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
             }
             else if (!Hero.LeftGunHasBullet)
             {
-                if (Hero.Grounded)
+                if (Hero.IsGrounded)
                 {
                     Hero.ReloadAnimation = "AHSS_gun_reload_l";
                 }
@@ -43,7 +43,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
             }
             else if (!Hero.RightGunHasBullet)
             {
-                if (Hero.Grounded)
+                if (Hero.IsGrounded)
                 {
                     Hero.ReloadAnimation = "AHSS_gun_reload_r";
                 }
@@ -54,7 +54,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
             }
             else
             {
-                if (Hero.Grounded)
+                if (Hero.IsGrounded)
                 {
                     Hero.ReloadAnimation = "AHSS_gun_reload_both";
                 }

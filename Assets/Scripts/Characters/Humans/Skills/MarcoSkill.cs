@@ -1,24 +1,21 @@
 ﻿using System;
 using Assets.Scripts.Characters.Humans.Constants;
+using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Skills
 {
     public class MarcoSkill : Skill
     {
-        public MarcoSkill(Hero hero) : base(hero)
-        {
-        }
-
         public override bool Use()
         {
-            if (!hero.IsGrounded())
+            if (!Hero.IsGrounded)
             {
-                hero.SkillCDDuration = 0f;
+                Hero.SkillCDDuration = 0f;
                 return false;
             }
 
-            hero.AttackAnimation = (UnityEngine.Random.Range(0, 2) != 0) ? HeroAnim.SPECIAL_MARCO_1 : HeroAnim.SPECIAL_MARCO_0;
-            hero.PlayAnimation(hero.AttackAnimation);
+            Hero.AttackAnimation = (UnityEngine.Random.Range(0, 2) != 0) ? HeroAnim.SPECIAL_MARCO_1 : HeroAnim.SPECIAL_MARCO_0;
+            Hero.PlayAnimation(Hero.AttackAnimation);
 
             return true;
         }

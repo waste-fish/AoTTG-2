@@ -8,9 +8,9 @@ namespace Assets.Scripts.Characters.Humans.States
     {
         public override void OnUpdate()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
+            if (!Hero.TitanForm && !Hero.IsCannon)
             {
-                if (!_hero.UseGun)
+                if (!Hero.UseGun)
                     UpdateBlade();
                 else
                     UpdateGun();
@@ -19,87 +19,87 @@ namespace Assets.Scripts.Characters.Humans.States
 
         private void UpdateBlade()
         {
-            if (!_hero.AttackReleased)
-            {
-                //TODO: Pause the Animation if the player is holding a button
-                if (!InputManager.HumanAttack)
-                {
-                    _hero.SetAnimationSpeed(_hero.CurrentAnimation);
-                    _hero.AttackReleased = true;
-                }
-                else if (_hero.Animation[_hero.AttackAnimation].normalizedTime >= 0.32f && _hero.Animation[_hero.AttackAnimation].speed > 0f)
-                {
-                    Debug.Log("Trying to freeze");
-                    _hero.SetAnimationSpeed(_hero.AttackAnimation, 0f);
-                }
-            }
+            //if (!Hero.AttackReleased)
+            //{
+            //    //TODO: Pause the Animation if the player is holding a button
+            //    if (!InputManager.HumanAttack)
+            //    {
+            //        Hero.SetAnimationSpeed(Hero.CurrentAnimation);
+            //        Hero.AttackReleased = true;
+            //    }
+            //    else if (Hero.Animation[Hero.AttackAnimation].normalizedTime >= 0.32f && Hero.Animation[Hero.AttackAnimation].speed > 0f)
+            //    {
+            //        Debug.Log("Trying to freeze");
+            //        Hero.SetAnimationSpeed(Hero.AttackAnimation, 0f);
+            //    }
+            //}
 
             UpdateBladeAttackAnimation();
 
-            if (_hero.Animation[_hero.AttackAnimation].normalizedTime >= 1f)
+            if (Hero.Animation[Hero.AttackAnimation].normalizedTime >= 1f)
             {
-                if ((_hero.AttackAnimation == HeroAnim.SPECIAL_MARCO_0) || (_hero.AttackAnimation == HeroAnim.SPECIAL_MARCO_1))
+                if ((Hero.AttackAnimation == HeroAnim.SPECIAL_MARCO_0) || (Hero.AttackAnimation == HeroAnim.SPECIAL_MARCO_1))
                 {
                     if (!PhotonNetwork.isMasterClient)
                     {
                         object[] parameters = new object[] { 5f, 100f };
-                        _hero.photonView.RPC(nameof(_hero.NetTauntAttack), PhotonTargets.MasterClient, parameters);
+                        Hero.photonView.RPC(nameof(Hero.NetTauntAttack), PhotonTargets.MasterClient, parameters);
                     }
                     else
-                        _hero.NetTauntAttack(5f, 100f);
+                        Hero.NetTauntAttack(5f, 100f);
 
-                    _hero.FalseAttack();
-                    _hero.SetState<HumanIdleState>();
+                    Hero.FalseAttack();
+                    Hero.SetState<HumanIdleState>();
                 }
-                else if (_hero.AttackAnimation == HeroAnim.SPECIAL_ARMIN)
+                else if (Hero.AttackAnimation == HeroAnim.SPECIAL_ARMIN)
                 {
                     if (!PhotonNetwork.isMasterClient)
-                        _hero.photonView.RPC(nameof(_hero.NetlaughAttack), PhotonTargets.MasterClient, new object[0]);
+                        Hero.photonView.RPC(nameof(Hero.NetlaughAttack), PhotonTargets.MasterClient, new object[0]);
                     else
-                        _hero.NetlaughAttack();
+                        Hero.NetlaughAttack();
 
-                    _hero.FalseAttack();
-                    _hero.SetState<HumanIdleState>();
+                    Hero.FalseAttack();
+                    Hero.SetState<HumanIdleState>();
                 }
-                else if (_hero.AttackAnimation == HeroAnim.SPECIAL_MIKASA_0)
-                    _hero.Rigidbody.velocity -= ((Vector3.up * Time.deltaTime) * 30f);
+                else if (Hero.AttackAnimation == HeroAnim.SPECIAL_MIKASA_0)
+                    Hero.Rigidbody.velocity -= ((Vector3.up * Time.deltaTime) * 30f);
                 else
                 {
-                    _hero.FalseAttack();
-                    _hero.SetState<HumanIdleState>();
+                    Hero.FalseAttack();
+                    Hero.SetState<HumanIdleState>();
                 }
             }
 
-            if (_hero.Animation.IsPlaying(HeroAnim.SPECIAL_MIKASA_1) && (_hero.Animation[HeroAnim.SPECIAL_MIKASA_1].normalizedTime >= 1f))
+            if (Hero.Animation.IsPlaying(HeroAnim.SPECIAL_MIKASA_1) && (Hero.Animation[HeroAnim.SPECIAL_MIKASA_1].normalizedTime >= 1f))
             {
-                _hero.FalseAttack();
-                _hero.SetState<HumanIdleState>();
+                Hero.FalseAttack();
+                Hero.SetState<HumanIdleState>();
             }
         }
 
         private void UpdateBladeAttackAnimation()
         {
-            if ((_hero.AttackAnimation == HeroAnim.SPECIAL_MIKASA_0) && (_hero.CurrentBladeSta > 0f))
+            if ((Hero.AttackAnimation == HeroAnim.SPECIAL_MIKASA_0) && (Hero.CurrentBladeSta > 0f))
             {
-                if (_hero.Animation[_hero.AttackAnimation].normalizedTime >= 0.8f)
+                if (Hero.Animation[Hero.AttackAnimation].normalizedTime >= 0.8f)
                 {
-                    if (!_hero.checkBoxLeft.IsActive)
+                    if (!Hero.checkBoxLeft.IsActive)
                     {
-                        _hero.checkBoxLeft.IsActive = true;
-                        _hero.Rigidbody.velocity = (-Vector3.up * 30f);
+                        Hero.checkBoxLeft.IsActive = true;
+                        Hero.Rigidbody.velocity = (-Vector3.up * 30f);
                     }
-                    if (!_hero.checkBoxRight.IsActive)
+                    if (!Hero.checkBoxRight.IsActive)
                     {
-                        _hero.checkBoxRight.IsActive = true;
-                        _hero.slash.Play();
+                        Hero.checkBoxRight.IsActive = true;
+                        Hero.slash.Play();
                     }
                 }
-                else if (_hero.checkBoxLeft.IsActive)
+                else if (Hero.checkBoxLeft.IsActive)
                 {
-                    _hero.checkBoxLeft.IsActive = false;
-                    _hero.checkBoxRight.IsActive = false;
-                    _hero.checkBoxLeft.ClearHits();
-                    _hero.checkBoxRight.ClearHits();
+                    Hero.checkBoxLeft.IsActive = false;
+                    Hero.checkBoxRight.IsActive = false;
+                    Hero.checkBoxLeft.ClearHits();
+                    Hero.checkBoxRight.ClearHits();
                 }
             }
             else
@@ -107,7 +107,7 @@ namespace Assets.Scripts.Characters.Humans.States
                 float min;
                 float max;
 
-                switch (_hero.AttackAnimation)
+                switch (Hero.AttackAnimation)
                 {
                     case HeroAnim.SPECIAL_LEVI:
                         min = 0.35f;
@@ -135,107 +135,124 @@ namespace Assets.Scripts.Characters.Humans.States
                         break;
                 }
 
-                if (_hero.CurrentBladeSta == 0f)
+                if (Hero.CurrentBladeSta == 0f)
                 {
                     max = -1f;
                     min = -1f;
                 }
 
-                if ((_hero.Animation[_hero.AttackAnimation].normalizedTime > min) && (_hero.Animation[_hero.AttackAnimation].normalizedTime < max))
+                if ((Hero.Animation[Hero.AttackAnimation].normalizedTime > min) && (Hero.Animation[Hero.AttackAnimation].normalizedTime < max))
                 {
-                    if (!_hero.checkBoxLeft.IsActive)
+                    if (!Hero.checkBoxLeft.IsActive)
                     {
-                        _hero.checkBoxLeft.IsActive = true;
-                        _hero.slash.Play();
+                        Hero.checkBoxLeft.IsActive = true;
+                        Hero.slash.Play();
                     }
-                    if (!_hero.checkBoxRight.IsActive)
+                    if (!Hero.checkBoxRight.IsActive)
                     {
-                        _hero.checkBoxRight.IsActive = true;
+                        Hero.checkBoxRight.IsActive = true;
                     }
                 }
-                else if (_hero.checkBoxLeft.IsActive)
+                else if (Hero.checkBoxLeft.IsActive)
                 {
-                    _hero.checkBoxLeft.IsActive = false;
-                    _hero.checkBoxRight.IsActive = false;
-                    _hero.checkBoxLeft.ClearHits();
-                    _hero.checkBoxRight.ClearHits();
+                    Hero.checkBoxLeft.IsActive = false;
+                    Hero.checkBoxRight.IsActive = false;
+                    Hero.checkBoxLeft.ClearHits();
+                    Hero.checkBoxRight.ClearHits();
                 }
-                if ((_hero.AttackLoop > 0) && (_hero.Animation[_hero.AttackAnimation].normalizedTime > max))
+                if ((Hero.AttackLoop > 0) && (Hero.Animation[Hero.AttackAnimation].normalizedTime > max))
                 {
-                    _hero.AttackLoop--;
-                    _hero.PlayAnimationAt(_hero.AttackAnimation, min);
+                    Hero.AttackLoop--;
+                    Hero.PlayAnimationAt(Hero.AttackAnimation, min);
                 }
             }
         }
 
         private void UpdateGun()
         {
-            _hero.checkBoxLeft.IsActive = false;
-            _hero.checkBoxRight.IsActive = false;
-            _hero.transform.rotation = Quaternion.Lerp(_hero.transform.rotation, _hero.GunDummy.transform.rotation, Time.deltaTime * 30f);
+            Hero.checkBoxLeft.IsActive = false;
+            Hero.checkBoxRight.IsActive = false;
+            Hero.transform.rotation = Quaternion.Lerp(Hero.transform.rotation, Hero.GunDummy.transform.rotation, Time.deltaTime * 30f);
 
-            if (!_hero.AttackReleased && (_hero.Animation[_hero.AttackAnimation].normalizedTime > 0.167f))
+            if (/*!Hero.AttackReleased && */(Hero.Animation[Hero.AttackAnimation].normalizedTime > 0.167f))
             {
                 GameObject shotGun;
-                _hero.AttackReleased = true;
+                //Hero.AttackReleased = true;
                 bool flag7 = false;
-                if ((_hero.AttackAnimation == HeroAnim.AHSS_SHOOT_BOTH) || (_hero.AttackAnimation == HeroAnim.AHSS_SHOOT_BOTH_AIR))
+                if ((Hero.AttackAnimation == HeroAnim.AHSS_SHOOT_BOTH) || (Hero.AttackAnimation == HeroAnim.AHSS_SHOOT_BOTH_AIR))
                 {
                     //Should use AHSSShotgunCollider instead of TriggerColliderWeapon.  
                     //Apply that change when abstracting weapons from this class.
                     //Note, when doing the abstraction, the relationship between the weapon collider and the abstracted weapon class should be carefully considered.
-                    _hero.checkBoxLeft.IsActive = true;
-                    _hero.checkBoxRight.IsActive = true;
+                    Hero.checkBoxLeft.IsActive = true;
+                    Hero.checkBoxRight.IsActive = true;
                     flag7 = true;
-                    _hero.LeftGunHasBullet = false;
-                    _hero.RightGunHasBullet = false;
-                    _hero.Rigidbody.AddForce((-_hero.transform.forward * 1000f), ForceMode.Acceleration);
+                    Hero.LeftGunHasBullet = false;
+                    Hero.RightGunHasBullet = false;
+                    Hero.Rigidbody.AddForce((-Hero.transform.forward * 1000f), ForceMode.Acceleration);
                 }
                 else
                 {
-                    if (_hero.AttackAnimation == HeroAnim.AHSS_SHOOT_L || _hero.AttackAnimation == HeroAnim.AHSS_SHOOT_L_AIR)
+                    if (Hero.AttackAnimation == HeroAnim.AHSS_SHOOT_L || Hero.AttackAnimation == HeroAnim.AHSS_SHOOT_L_AIR)
                     {
-                        _hero.checkBoxLeft.IsActive = true;
-                        _hero.LeftGunHasBullet = false;
+                        Hero.checkBoxLeft.IsActive = true;
+                        Hero.LeftGunHasBullet = false;
                     }
                     else
                     {
-                        _hero.checkBoxRight.IsActive = true;
-                        _hero.RightGunHasBullet = false;
+                        Hero.checkBoxRight.IsActive = true;
+                        Hero.RightGunHasBullet = false;
                     }
-                    _hero.Rigidbody.AddForce((-_hero.transform.forward * 600f), ForceMode.Acceleration);
+                    Hero.Rigidbody.AddForce((-Hero.transform.forward * 600f), ForceMode.Acceleration);
                 }
 
-                _hero.Rigidbody.AddForce((Vector3.up * 200f), ForceMode.Acceleration);
+                Hero.Rigidbody.AddForce((Vector3.up * 200f), ForceMode.Acceleration);
 
                 var prefabName = "FX/shotGun";
                 if (flag7)
                     prefabName = "FX/shotGun 1";
 
-                if (_hero.photonView.isMine)
+                if (Hero.photonView.isMine)
                 {
-                    shotGun = PhotonNetwork.Instantiate(prefabName, (_hero.transform.position + (_hero.transform.up * 0.8f)) - (_hero.transform.right * 0.1f), _hero.transform.rotation, 0);
+                    shotGun = PhotonNetwork.Instantiate(prefabName, (Hero.transform.position + (Hero.transform.up * 0.8f)) - (Hero.transform.right * 0.1f), Hero.transform.rotation, 0);
                     if (shotGun.GetComponent<EnemyfxIDcontainer>() != null)
-                        shotGun.GetComponent<EnemyfxIDcontainer>().myOwnerViewID = _hero.photonView.viewID;
+                        shotGun.GetComponent<EnemyfxIDcontainer>().myOwnerViewID = Hero.photonView.viewID;
                 }
                 else
-                    Object.Instantiate(Resources.Load<GameObject>(prefabName), ((_hero.transform.position + (_hero.transform.up * 0.8f)) - (_hero.transform.right * 0.1f)), _hero.transform.rotation);
+                    Object.Instantiate(Resources.Load<GameObject>(prefabName), ((Hero.transform.position + (Hero.transform.up * 0.8f)) - (Hero.transform.right * 0.1f)), Hero.transform.rotation);
             }
 
-            if (_hero.Animation[_hero.AttackAnimation].normalizedTime >= 1f)
+            if (Hero.Animation[Hero.AttackAnimation].normalizedTime >= 1f)
             {
-                _hero.FalseAttack();
-                _hero.SetState<HumanIdleState>();
-                _hero.checkBoxLeft.IsActive = false;
-                _hero.checkBoxRight.IsActive = false;
+                Hero.FalseAttack();
+                Hero.SetState<HumanIdleState>();
+                Hero.checkBoxLeft.IsActive = false;
+                Hero.checkBoxRight.IsActive = false;
             }
 
-            if (!_hero.Animation.IsPlaying(_hero.AttackAnimation))
+            if (!Hero.Animation.IsPlaying(Hero.AttackAnimation))
             {
-                _hero.FalseAttack();
-                _hero.SetState<HumanIdleState>();
-                _hero.checkBoxLeft.IsActive = false;
-                _hero.checkBoxRight.IsActive = false;
+                Hero.FalseAttack();
+                Hero.SetState<HumanIdleState>();
+                Hero.checkBoxLeft.IsActive = false;
+                Hero.checkBoxRight.IsActive = false;
+            }
+        }
+
+        public override void OnFixedUpdate()
+        {
+            if (Hero.IsGrounded)
+
+            if (Hero.AttackAnimation == HeroAnim.SPECIAL_LEVI)
+            {
+                if ((Hero.Animation[Hero.AttackAnimation].normalizedTime > 0.4f) && (Hero.Animation[Hero.AttackAnimation].normalizedTime < 0.61f))
+                {
+                    Hero.Rigidbody.AddForce((Hero.transform.forward * 200f));
+                }
+            }
+            else if (Hero.Animation.IsPlaying(HeroAnim.ATTACK1) || Hero.Animation.IsPlaying(HeroAnim.ATTACK2))
+            {
+                Hero.Rigidbody.AddForce((Hero.transform.forward * 200f));
             }
         }
     }

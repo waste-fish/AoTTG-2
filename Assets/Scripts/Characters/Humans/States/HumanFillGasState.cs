@@ -6,21 +6,21 @@ namespace Assets.Scripts.Characters.Humans.States
     {
         public override void OnUpdate()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
-                if (_hero.Animation.IsPlaying(HeroAnim.SUPPLY) && _hero.Animation[HeroAnim.SUPPLY].normalizedTime >= 1f)
+            if (!Hero.TitanForm && !Hero.IsCannon)
+                if (Hero.Animation.IsPlaying(HeroAnim.SUPPLY) && Hero.Animation[HeroAnim.SUPPLY].normalizedTime >= 1f)
                 {
-                    _hero.Equipment.Weapon.Resupply();
-                    _hero.CurrentBladeSta = _hero.TotalBladeSta;
-                    _hero.CurrentGas = _hero.TotalGas;
+                    Hero.Equipment.Weapon.Resupply();
+                    Hero.CurrentBladeSta = Hero.TotalBladeSta;
+                    Hero.CurrentGas = Hero.TotalGas;
 
-                    if (_hero.UseGun)
+                    if (Hero.UseGun)
                     {
-                        _hero.LeftBulletRemaining = _hero.RightBulletRemaining = _hero.BulletMax;
-                        _hero.RightGunHasBullet = true;
-                        _hero.LeftGunHasBullet = true;
+                        Hero.LeftBulletRemaining = Hero.RightBulletRemaining = Hero.BulletMax;
+                        Hero.RightGunHasBullet = true;
+                        Hero.LeftGunHasBullet = true;
                     }
 
-                    _hero.SetState<HumanIdleState>();
+                    Hero.SetState<HumanIdleState>();
                 }
         }
     }

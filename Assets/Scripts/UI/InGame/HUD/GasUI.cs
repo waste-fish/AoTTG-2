@@ -12,19 +12,10 @@ namespace Assets.Scripts.UI.InGame.HUD
         [SerializeField] private Image leftImage;
         [SerializeField] private Image rightImage;
 
-        Hero hero;
+        private void Awake() => Hero.OnUseGasClient += UpdateGas;
 
-        private void Awake()
+        private void UpdateGas(Hero hero, float percent)
         {
-            Hero.OnSpawnClient += (hero) => this.hero = hero;
-        }
-
-        private void LateUpdate()
-        {
-            if (!hero)
-                return;
-
-            var percent = hero.CurrentGas / hero.TotalGas;
             leftImage.fillAmount = percent;
             rightImage.fillAmount = percent;
 

@@ -1,21 +1,18 @@
 ﻿using System;
 using Assets.Scripts.Characters.Humans.Constants;
+using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Skills
 {
     public class ArminSkill : Skill
     {
-        public ArminSkill(Hero hero) : base(hero)
-        {
-        }
-
         public override bool Use()
         {
-            if (!hero.IsGrounded())
+            if (!Hero.IsGrounded)
                 return false;
 
-            hero.AttackAnimation = HeroAnim.SPECIAL_ARMIN;
-            hero.PlayAnimation(HeroAnim.SPECIAL_ARMIN);
+            Hero.AttackAnimation = HeroAnim.SPECIAL_ARMIN;
+            Hero.PlayAnimation(HeroAnim.SPECIAL_ARMIN);
             return true;
         }
 

@@ -6,16 +6,16 @@ namespace Assets.Scripts.Characters.Humans.States
     {
         public override void OnFixedUpdate()
         {
-            if (_hero.DashTime > 0f)
+            if (Hero.DashTime > 0f)
             {
-                _hero.DashTime -= Time.fixedDeltaTime;
-                if (_hero.CurrentSpeed > _hero.OriginVM)
-                    _hero.Rigidbody.AddForce((-_hero.Rigidbody.velocity * Time.fixedDeltaTime) * 1.7f, ForceMode.VelocityChange);
+                Hero.DashTime -= Time.fixedDeltaTime;
+                if (Hero.CurrentSpeed > Hero.OriginVM)
+                    Hero.Rigidbody.AddForce((-Hero.Rigidbody.velocity * Time.fixedDeltaTime) * 1.7f, ForceMode.VelocityChange);
             }
             else
             {
-                _hero.DashTime = 0f;
-                _hero.SetState<HumanIdleState>(true);
+                Hero.DashTime = 0f;
+                Hero.SetState<HumanIdleState>(true);
             }
         }
     }

@@ -135,7 +135,7 @@ MonoBehaviour:
       Speed: 0
       Gas: 0
       Equipment: 0
-    Skill: 3
+    Skill: {fileID: 11400000, guid: 1993096dfd223f44fa0747664ca1b492, type: 2}
   - Name: AHSS
     Equipment: 1
     EquipmentComponent:
@@ -151,4 +151,4 @@ MonoBehaviour:
       Speed: 0
       Gas: 0
       Equipment: 0
-    Skill: 3
+    Skill: {fileID: 11400000, guid: 1993096dfd223f44fa0747664ca1b492, type: 2}

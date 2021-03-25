@@ -1,21 +1,36 @@
 using Assets.Scripts.Characters.Humans.Constants;
+using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.States
 {
     public class HumanGroundDodgeState : BaseHumanState
     {
+        Vector3 zero;
+
         public override void OnUpdate()
         {
-            if (!_hero.TitanForm && !_hero.IsCannon)
+            if (!Hero.TitanForm && !Hero.IsCannon)
             {
-                if (_hero.Animation.IsPlaying(HeroAnim.DODGE))
+                if (Hero.Animation.IsPlaying(HeroAnim.DODGE))
                 {
-                    if (!(_hero.Grounded || (_hero.Animation[HeroAnim.DODGE].normalizedTime <= 0.6f)))
-                        _hero.SetState<HumanIdleState>();
+                    if (!(Hero.IsGrounded || (Hero.Animation[HeroAnim.DODGE].normalizedTime <= 0.6f)))
+                        Hero.SetState<HumanIdleState>();
 
-                    if (_hero.Animation[HeroAnim.DODGE].normalizedTime >= 1f)
-                        _hero.SetState<HumanIdleState>();
+                    if (Hero.Animation[HeroAnim.DODGE].normalizedTime >= 1f)
+                        Hero.SetState<HumanIdleState>();
                 }
+            }
+        }
+
+        public override void OnFixedUpdate()
+        {
+            if ((Hero.Animation[HeroAnim.DODGE].normalizedTime >= 0.2f) && (Hero.Animation[HeroAnim.DODGE].normalizedTime < 0.8f))
+            {
+                zero = ((-Hero.transform.forward * 2.4f) * Hero.Speed);
+            }
+            if (Hero.Animation[HeroAnim.DODGE].normalizedTime > 0.8f)
+            {
+                zero = (Hero.Rigidbody.velocity * 0.9f);
             }
         }
     }

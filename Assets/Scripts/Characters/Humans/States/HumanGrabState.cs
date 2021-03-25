@@ -7,25 +7,25 @@ namespace Assets.Scripts.Characters.Humans.States
     {
         public override void OnFixedUpdate()
         {
-            _hero.Rigidbody.AddForce(-_hero.Rigidbody.velocity, ForceMode.VelocityChange);
+            Hero.Rigidbody.AddForce(-Hero.Rigidbody.velocity, ForceMode.VelocityChange);
         }
 
-        public override void OnSpecialAttack()
+        public override void OnSkill()
         {
-            if (!_hero.UseGun)
+            if (!Hero.UseGun)
             {
-                if (_hero.Skill.CanUseWhileGrabbed)
+                if (Hero.Skill.BreaksGrabState)
                 {
-                    _hero.SkillCDDuration = _hero.SkillCDLast;
-                    if (_hero.TitanWhoGrabMe.GetComponent<MindlessTitan>() != null)
+                    Hero.SkillCDDuration = Hero.SkillCDLast;
+                    if (Hero.TitanWhoGrabMe.GetComponent<MindlessTitan>() != null)
                     {
-                        _hero.BreakFreeFromGrab();
-                        _hero.photonView.RPC(nameof(_hero.NetSetIsGrabbedFalse), PhotonTargets.All, new object[0]);
+                        Hero.BreakFreeFromGrab();
+                        Hero.photonView.RPC(nameof(Hero.NetSetIsGrabbedFalse), PhotonTargets.All, new object[0]);
                         if (PhotonNetwork.isMasterClient)
-                            _hero.TitanWhoGrabMe.GetComponent<MindlessTitan>().GrabEscapeRpc();
+                            Hero.TitanWhoGrabMe.GetComponent<MindlessTitan>().GrabEscapeRpc();
                         else
-                            PhotonView.Find(_hero.TitanWhoGrabMeID).photonView.RPC(nameof(MindlessTitan.GrabEscapeRpc), PhotonTargets.MasterClient, new object[0]);
-                        _hero.Skill.Use();
+                            PhotonView.Find(Hero.TitanWhoGrabMeID).photonView.RPC(nameof(MindlessTitan.GrabEscapeRpc), PhotonTargets.MasterClient, new object[0]);
+                        Hero.Skill.Use();
                     }
                 }
             }

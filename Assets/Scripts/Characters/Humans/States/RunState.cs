@@ -10,7 +10,7 @@ namespace Assets.Scripts.Characters.Humans.States
         {
         }
 
-        public override void OnSpecialAttack()
+        public override void OnSkill()
         {
         }
     }

@@ -1,26 +1,35 @@
 ﻿using Assets.Scripts.Characters.Humans.Equipment;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Skills
 {
-    public abstract class Skill
+    public abstract class Skill : ScriptableObject
     {
-        protected readonly Hero hero;
-        public virtual bool CanUseWhileGrabbed { get; protected set; } = false;
+        protected Hero Hero { get; private set; }
 
-        protected Skill(Hero hero)
-        {
-            this.hero = hero;
-        }
+        [JsonIgnore] [SerializeField] private UnityEngine.Sprite sprite;
+        [JsonIgnore] public UnityEngine.Sprite Sprite => sprite;
+
+        [SerializeField] protected float _cooldown;
+        public float MaxCooldown => _cooldown;
+        protected float CurrentCooldown { get; private set; }
+
+        [SerializeField] protected bool _breaksGrabState;
+        public bool BreaksGrabState => _breaksGrabState;
 
         public List<EquipmentType> CompatibleEquipmentTypes = new List<EquipmentType>();
 
-        public float Cooldown { get; set; }
-
+        public void Initialize(Hero hero)
+        {
+            CurrentCooldown = _cooldown;
+            Hero = hero;
+        }
         public bool IsActive { get; protected set; }
         public abstract bool Use();
-        public abstract void OnUpdate();
+        public virtual void OnUpdate() { }
 
         public virtual void OnFixedUpdate() { }
 
@@ -33,38 +42,5 @@ namespace Assets.Scripts.Characters.Humans.Skills
         // Some skills check whether or not the player is on the ground
         // None of the skills currently are working for AHSS
         // AHSS skill would be dual shot
-
-        public static Skill Create(HeroSkill skill, Hero hero)
-        {
-            switch (skill)
-            {
-                case HeroSkill.Armin:
-                    break;
-                case HeroSkill.Marco:
-                    break;
-                case HeroSkill.Jean:
-                    return new JeanSkill(hero);
-                case HeroSkill.Levi:
-                    return new LeviSkill(hero);
-                case HeroSkill.Petra:
-                    return new PetraSkill(hero);
-                case HeroSkill.Mikasa:
-                    return new MikasaSkill(hero);
-                case HeroSkill.Eren:
-                    break;
-                case HeroSkill.Annie:
-                    break;
-                case HeroSkill.Reiner:
-                    break;
-                case HeroSkill.Bertholdt:
-                    break;
-                case HeroSkill.BombPvp:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(skill), skill, null);
-            }
-
-            return null;
-        }
     }
 }

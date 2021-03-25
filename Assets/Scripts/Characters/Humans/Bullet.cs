@@ -58,52 +58,52 @@ namespace Assets.Scripts.Characters.Humans
 
         public void disable()
         {
-            this.phase = 2;
-            this.killTime = 0f;
+            phase = 2;
+            killTime = 0f;
             object[] parameters = { 2 };
-            base.photonView.RPC(nameof(setPhase), PhotonTargets.Others, parameters);
+            photonView.RPC(nameof(setPhase), PhotonTargets.Others, parameters);
         }
 
         private void FixedUpdate()
         {
-            if (!(((this.phase == 2) || (this.phase == 1)) ? !this.leviMode : true))
+            if (!(((phase == 2) || (phase == 1)) ? !leviMode : true))
             {
-                this.spiralcount++;
-                if (this.spiralcount >= 60)
+                spiralcount++;
+                if (spiralcount >= 60)
                 {
-                    this.isdestroying = true;
-                    this.removeMe();
+                    isdestroying = true;
+                    removeMe();
                     return;
                 }
             }
-            if (!(base.photonView.isMine))
+            if (!(photonView.isMine))
             {
-                if (this.phase == 0)
+                if (phase == 0)
                 {
-                    Transform transform = base.gameObject.transform;
-                    transform.position += ((this.velocity * Time.deltaTime) * 50f) + (this.velocity2 * Time.deltaTime);
-                    this.nodes.Add(new Vector3(base.gameObject.transform.position.x, base.gameObject.transform.position.y, base.gameObject.transform.position.z));
+                    Transform transform = gameObject.transform;
+                    transform.position += ((velocity * Time.deltaTime) * 50f) + (velocity2 * Time.deltaTime);
+                    nodes.Add(new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, gameObject.transform.position.z));
                 }
             }
-            else if (this.phase == 0)
+            else if (phase == 0)
             {
                 RaycastHit hit;
-                this.checkTitan();
-                Transform transform3 = base.gameObject.transform;
-                transform3.position += ((this.velocity * Time.deltaTime) * 50f) + (this.velocity2 * Time.deltaTime);
+                checkTitan();
+                Transform transform3 = gameObject.transform;
+                transform3.position += ((velocity * Time.deltaTime) * 50f) + (velocity2 * Time.deltaTime);
                 LayerMask mask = 1 << LayerMask.NameToLayer("EnemyBox");
                 LayerMask mask2 = 1 << LayerMask.NameToLayer("Ground");
                 LayerMask mask3 = 1 << LayerMask.NameToLayer("NetworkObject");
                 LayerMask mask4 = (mask | mask2) | mask3;
                 bool flag2 = false;
                 bool flag3 = false;
-                if (this.nodes.Count > 1)
+                if (nodes.Count > 1)
                 {
-                    flag3 = Physics.Linecast((Vector3) this.nodes[this.nodes.Count - 2], base.gameObject.transform.position, out hit, mask4.value);
+                    flag3 = Physics.Linecast((Vector3) nodes[nodes.Count - 2], gameObject.transform.position, out hit, mask4.value);
                 }
                 else
                 {
-                    flag3 = Physics.Linecast((Vector3) this.nodes[this.nodes.Count - 1], base.gameObject.transform.position, out hit, mask4.value);
+                    flag3 = Physics.Linecast((Vector3) nodes[nodes.Count - 1], gameObject.transform.position, out hit, mask4.value);
                 }
                 if (flag3)
                 {
@@ -111,44 +111,44 @@ namespace Assets.Scripts.Characters.Humans
                     if (hit.collider.transform.gameObject.layer == LayerMask.NameToLayer("EnemyBox"))
                     {
                         object[] parameters = { hit.collider.transform.root.gameObject.GetPhotonView().viewID };
-                        base.photonView.RPC(nameof(tieMeToOBJ), PhotonTargets.Others, parameters);
-                        this.master.GetComponent<Hero>().LastHook = hit.collider.transform.root;
-                        base.transform.parent = hit.collider.transform;
+                        photonView.RPC(nameof(tieMeToOBJ), PhotonTargets.Others, parameters);
+                        master.GetComponent<Hero>().LastHook = hit.collider.transform.root;
+                        transform.parent = hit.collider.transform;
                     }
                     else if (hit.collider.transform.gameObject.layer == LayerMask.NameToLayer("Ground"))
                     {
-                        this.master.GetComponent<Hero>().LastHook = null;
+                        master.GetComponent<Hero>().LastHook = null;
                     }
                     else if (((hit.collider.transform.gameObject.layer == LayerMask.NameToLayer("NetworkObject")) && (hit.collider.transform.gameObject.tag == "Player")) && !this.leviMode)
                     {
                         object[] objArray3 = { hit.collider.transform.root.gameObject.GetPhotonView().viewID };
-                        base.photonView.RPC(nameof(tieMeToOBJ), PhotonTargets.Others, objArray3);
-                        this.master.GetComponent<Hero>().HookToHuman(hit.collider.transform.root.gameObject, base.transform.position);
-                        base.transform.parent = hit.collider.transform;
-                        this.master.GetComponent<Hero>().LastHook = null;
+                        photonView.RPC(nameof(tieMeToOBJ), PhotonTargets.Others, objArray3);
+                        master.GetComponent<Hero>().HookToHuman(hit.collider.transform.root.gameObject, transform.position);
+                        transform.parent = hit.collider.transform;
+                        master.GetComponent<Hero>().LastHook = null;
                     }
                     else
                     {
                         flag4 = false;
                     }
-                    if (this.phase == 2)
+                    if (phase == 2)
                     {
                         flag4 = false;
                     }
                     if (flag4)
                     {
-                        this.master.GetComponent<Hero>().Launch(hit.point, this.left, this.leviMode);
-                        base.transform.position = hit.point;
-                        if (this.phase != 2)
+                        master.GetComponent<Hero>().Launch(hit.point, left, leviMode);
+                        transform.position = hit.point;
+                        if (phase != 2)
                         {
-                            this.phase = 1;
+                            phase = 1;
                             object[] objArray4 = { 1 };
-                            base.photonView.RPC(nameof(setPhase), PhotonTargets.Others, objArray4);
-                            object[] objArray5 = { base.transform.position };
-                            base.photonView.RPC(nameof(tieMeTo), PhotonTargets.Others, objArray5);
-                            if (this.leviMode)
+                            photonView.RPC(nameof(setPhase), PhotonTargets.Others, objArray4);
+                            object[] objArray5 = { transform.position };
+                            photonView.RPC(nameof(tieMeTo), PhotonTargets.Others, objArray5);
+                            if (leviMode)
                             {
-                                this.getSpiral(this.master.transform.position, this.master.transform.rotation.eulerAngles);
+                                getSpiral(master.transform.position, master.transform.rotation.eulerAngles);
                             }
                             flag2 = true;
                         }

@@ -153,7 +153,6 @@ namespace Assets.Scripts.DayNightCycle
             SkyboxMaterial.SetFloat("_Angle", -CurrentTimeScale * 360f);
             //DJ's proof of concept atmospheric density thingy 
             SkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereDensity.Evaluate(CurrentTimeScale));
-            Debug.Log("atmosphere thickness is " + SkyboxMaterial.GetFloat("_AtmosphereThickness"));
 
 
         }
@@ -238,6 +237,7 @@ namespace Assets.Scripts.DayNightCycle
         {
             UpdateLightingSettings();
             UpdateLight();
+            SkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereDensity.Evaluate(CurrentTimeScale));
             ReflectionProbe.RenderProbe();
             // Reflection Probes have limited range so we'll want it to follow the scene view's camera when previewing changes
             Vector3 sceneViewPosition = SceneView.lastActiveSceneView != null ? SceneView.lastActiveSceneView.camera.transform.position : Vector3.zero;

@@ -378,18 +378,64 @@ namespace Assets.Scripts.Room
                 SceneName = "Trost - anime revamp",
                 Gamemodes = new List<GamemodeSettings>
                 {
+
                     new KillTitansSettings
                     {
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = false,
+                        },
                         GamemodeType = GamemodeType.Titans,
                     },
                     new EndlessSettings
                     {
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = false,
+                        },
                         GamemodeType = GamemodeType.Endless,
                     },
-                    new WaveGamemodeSettings(),
-                    new CaptureGamemodeSettings(),
-                    new RacingSettings(),
+                    new WaveGamemodeSettings(){
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = true,
+                        }
+                    },
+                    new CaptureGamemodeSettings()
+                    {
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = false,
+                        },
+                    },
+                    new RacingSettings()
+                    {
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 7,
+                            DayLength = 300,
+                            Pause = true,
+                        },
+                    },
                     new InfectionGamemodeSettings()
+                    {
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = false,
+                        },
+                    },
+
+
                 }
             });
         }

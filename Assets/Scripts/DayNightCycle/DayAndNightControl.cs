@@ -151,6 +151,11 @@ namespace Assets.Scripts.DayNightCycle
         {
             SkyboxMaterial.SetVector("_Axis", DirectionalLight.transform.right);
             SkyboxMaterial.SetFloat("_Angle", -CurrentTimeScale * 360f);
+            //DJ's proof of concept atmospheric density thingy 
+            SkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereDensity.Evaluate(CurrentTimeScale));
+            Debug.Log("atmosphere thickness is " + SkyboxMaterial.GetFloat("_AtmosphereThickness"));
+
+
         }
 
         void UpdateLightingSettings()

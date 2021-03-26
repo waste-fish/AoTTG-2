@@ -20,7 +20,6 @@ namespace Assets.Scripts.Characters.Humans.States
                 Hero.FalseAttack();
 
             Hero.CrossFade(Hero.StandAnimation, 0.1f);
-            Hero.Rigidbody.useGravity = true;
         }
 
         public override void OnFixedUpdate()

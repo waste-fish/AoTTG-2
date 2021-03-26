@@ -36,6 +36,8 @@ namespace Assets.Scripts.UI.Input
         public static bool HumanHookLeft { get; private set; }
         public static bool HumanHookRight { get; private set; }
         public static bool HumanHookBoth { get; private set; }
+        public static bool HumanReelIn { get; private set; }
+        public static bool HumanReelOut { get; private set; }
 
         public InputManager()
         {
@@ -80,6 +82,12 @@ namespace Assets.Scripts.UI.Input
 
             inputMap.Human.HookBoth.started += (context) => { HumanHookBoth = true; };
             inputMap.Human.HookBoth.canceled += (context) => { HumanHookBoth = false; };
+
+            inputMap.Human.ReelIn.started += (context) => { HumanReelIn = true; };
+            inputMap.Human.ReelIn.canceled += (context) => { HumanReelIn = false; };
+
+            inputMap.Human.ReelOut.started += (context) => { HumanReelOut = true; };
+            inputMap.Human.ReelOut.canceled += (context) => { HumanReelOut = false; };
 
             LoadRebinds(typeof(InputCannon));
             LoadRebinds(typeof(InputHorse));

@@ -502,7 +502,7 @@
                 {
                     "name": "",
                     "id": "60fa84b5-c5e0-4a48-9403-78b66c3db634",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -524,7 +524,7 @@
                 {
                     "name": "",
                     "id": "74b97249-6b00-4850-8198-7a46f95957bc",
-                    "path": "<Keyboard>/q",
+                    "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -546,7 +546,7 @@
                 {
                     "name": "",
                     "id": "b26c817f-a159-4fdc-9248-38d331b3752f",
-                    "path": "<Keyboard>/leftShift",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -634,7 +634,7 @@
                 {
                     "name": "",
                     "id": "885cbfdf-fb61-4af7-a9d2-1750a01cb70f",
-                    "path": "<Keyboard>/space",
+                    "path": "<Mouse>/middleButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -678,7 +678,7 @@
                 {
                     "name": "",
                     "id": "eafea899-d274-4cdf-9555-445345174ba0",
-                    "path": "<Keyboard>/leftAlt",
+                    "path": "<Keyboard>/leftCtrl",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -700,7 +700,7 @@
                 {
                     "name": "",
                     "id": "f84e21c3-3b86-4de1-87ef-309f48420061",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Mouse>/forwardButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -722,7 +722,7 @@
                 {
                     "name": "",
                     "id": "66aa541d-aa2a-4e02-b327-5afaa42f417c",
-                    "path": "<Mouse>/rightButton",
+                    "path": "<Mouse>/backButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
@@ -744,7 +744,7 @@
                 {
                     "name": "",
                     "id": "66b831f8-346d-42c8-9499-ce744ae7fc2a",
-                    "path": "<Keyboard>/e",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",

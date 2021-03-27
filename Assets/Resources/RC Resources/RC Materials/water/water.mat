@@ -76,7 +76,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _foamtexture:
-        m_Texture: {fileID: 2800000, guid: b26eeca7eb9e07d408c518221d5a0818, type: 3}
+        m_Texture: {fileID: 2800000, guid: 59450d398c1a9fc4e972abad5fd2f7b3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _smallwaves:
@@ -118,13 +118,13 @@ Material:
     - __dirty: 0
     - _bigwavesdirection: -30
     - _bigwavesflow: 0.142
-    - _bigwavesintensity: 1
+    - _bigwavesintensity: 1.44
     - _bigwavesspeed: 8
     - _bigwavetilling: 0.2
-    - _distortionintensity: 5
+    - _distortionintensity: 2
     - _edgeblending: 30
     - _foamdirection: -30
-    - _foamintensity: 10.41
+    - _foamintensity: 23.29
     - _foamspeed: 0.5
     - _foamtilling: 10
     - _smallwavesDirection: -30

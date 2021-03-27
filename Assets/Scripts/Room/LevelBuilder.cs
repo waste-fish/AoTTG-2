@@ -383,8 +383,8 @@ namespace Assets.Scripts.Room
                     {
                         Time = new TimeSettings
                         {
-                            CurrentTime = 12,
-                            DayLength = 300,
+                            CurrentTime = 16,
+                            DayLength = 1000,
                             Pause = false,
                         },
                         GamemodeType = GamemodeType.Titans,
@@ -393,8 +393,8 @@ namespace Assets.Scripts.Room
                     {
                         Time = new TimeSettings
                         {
-                            CurrentTime = 12,
-                            DayLength = 300,
+                            CurrentTime = 16,
+                            DayLength = 4000,
                             Pause = false,
                         },
                         GamemodeType = GamemodeType.Endless,
@@ -403,7 +403,7 @@ namespace Assets.Scripts.Room
                         Time = new TimeSettings
                         {
                             CurrentTime = 12,
-                            DayLength = 300,
+                            DayLength = 4000,
                             Pause = true,
                         }
                     },
@@ -412,7 +412,7 @@ namespace Assets.Scripts.Room
                         Time = new TimeSettings
                         {
                             CurrentTime = 12,
-                            DayLength = 300,
+                            DayLength = 4000,
                             Pause = false,
                         },
                     },
@@ -421,7 +421,7 @@ namespace Assets.Scripts.Room
                         Time = new TimeSettings
                         {
                             CurrentTime = 7,
-                            DayLength = 300,
+                            DayLength = 4000,
                             Pause = true,
                         },
                     },
@@ -430,7 +430,7 @@ namespace Assets.Scripts.Room
                         Time = new TimeSettings
                         {
                             CurrentTime = 12,
-                            DayLength = 300,
+                            DayLength = 4000,
                             Pause = false,
                         },
                     },

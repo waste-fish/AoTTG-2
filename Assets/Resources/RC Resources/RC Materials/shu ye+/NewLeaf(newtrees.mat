@@ -84,7 +84,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _SSSmapintensity: 0.134
+    - _SSSmapintensity: 0
     - _SSSpower: 18.16
     - _SSSscale: 0.5
     - _SmoothnessTextureChannel: 0
@@ -93,8 +93,9 @@ Material:
     - _SubsurfaceDistortion: 0.084
     - _UVSec: 0
     - _WindDirection: 0
-    - _WindIntensity: 0.37
-    - _WindSpeed: 0.1
+    - _WindIntensity: 0.47
+    - _WindSpeed: 0.5
+    - _WindTextureScale: 0.05
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:

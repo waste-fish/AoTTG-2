@@ -168,7 +168,7 @@ namespace Assets.Scripts
             this.isUnloading = false;
             this.isRecompiling = false;
             Time.timeScale = 1f;
-            Camera.main.farClipPlane = 1500f; //TODO Make camera view distance a configurable setting
+            Camera.main.farClipPlane = 15000f; //TODO Make camera view distance a configurable setting
             this.isRestarting = false;
             if (PhotonNetwork.isMasterClient)
             {

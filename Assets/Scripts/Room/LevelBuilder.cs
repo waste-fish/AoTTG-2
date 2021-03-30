@@ -384,7 +384,7 @@ namespace Assets.Scripts.Room
                         Time = new TimeSettings
                         {
                             CurrentTime = 16,
-                            DayLength = 1000,
+                            DayLength = 4000,
                             Pause = false,
                         },
                         GamemodeType = GamemodeType.Titans,

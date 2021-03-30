@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3085564312093859973}
   - component: {fileID: 3743618679525481192}
   - component: {fileID: 83916483803020861}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tower_Belllod1lod1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 2654530701145883059}
   - component: {fileID: 1835541318561551099}
   - component: {fileID: 6896564854811309299}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Tower_Belllod1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

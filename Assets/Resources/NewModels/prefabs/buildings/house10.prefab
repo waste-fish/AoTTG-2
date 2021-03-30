@@ -5276,7 +5276,7 @@ GameObject:
   - component: {fileID: 4114892684243741598}
   - component: {fileID: 1085360474066092444}
   - component: {fileID: 262744075834071968}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: defaultlod1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5357,7 +5357,7 @@ GameObject:
   - component: {fileID: 5883007029566218391}
   - component: {fileID: 4846776802015066981}
   - component: {fileID: 48558254053067557}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: defaultlod2lod1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

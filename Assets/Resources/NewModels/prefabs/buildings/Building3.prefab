@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 8544068553151018326}
   - component: {fileID: 6885726369978606152}
   - component: {fileID: 8567902230838081927}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building3lod1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 168503016664791265}
   - component: {fileID: 1967294508159246190}
   - component: {fileID: 2861335451125844457}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Building3lod1lod1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

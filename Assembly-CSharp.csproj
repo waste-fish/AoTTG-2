@@ -122,10 +122,12 @@
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
      <None Include="Assets\Resources\shaders\Unlit - Transparent Colored (SoftClip).shader" />
      <None Include="Assets\custom_map.txt" />
+     <None Include="Assets\Resources\RC Resources\RC Materials\ice1\ICE.shader" />
      <None Include="Assets\Resources\shaders\Unlit - Dynamic Font (AlphaClip).shader" />
      <None Include="Assets\Resources\shaders\dynamicfonts\Unlit - Transparent Colored (DynamicFont) (SoftClip).shader" />
      <None Include="Assets\Resources\shaders\dynamicfonts\Unlit - Transparent Colored (DynamicFont).shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
+     <None Include="Assets\Scene\scene\Materials\Bounds.shader" />
      <None Include="Assets\Scene\scene\Trost - Revamp\DOnt mind.shader" />
      <None Include="Assets\Resources\RC Resources\RC Materials\tissue\Tissue.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />

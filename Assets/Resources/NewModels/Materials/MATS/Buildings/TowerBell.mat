@@ -75,6 +75,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 30df79c1c6af3764c894d7e0737aa4dc, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SnowTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _normals:
         m_Texture: {fileID: 2800000, guid: 71c418616ca9b794fa580e3ce5013014, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -101,6 +105,11 @@ Material:
     - _Parallax: 0.02
     - _Smoothness: 0.755
     - _SmoothnessTextureChannel: 0
+    - _Snowhardness: 0.4705857
+    - _Snowintensity: 0.5
+    - _Snowmaxinclinaison: 0
+    - _Snowstickiness: 1
+    - _Snowtension: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0

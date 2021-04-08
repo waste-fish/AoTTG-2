@@ -102,6 +102,7 @@
      <None Include="Assets\Resources\shaders\GUI - Text Shader (AlphaClip).shader" />
      <None Include="Assets\Resources\shaders\Unlit - Premultiplied Colored (AlphaClip).shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
+     <None Include="Assets\Config\Makina ICE !.txt" />
      <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />

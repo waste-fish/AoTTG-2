@@ -437,7 +437,28 @@ namespace Assets.Scripts.Room
 
 
                 }
+
             });
+            _levels.Add(new Level
+            {
+                Name = "Makina ICE",
+                Description = "icy brrrrr",
+                SceneName = "Racing Test",
+                Gamemodes = new List<GamemodeSettings>
+                {
+                    new RacingSettings
+                    {
+                        IsPlayerTitanEnabled = false,
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = true,
+                        },
+                    }
+                },
+            });
+
         }
     }
 }

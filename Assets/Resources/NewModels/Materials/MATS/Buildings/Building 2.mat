@@ -79,6 +79,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 67978cd1c7bc958439193572d5c1f2dd, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SnowTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _normals:
         m_Texture: {fileID: 2800000, guid: 14aa50c084593be4d91e40cb15ecc244, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -105,11 +109,14 @@ Material:
     - _Parallax: 0.02
     - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
+    - _Snowmaxinclinaison: 0
+    - _Snowtension: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
+    - _snowopacity: 0
     m_Colors:
     - _AlbedoColor: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

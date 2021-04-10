@@ -3,6 +3,7 @@ using Assets.Scripts.Characters.Humans.Skills;
 using Assets.Scripts.Characters.Titan;
 using Assets.Scripts.Constants;
 using Assets.Scripts.Settings;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.States
@@ -13,6 +14,7 @@ namespace Assets.Scripts.Characters.Humans.States
         private bool bothGunsHaveBullet;
         private bool noBulletsInEitherGun;
         private bool gunsHaveABullet;
+        private Vector3 targetMoveForce;
 
         public override void OnEnter()
         {
@@ -20,6 +22,13 @@ namespace Assets.Scripts.Characters.Humans.States
                 Hero.FalseAttack();
 
             Hero.CrossFade(Hero.StandAnimation, 0.1f);
+
+            Hero.OnLand += OnLand;
+        }
+
+        public override void OnExit()
+        {
+            Hero.OnLand -= OnLand;
         }
 
         public override void OnFixedUpdate()
@@ -60,50 +69,62 @@ namespace Assets.Scripts.Characters.Humans.States
             bothGunsHaveBullet = false;
             noBulletsInEitherGun = false;
             gunsHaveABullet = false;
-
-            FixedUpdateGrounded();
         }
 
-        private void FixedUpdateGrounded()
+        private void OnLand()
+        {
+            targetMoveForce = Hero.Rigidbody.velocity;
+        }
+
+        public override Vector3 FixedUpdateMovement() // 29099
         {
             if (!Hero.IsGrounded)
-                return;
+                return Vector3.zero;
 
-            var vector8 = new Vector3(Hero.TargetMoveDirection.x, 0f, Hero.TargetMoveDirection.y);
-            var resultAngle = Hero.GetGlobalFacingDirection(Hero.TargetMoveDirection.x, Hero.TargetMoveDirection.y);
-            Hero.Zero = Hero.GetGlobaleFacingVector3(resultAngle);
-            var num6 = (vector8.magnitude <= 0.95f) ? ((vector8.magnitude >= 0.25f) ? vector8.magnitude : 0f) : 1f;
-            Hero.Zero *= num6;
-            Hero.Zero *= Hero.Speed;
+            targetMoveForce = Vector3.zero;
+            var x = Hero.TargetMoveDirection.x;
+            var y = Hero.TargetMoveDirection.y;
+            Vector3 movement = new Vector3(x, 0f, y);
+            float resultAngle = Hero.GetGlobalFacingDirection(x, y);
+            targetMoveForce = Hero.GetGlobaleFacingVector3(resultAngle);
 
-            if ((Hero.BuffTime > 0f) && (Hero.CurrentBuff == BUFF.SpeedUp))
-                Hero.Zero *= 4f;
+            if (movement.magnitude < 0.25f)
+                targetMoveForce = Vector3.zero;
+            else if (movement.magnitude <= 0.95f)
+                targetMoveForce *= movement.magnitude;
+            targetMoveForce *= Hero.Speed;
 
-            if (Hero.TargetMoveDirection != Vector2.zero)
+            if (movement.magnitude > 0f)
             {
-                if (((!Hero.Animation.IsPlaying(HeroAnim.RUN_1) && !Hero.Animation.IsPlaying(HeroAnim.JUMP)) && !Hero.Animation.IsPlaying(HeroAnim.RUN_SASHA)) && (!Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || (Hero.Animation[HeroAnim.HORSE_GET_ON].normalizedTime >= 0.5f)))
+                if (!Hero.Animation.IsPlaying(HeroAnim.RUN_1)
+                    && !Hero.Animation.IsPlaying(HeroAnim.JUMP)
+                    && !Hero.Animation.IsPlaying(HeroAnim.RUN_SASHA)
+                    && (!Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || (Hero.Animation[HeroAnim.HORSE_GET_ON].normalizedTime >= 0.5f)))
                 {
-                    if ((Hero.BuffTime > 0f) && (Hero.CurrentBuff == BUFF.SpeedUp))
-                        Hero.CrossFade(HeroAnim.RUN_SASHA, 0.1f);
-                    else
-                        Hero.CrossFade(HeroAnim.RUN_1, 0.1f);
+                    Hero.CrossFade(HeroAnim.RUN_1, 0.1f);
                 }
+
+                Hero.FacingDirection = resultAngle;
+                Hero.TargetRotation = Quaternion.Euler(0f, resultAngle, 0f);
             }
             else
             {
-                if (!(((Hero.Animation.IsPlaying(Hero.StandAnimation) || (Hero.State is HumanLandState)) || (Hero.Animation.IsPlaying(HeroAnim.JUMP) || Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON))) || Hero.Animation.IsPlaying(HeroAnim.GRABBED)))
+                if (!Hero.Animation.IsPlaying(Hero.StandAnimation)
+                    && !Hero.Animation.IsPlaying(HeroAnim.JUMP)
+                    && !Hero.Animation.IsPlaying(HeroAnim.HORSE_GET_ON)
+                    && !Hero.Animation.IsPlaying(HeroAnim.GRABBED))
                 {
                     Hero.CrossFade(Hero.StandAnimation, 0.1f);
-                    Hero.Zero *= 0f;
+                    targetMoveForce = Vector3.zero;
                 }
-                resultAngle = -874f;
             }
 
-            if (resultAngle != -874f)
-            {
-                Hero.FacingDirection = resultAngle;
-                Hero.TargetRotation = Quaternion.Euler(0f, Hero.FacingDirection, 0f);
-            }
+            return targetMoveForce;
+        }
+        public override void FixedUpdateTransitioning() // 95943
+        {
+            if (Hero.Animation.IsPlaying(HeroAnim.AIR_RELEASE) && Hero.Animation[HeroAnim.AIR_RELEASE].normalizedTime >= 1f)
+                Hero.CrossFade(HeroAnim.AIR_RISE, 0.2f);
         }
 
         public override void OnAttack()
@@ -183,17 +204,17 @@ namespace Assets.Scripts.Characters.Humans.States
                     else
                         skillFailed = true;
                 }
-                else if ((Hero.HookLeft != null) && (Hero.HookLeft.transform.parent != null))
+                else if ((Hero.LeftHookProjectile != null) && (Hero.LeftHookProjectile.transform.parent != null))
                 {
-                    var neck = Hero.HookLeft.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
+                    var neck = Hero.LeftHookProjectile.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
                     if (neck != null)
                         Hero.AttackAccordingToTarget(neck);
                     else
                         Hero.AttackAccordingToMouse();
                 }
-                else if ((Hero.HookRight != null) && (Hero.HookRight.transform.parent != null))
+                else if ((Hero.RightHookProjectile != null) && (Hero.RightHookProjectile.transform.parent != null))
                 {
-                    var transform2 = Hero.HookRight.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
+                    var transform2 = Hero.RightHookProjectile.transform.parent.transform.root.Find("Amarture/Core/Controller_Body/hip/spine/chest/neck");
                     if (transform2 != null)
                         Hero.AttackAccordingToTarget(transform2);
                     else

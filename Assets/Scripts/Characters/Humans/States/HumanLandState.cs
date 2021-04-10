@@ -12,10 +12,9 @@ namespace Assets.Scripts.Characters.Humans.States
                     Hero.SetState<HumanIdleState>();
         }
 
-        public override void OnFixedUpdate()
+        public override Vector3 FixedUpdateMovement() // 47951
         {
-            if (Hero.IsGrounded)
-                Hero.Zero = (Hero.Rigidbody.velocity * 0.96f);
+            return Hero.Rigidbody.velocity * 0.96f;
         }
     }
 }

@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16e213666c3b1304695fe663a6b8aff6, type: 3}
   m_Name: Sasha Skill
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  sprite: {fileID: 0}
   _cooldown: 0
+  _canUseGas: 1
   _breaksGrabState: 0
   CompatibleEquipmentTypes: 000000000100000002000000
+  Animations:
+  - {fileID: 7400000, guid: 9f0f9a09ff2a13c4aa424ab264c81445, type: 2}
+  - {fileID: 7400000, guid: 6012f3155c7376b4b92cf566a8996651, type: 2}

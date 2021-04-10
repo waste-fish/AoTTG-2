@@ -200,7 +200,7 @@ namespace Assets.Scripts.Characters.Humans
             }
         }
 
-        public bool isHooked()
+        public bool IsHooked()
         {
             return (this.phase == 1);
         }

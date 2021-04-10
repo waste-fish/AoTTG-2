@@ -27,6 +27,30 @@ namespace Assets.Scripts.Characters.Humans
 {
     public class Hero : Human
     {
+        private void OnGUI()
+        {
+            var style = new GUIStyle { fontSize = 50, richText = true };
+            GUI.TextField(new Rect(100f, 100f, 300f, 100f), $"<color=white>" +
+                $"CurrentAnimation:\t {CurrentAnimation}" +
+                $"\nState:\t {State.GetType().Name}" +
+                $"\nalmostSingleHook:\t {AlmostSingleHook}" +
+                $"\nttackAnimations:\t {AttackAnimation}" +
+                $"\nCurrentV:\t {CurrentV}" +
+                $"\nCurrentSpeed:\t {CurrentSpeed}" +
+                $"\nLeftHookHold:\t {LeftHookHold}" +
+                $"\nRightHookHold:\t {RightHookHold}" +
+                $"\nIsGrounded:\t {IsGrounded}" +
+                $"\nIsLaunchLeft:\t {IsLeftHookEmbedded}" +
+                $"\nIsLaunchRight:\t {IsRightHookEmbedded}" +
+                $"\nIsLeftHandHooked:\t {IsLeftHandHooked}" +
+                $"\nIsRightHandHooked:\t {IsRightHandHooked}" +
+                $"\nLaunchElapsedTimeL:\t {LaunchElapsedTimeL}" +
+                $"\nLaunchElapsedTimeR:\t {LaunchElapsedTimeR}" +
+                $"\nLaunchForce:\t {LaunchForce}" +
+                $"\nLeanLeft:\t {LeanLeft}" +
+                $"</color>", style);
+        }
+
         #region Events
         public static event Action<Hero> OnSpawnClient;
         public static event Action<Hero> OnDeathClient;
@@ -70,8 +94,8 @@ namespace Assets.Scripts.Characters.Humans
         public float BombTimeMax { get; set; }
         public float BuffTime { get; private set; }
         public int BulletMax { get; private set; } = 7;
-        public Bullet HookLeft { get; private set; }
-        public Bullet HookRight { get; private set; }
+        public Bullet LeftHookProjectile { get; private set; }
+        public Bullet RightHookProjectile { get; private set; }
         public Dictionary<string, Image> cachedSprites { get; set; }
         public float CameraMultiplier { get; set; }
         public TriggerColliderWeapon checkBoxLeft;
@@ -115,8 +139,8 @@ namespace Assets.Scripts.Characters.Humans
         private GameObject HookTarget { get; set; }
         private float Invincible { get; set; } = 3f; // Time when you cannot be harmed after spawning
         public bool IsCannon { get; set; }
-        private bool IsLaunchLeft { get; set; }
-        private bool IsLaunchRight { get; set; }
+        private bool IsLeftHookEmbedded { get; set; }
+        private bool IsRightHookEmbedded { get; set; }
         public bool IsLeftHandHooked { get; private set; }
         public bool IsMounted { get; private set; }
         public bool IsPhotonCamera { get; set; }
@@ -399,9 +423,65 @@ namespace Assets.Scripts.Characters.Humans
                 if (GameSettings.PvP.Bomb.Value)
                 {
                     BombImmune = true;
-                    StartCoroutine(StopImmunity())
-                        ;
+                    StartCoroutine(StopImmunity());
                 }
+            }
+        }
+
+        public void Initialize(CharacterPreset preset)
+        {
+            //TODO: Remove hack
+            var manager = GetComponent<CustomizationManager>();
+            preset ??= manager.Presets.First();
+
+            preset.Apply(this, manager.Prefabs);
+            Skill = preset.CurrentBuild.Skill;
+            Skill.Initialize(this);
+
+            for (var i = 0; i < Skill.Animations.Length; i++)
+                Animation.AddClip(Skill.Animations[i], HeroAnim.SKILL_PREFIX + i);
+
+            EquipmentType = preset.CurrentBuild.Equipment;
+            Equipment.Initialize();
+
+            if (EquipmentType == EquipmentType.Ahss)
+            {
+                StandAnimation = HeroAnim.AHSS_STAND_GUN;
+                UseGun = true;
+                GunDummy = new GameObject
+                {
+                    name = "GunDummy"
+                };
+                GunDummy.transform.position = transform.position;
+                GunDummy.transform.rotation = transform.rotation;
+            }
+
+            if (photonView.isMine)
+            {
+                //TODO: If this is a default preset, find a more efficient way
+                var config = JsonConvert.SerializeObject(preset, Formatting.Indented, new JsonSerializerSettings
+                {
+                    Converters = new List<JsonConverter> { new ColorJsonConverter() },
+                    ContractResolver = new JsonIgnoreResolver() // This will stop Images (on skills) from being serialized
+                });
+                photonView.RPC(nameof(InitializeRpc), PhotonTargets.OthersBuffered, config);
+            }
+
+            EntityService.Register(this);
+        }
+
+        [PunRPC]
+        public void InitializeRpc(string characterPreset, PhotonMessageInfo info)
+        {
+            if (photonView.isMine)
+            {
+                //TODO: HandLe Abusive RPC
+                return;
+            }
+
+            if (info.sender.ID == photonView.ownerId)
+            {
+                Initialize(JsonConvert.DeserializeObject<CharacterPreset>(characterPreset, new ColorJsonConverter()));
             }
         }
         #endregion
@@ -457,9 +537,343 @@ namespace Assets.Scripts.Characters.Humans
                 Skill.OnUpdate();
         }
 
-        public Vector3 Zero { get; set; }
+        /// <summary>
+        /// Is this the frame that the hero has touched the ground?
+        /// </summary>
+        private bool IsLandFrame { get; set; }
+
+        public void HandleFixedUpdateAnimationCrossfades() // 30742
+        {
+            if (!IsLeftHandHooked && IsRightHandHooked && Rigidbody.velocity.y > 20)
+                if (Animation.IsPlaying(HeroAnim.AIR_HOOK_L) || Animation.IsPlaying(HeroAnim.AIR_HOOK_R) || Animation.IsPlaying(HeroAnim.AIR_HOOK))
+                {
+                    Animation.CrossFade(HeroAnim.AIR_RELEASE);
+                    return;
+                }
+
+            var hVelocity = Rigidbody.velocity;
+            hVelocity.y = 0f;
+
+            if (hVelocity.magnitude <= 20f)
+            {
+                if (Rigidbody.velocity.y < 0f)
+                {
+                    if (!Animation.IsPlaying(HeroAnim.AIR_FALL))
+                        CrossFade(HeroAnim.AIR_FALL, 0.2f);
+                }
+                else if (!Animation.IsPlaying(HeroAnim.AIR_RISE))
+                    CrossFade(HeroAnim.AIR_RISE, 0.2f);
+            }
+            else if (!IsLeftHandHooked && !IsRightHandHooked)
+            {
+                var currentAngle = -Mathf.Atan2(Rigidbody.velocity.z, Rigidbody.velocity.x) * Mathf.Rad2Deg;
+                var deltaAngle = -Mathf.DeltaAngle(currentAngle, transform.rotation.eulerAngles.y - 90f);
+                if (Mathf.Abs(deltaAngle) < 45f)
+                {
+                    if (!Animation.IsPlaying(HeroAnim.AIR2))
+                        CrossFade(HeroAnim.AIR2, 0.2f);
+                }
+                else if (deltaAngle < 135f && deltaAngle >= 0f)
+                {
+                    if (!Animation.IsPlaying(HeroAnim.AIR2_RIGHT))
+                        CrossFade(HeroAnim.AIR2_RIGHT, 0.2f);
+                }
+                else if (deltaAngle >= -135f && deltaAngle < 0)
+                {
+                    if (!Animation.IsPlaying(HeroAnim.AIR2_LEFT))
+                        CrossFade(HeroAnim.AIR2_LEFT, 0.2f);
+                }
+                else if (!Animation.IsPlaying(HeroAnim.AIR2_BACKWARD))
+                    CrossFade(HeroAnim.AIR2_BACKWARD, 0.2f);
+            }
+            else if (!IsRightHandHooked)
+                TryCrossFade(Equipment.Weapon.HookForwardLeft, 0.1f);
+            else if (!IsLeftHandHooked)
+                TryCrossFade(Equipment.Weapon.HookForwardRight, 0.1f);
+            else if (!Animation.IsPlaying(Equipment.Weapon.HookForward))
+                TryCrossFade(Equipment.Weapon.HookForward, 0.1f);
+        }
+
         public void FixedUpdate()
         {
+            var usingEitherHook = false;
+            var usingLeftHook = false;
+            var usingRightHook = false;
+            #region IsLeftHookEmbedded 78864
+            if (IsLeftHookEmbedded)
+            {
+                if (LeftHookProjectile && LeftHookProjectile.IsHooked())
+                {
+                    IsLeftHandHooked = true;
+                    var to = LeftHookProjectile.transform.position - transform.position;
+                    to = to.normalized * (IsRightHookEmbedded ? 10f : 20f);
+
+                    if (Vector3.Angle(Rigidbody.velocity, to) > 90f && InputManager.HumanJump)
+                    {
+                        usingLeftHook = true;
+                        usingEitherHook = true;
+                    }
+
+                    if (!usingLeftHook)
+                    {
+                        Debug.Log("<color=#00FFFF>AddForce: Not Flag3</color> " + Vector3.Angle(Rigidbody.velocity, to));
+                        Rigidbody.AddForce(to);
+                        if (Vector3.Angle(Rigidbody.velocity, to) > 90f)
+                        {
+                            Debug.Log("\t<color=#00FFFF>AddForce: angle > 90f</color>");
+                            Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
+                        }
+                    }
+                }
+
+                LaunchElapsedTimeL += Time.fixedDeltaTime;
+
+                if (LeftHookHold)
+                    UseGas(UseGasSpeed * Time.fixedDeltaTime);
+                else if (LaunchElapsedTimeL > 0.2f)
+                {
+                    IsLeftHookEmbedded = false;
+                    if (LeftHookProjectile)
+                    {
+                        LeftHookProjectile.disable();
+                        ReleaseIfIHookSb();
+                        LeftHookProjectile = null;
+                        usingLeftHook = false;
+                    }
+                }
+            }
+            #endregion
+
+            #region IsRightHookEmbedded 14262
+            if (IsRightHookEmbedded)
+            {
+                if (RightHookProjectile && RightHookProjectile.IsHooked())
+                {
+                    IsRightHandHooked = true;
+                    var to = RightHookProjectile.transform.position - transform.position;
+                    to = to.normalized * (IsLeftHookEmbedded ? 10f : 20f);
+
+                    if (Vector3.Angle(Rigidbody.velocity, to) > 90f && InputManager.HumanJump)
+                    {
+                        usingRightHook = true;
+                        usingEitherHook = true;
+                    }
+
+                    if (!usingRightHook)
+                    {
+                        Debug.Log("<color=#00FFFF>AddForce: Not Flag4</color> " + Vector3.Angle(Rigidbody.velocity, to));
+                        Rigidbody.AddForce(to);
+                        if (Vector3.Angle(Rigidbody.velocity, to) > 90f)
+                        {
+                            Debug.Log("\t<color=#00FFFF>AddForce: angle > 90f</color>");
+                            Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
+                        }
+                    }
+                }
+
+                LaunchElapsedTimeR += Time.fixedDeltaTime;
+
+                if (RightHookHold)
+                    UseGas(UseGasSpeed * Time.fixedDeltaTime);
+                else if (LaunchElapsedTimeR > 0.2f)
+                {
+                    IsRightHookEmbedded = false;
+                    if (RightHookProjectile)
+                    {
+                        RightHookProjectile.disable();
+                        ReleaseIfIHookSb();
+                        RightHookProjectile = null;
+                        usingRightHook = false;
+                    }
+                }
+            }
+            #endregion
+
+            if (IsGrounded)
+            {
+                #region LandFrame to LandState or SlideState 31304
+                if (IsLandFrame && !(State is HumanAttackState || State is HumanFillGasState))
+                {
+                    var hVelocity = new Vector3(Rigidbody.velocity.x, 0f, Rigidbody.velocity.y);
+
+                    if (TargetMoveDirection.magnitude == 0
+                        && LeftHookProjectile == null
+                        && RightHookProjectile == null)
+                    {
+                        SetState<HumanLandState>();
+                        CrossFade(HeroAnim.DASH_LAND, 0.01f);
+                    }
+                    else if (hVelocity.magnitude > Speed * 1.5f)
+                    {
+                        SetState<HumanSlideState>();
+                        CrossFade(HeroAnim.DASH_LAND, 0.05f);
+                        FacingDirection = Mathf.Atan2(Rigidbody.velocity.x, Rigidbody.velocity.z) * Mathf.Rad2Deg;
+                        TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                        SparksEM.enabled = true;
+                    }
+                }
+                #endregion
+
+                #region Movement 40193
+                var zero = IsLandFrame ? Rigidbody.velocity : Vector3.zero;
+                zero = State.FixedUpdateMovement(); // 75006, 29099, 47951, 81136
+
+                var force = zero - Rigidbody.velocity;
+                force.y = 0f;
+
+                if (force.magnitude > MaxVelocityChange)
+                    force = force.normalized * MaxVelocityChange;
+
+                if (Animation.IsPlaying(HeroAnim.HORSE_GET_ON)
+                    && Animation[HeroAnim.HORSE_GET_ON].normalizedTime > 0.18f
+                    && Animation[HeroAnim.HORSE_GET_ON].normalizedTime < 1f)
+                {
+                    force = -Rigidbody.velocity;
+                    force.y = 6f;
+                    var distanceFromHorse = Vector3.Distance(Horse.transform.position,
+                        transform.position);
+                    var toHorseStrength = (0.6f * Gravity * distanceFromHorse) / 12f;
+                    var toHorseVector = Horse.transform.position - transform.position;
+                    force += toHorseVector.normalized * toHorseStrength;
+                }
+
+                if (!(State is HumanAttackState) || !UseGun)
+                {
+                    Debug.Log("<color=#00FFFF>AddForce: Idle Walk Force, Dodge</color>");
+                    Rigidbody.AddForce(force, ForceMode.VelocityChange);
+                    Rigidbody.rotation = Quaternion.Lerp(transform.transform.rotation,
+                        Quaternion.Euler(0f, FacingDirection, 0f), Time.deltaTime * 10f);
+                }
+                #endregion
+            }
+            else
+            {
+                #region Disable SparksEM 59152
+                if (SparksEM.enabled)
+                    SparksEM.enabled = false;
+                #endregion
+
+
+            }
+
+            if (!(State is HumanIdleState) && Animation[HeroAnim.DASH].normalizedTime > 0.99f)
+                HandleFixedUpdateAnimationCrossfades();
+
+            State.FixedUpdateTransitioning(); // 95943, 
+
+            if (Animation.IsPlaying(HeroAnim.HORSE_GET_OFF) && Animation[HeroAnim.HORSE_GET_OFF].normalizedTime >= 1f)
+                CrossFade(HeroAnim.AIR_RISE, 0.2f);
+
+            if (Animation.IsPlaying(HeroAnim.TO_ROOF))
+            {
+                if (Animation[HeroAnim.TO_ROOF].normalizedTime < 0.22f)
+                {
+                    Debug.Log("<color=#00AA33>Velocity = (0, 0, 0)</color>");
+                    Rigidbody.velocity = Vector3.zero;
+                    Debug.Log("<color=#00FFFF>AddForce: TO_ROOF < 0.22f</color>");
+                    Rigidbody.AddForce(new Vector3(0f, Gravity, 0f), ForceMode.Acceleration);
+                }
+                else
+                {
+                    if (!WallJump)
+                    {
+                        WallJump = true;
+                        Debug.Log("<color=#00FFFF>AddForce: !WallJump</color>");
+                        Rigidbody.AddForce((Vector3.up * 8f), ForceMode.Impulse);
+                    }
+
+                    Debug.Log("<color=#00FFFF>AddForce: TO_ROOF > 0.22f</color>");
+                    Rigidbody.AddForce((transform.forward * 0.05f), ForceMode.Impulse);
+                }
+
+                if (Animation[HeroAnim.TO_ROOF].normalizedTime >= 1f)
+                    PlayAnimation(HeroAnim.AIR_RISE);
+            }
+            else if (State is HumanIdleState && IsPressDirectionTowardsHero(TargetMoveDirection.x, TargetMoveDirection.y)
+              && !InputManager.HumanJump && !InputManager.HumanHookLeft
+              && !InputManager.HumanHookRight && !InputManager.HumanHookBoth
+              && IsFrontGrounded() && !Animation.IsPlaying(HeroAnim.WALL_RUN)
+              && !Animation.IsPlaying(HeroAnim.DODGE))
+            {
+                CrossFade(HeroAnim.WALL_RUN, 0.1f);
+                WallRunTime = 0f;
+            }
+            else if (Animation.IsPlaying(HeroAnim.WALL_RUN))
+            {
+                Debug.Log("<color=#00FFFF>AddForce: WALL_RUN</color>");
+                Rigidbody.AddForce((Vector3.up * Speed) - Rigidbody.velocity, ForceMode.VelocityChange);
+                WallRunTime += Time.fixedDeltaTime;
+                if (WallRunTime >= 1f || TargetMoveDirection.magnitude == 0)
+                {
+                    Debug.Log("<color=#00FFFF>AddForce: wallRunTime > 1f && not moving</color>");
+                    Rigidbody.AddForce((-transform.forward * Speed) * 0.75f, ForceMode.Impulse);
+                    Dodge(true);
+                }
+                else if (!IsUpFrontGrounded())
+                {
+                    WallJump = false;
+                    CrossFade(HeroAnim.TO_ROOF, 0.1f);
+                }
+                else if (!IsFrontGrounded())
+                    CrossFade(HeroAnim.AIR_FALL, 0.1f);
+            }
+            else if (!Animation.IsPlaying(Skill.CurrentAnimationName) || Skill.CanUseGas)
+            {
+                if (!Animation.IsPlaying(HeroAnim.DASH) && !Animation.IsPlaying(HeroAnim.JUMP))
+                {
+                    var x = TargetMoveDirection.x;
+                    var z = TargetMoveDirection.y;
+                    Vector3 vector11 = new Vector3(x, 0f, z);
+                    float num12 = GetGlobalFacingDirection(x, z);
+                    Vector3 vector12 = GetGlobaleFacingVector3(num12);
+                    float num13 = vector11.magnitude;
+                    if (num13 > 0.95)
+                        num13 = 1f;
+                    else if (num13 < 0.25f)
+                        num13 = 0f;
+                    vector12 *= num13 * 25f;
+
+                    bool moving = true;
+                    if (TargetMoveDirection.magnitude == 0f)
+                    {
+                        if (State is HumanAttackState)
+                            vector12 = Vector3.zero;
+
+                        moving = false;
+                    }
+
+                    if (moving)
+                    {
+                        FacingDirection = num12;
+                        TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                    }
+
+                    if (!usingLeftHook && !usingRightHook && !IsMounted && InputManager.HumanJump && CurrentGas > 0f)
+                    {
+                        if (TargetMoveDirection.magnitude > 0f)
+                        {
+                            Debug.Log("<color=#00FFFF>AddForce: Directional Gas</color>");
+                            Rigidbody.AddForce(vector12, ForceMode.Acceleration);
+                        }
+                        else
+                        {
+                            Debug.Log("<color=#00FFFF>AddForce: Forward Gas</color>");
+                            Rigidbody.AddForce((transform.forward * vector12.magnitude), ForceMode.Acceleration);
+                        }
+                        usingEitherHook = true;
+                    }
+                }
+            }
+
+
+            if (IsLandFrame)
+                IsLandFrame = false;
+            return;
+
+
+
+
+            // Old
             if (!photonView.isMine)
                 return;
 
@@ -483,14 +897,11 @@ namespace Assets.Scripts.Characters.Humans
                 State.OnFixedUpdate();
 
                 var velocity = Rigidbody.velocity;
-                var force = Zero - velocity;
+                var force = Vector3.zero - velocity;
                 force.x = Mathf.Clamp(force.x, -MaxVelocityChange, MaxVelocityChange);
                 force.z = Mathf.Clamp(force.z, -MaxVelocityChange, MaxVelocityChange);
                 force.y = 0f;
-                if (Animation.IsPlaying(HeroAnim.JUMP) && (Animation[HeroAnim.JUMP].normalizedTime > 0.18f))
-                {
-                    force.y += 8f;
-                }
+
                 if ((Animation.IsPlaying(HeroAnim.HORSE_GET_ON) && (Animation[HeroAnim.HORSE_GET_ON].normalizedTime > 0.18f)) && (Animation[HeroAnim.HORSE_GET_ON].normalizedTime < 1f))
                 {
                     force = new Vector3(-Rigidbody.velocity.x, 6f, -Rigidbody.velocity.z);
@@ -499,6 +910,7 @@ namespace Assets.Scripts.Characters.Humans
                     var vector7 = Horse.transform.position - transform.position;
                     force += (num9 * vector7.normalized);
                 }
+
                 if (!(State is HumanAttackState) || !UseGun)
                 {
                     Rigidbody.AddForce(force, ForceMode.VelocityChange);
@@ -511,29 +923,28 @@ namespace Assets.Scripts.Characters.Humans
             bool flag4 = false;
             IsLeftHandHooked = false;
             IsRightHandHooked = false;
-            if (IsLaunchLeft)
+            if (IsLeftHookEmbedded)
             {
-                if ((HookLeft != null) && HookLeft.isHooked())
+                if (LeftHookProjectile != null && LeftHookProjectile.IsHooked())
                 {
                     IsLeftHandHooked = true;
-                    Vector3 to = HookLeft.transform.position - transform.position;
-                    to.Normalize();
-                    to *= 10f;
-                    if (!IsLaunchRight)
+                    var to = LeftHookProjectile.transform.position - transform.position;
+                    to = to.normalized * (IsRightHookEmbedded ? 100f : 200f);
+
+                    if (Vector3.Angle(Rigidbody.velocity, to) > 90f && InputManager.HumanJump)
                     {
-                        to *= 2f;
+                        usingLeftHook = true;
+                        usingEitherHook = true;
                     }
-                    if ((Vector3.Angle(Rigidbody.velocity, to) > 90f) && InputManager.Key(InputHuman.Jump))
+
+                    if (!usingLeftHook)
                     {
-                        flag3 = true;
-                        flag2 = true;
-                    }
-                    if (!flag3)
-                    {
+                        Debug.Log("Left Force " + to);
                         Rigidbody.AddForce(to);
                         if (Vector3.Angle(Rigidbody.velocity, to) > 90f)
                         {
-                            Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
+                            Debug.Log("- Left Force");
+                            Rigidbody.AddForce(-Rigidbody.velocity * 2f, ForceMode.Acceleration);
                         }
                     }
                 }
@@ -544,40 +955,39 @@ namespace Assets.Scripts.Characters.Humans
                 }
                 else if (LaunchElapsedTimeL > 0.3f)
                 {
-                    IsLaunchLeft = false;
-                    if (HookLeft != null)
+                    IsLeftHookEmbedded = false;
+                    if (LeftHookProjectile != null)
                     {
-                        HookLeft.disable();
+                        LeftHookProjectile.disable();
                         ReleaseIfIHookSb();
-                        HookLeft = null;
-                        flag3 = false;
+                        LeftHookProjectile = null;
+                        usingLeftHook = false;
                     }
                 }
             }
 
-            if (IsLaunchRight)
+            if (IsRightHookEmbedded)
             {
-                if ((HookRight != null) && HookRight.isHooked())
+                if ((RightHookProjectile != null) && RightHookProjectile.IsHooked())
                 {
                     IsRightHandHooked = true;
-                    var vector5 = HookRight.transform.position - transform.position;
-                    vector5.Normalize();
-                    vector5 *= 10f;
-                    if (!IsLaunchLeft)
+                    var to = RightHookProjectile.transform.position - transform.position;
+                    to = to.normalized * (IsLeftHookEmbedded ? 100f : 200f);
+
+                    if (Vector3.Angle(Rigidbody.velocity, to) > 90f && InputManager.HumanJump)
                     {
-                        vector5 *= 2f;
+                        usingRightHook = true;
+                        usingEitherHook = true;
                     }
-                    if ((Vector3.Angle(Rigidbody.velocity, vector5) > 90f) && InputManager.HumanJump)
+
+                    if (!usingRightHook)
                     {
-                        flag4 = true;
-                        flag2 = true;
-                    }
-                    if (!flag4)
-                    {
-                        Rigidbody.AddForce(vector5);
-                        if (Vector3.Angle(Rigidbody.velocity, vector5) > 90f)
+                        Debug.Log("Right Force: " + to);
+                        Rigidbody.AddForce(to, ForceMode.Force);
+                        if (Vector3.Angle(Rigidbody.velocity, to) > 90f)
                         {
-                            Rigidbody.AddForce((-Rigidbody.velocity * 2f), ForceMode.Acceleration);
+                            Debug.Log("- Right Force");
+                            Rigidbody.AddForce(-Rigidbody.velocity * 2f, ForceMode.Acceleration);
                         }
                     }
                 }
@@ -588,13 +998,13 @@ namespace Assets.Scripts.Characters.Humans
                 }
                 else if (LaunchElapsedTimeR > 0.3f)
                 {
-                    IsLaunchRight = false;
-                    if (HookRight != null)
+                    IsRightHookEmbedded = false;
+                    if (RightHookProjectile != null)
                     {
-                        HookRight.disable();
+                        RightHookProjectile.disable();
                         ReleaseIfIHookSb();
-                        HookRight = null;
-                        flag4 = false;
+                        RightHookProjectile = null;
+                        usingRightHook = false;
                     }
                 }
             }
@@ -613,11 +1023,17 @@ namespace Assets.Scripts.Characters.Humans
                     Horse.Mount();
                 }
 
-                if (!(((((!(State is HumanIdleState) || Animation.IsPlaying(HeroAnim.DASH)) ||
-                    (Animation.IsPlaying(HeroAnim.WALL_RUN) || Animation.IsPlaying(HeroAnim.TO_ROOF))) ||
-                    ((Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || Animation.IsPlaying(HeroAnim.HORSE_GET_OFF)) || (Animation.IsPlaying(HeroAnim.AIR_RELEASE) || IsMounted))) ||
-                    ((Animation.IsPlaying(HeroAnim.AIR_HOOK_L_JUST) && (Animation[HeroAnim.AIR_HOOK_L_JUST].normalizedTime < 1f)) ||
-                    (Animation.IsPlaying(HeroAnim.AIR_HOOK_R_JUST) && (Animation[HeroAnim.AIR_HOOK_R_JUST].normalizedTime < 1f)))) ? (Animation[HeroAnim.DASH].normalizedTime < 0.99f) : false))
+                if (State is HumanIdleState
+                    && !Animation.IsPlaying(HeroAnim.DASH)
+                    && !Animation.IsPlaying(HeroAnim.WALL_RUN)
+                    && !Animation.IsPlaying(HeroAnim.TO_ROOF)
+                    && !Animation.IsPlaying(HeroAnim.HORSE_GET_ON)
+                    && !Animation.IsPlaying(HeroAnim.HORSE_GET_OFF)
+                    && !Animation.IsPlaying(HeroAnim.AIR_RELEASE)
+                    && !IsMounted
+                    && !(Animation.IsPlaying(HeroAnim.AIR_HOOK_L_JUST) && Animation[HeroAnim.AIR_HOOK_L_JUST].normalizedTime < 1f)
+                    && !(Animation.IsPlaying(HeroAnim.AIR_HOOK_R_JUST) && Animation[HeroAnim.AIR_HOOK_R_JUST].normalizedTime < 1f)
+                    && Animation[HeroAnim.DASH].normalizedTime < 0.99f)
                 {
                     if (((!IsLeftHandHooked && !IsRightHandHooked) && ((Animation.IsPlaying(HeroAnim.AIR_HOOK_L) || Animation.IsPlaying(HeroAnim.AIR_HOOK_R)) || Animation.IsPlaying(HeroAnim.AIR_HOOK))) && (Rigidbody.velocity.y > 20f))
                         Animation.CrossFade(HeroAnim.AIR_RELEASE);
@@ -679,17 +1095,17 @@ namespace Assets.Scripts.Characters.Humans
                     if (Animation[HeroAnim.TO_ROOF].normalizedTime < 0.22f)
                     {
                         Rigidbody.velocity = Vector3.zero;
-                        Rigidbody.AddForce(new Vector3(0f, Gravity * Rigidbody.mass, 0f));
+                        //Rigidbody.AddForce(new Vector3(0f, Gravity * Rigidbody.mass, 0f));
                     }
                     else
                     {
                         if (!WallJump)
                         {
                             WallJump = true;
-                            Rigidbody.AddForce((Vector3.up * 8f), ForceMode.Impulse);
+                            //Rigidbody.AddForce(Vector3.up * 8f, ForceMode.Impulse);
                         }
 
-                        Rigidbody.AddForce((transform.forward * 0.05f), ForceMode.Impulse);
+                        //Rigidbody.AddForce(transform.forward * 0.05f, ForceMode.Impulse);
                     }
 
                     if (Animation[HeroAnim.TO_ROOF].normalizedTime >= 1f)
@@ -708,12 +1124,12 @@ namespace Assets.Scripts.Characters.Humans
                 }
                 else if (Animation.IsPlaying(HeroAnim.WALL_RUN))
                 {
-                    Rigidbody.AddForce(((Vector3.up * Speed)) - Rigidbody.velocity, ForceMode.VelocityChange);
+                    //Rigidbody.AddForce((Vector3.up * Speed) - Rigidbody.velocity, ForceMode.VelocityChange);
                     WallRunTime += Time.deltaTime;
 
                     if (WallRunTime > 1f || TargetMoveDirection == Vector2.zero)
                     {
-                        Rigidbody.AddForce(((-transform.forward * Speed) * 0.75f), ForceMode.Impulse);
+                        //Rigidbody.AddForce((-transform.forward * Speed) * 0.75f, ForceMode.Impulse);
                         Dodge(true);
                     }
                     else if (!IsUpFrontGrounded())
@@ -746,14 +1162,14 @@ namespace Assets.Scripts.Characters.Humans
                         FacingDirection = num12;
                         TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
                     }
-                    if (((!flag3 && !flag4) && (!IsMounted && InputManager.HumanJump)) && (CurrentGas > 0f))
+                    if (((!usingLeftHook && !usingRightHook) && (!IsMounted && InputManager.HumanJump)) && (CurrentGas > 0f))
                     {
-                        if (TargetMoveDirection != Vector2.zero)
-                            Rigidbody.AddForce(vector12, ForceMode.Acceleration);
-                        else
-                            Rigidbody.AddForce((transform.forward * vector12.magnitude), ForceMode.Acceleration);
+                        //if (TargetMoveDirection != Vector2.zero)
+                        //    Rigidbody.AddForce(vector12, ForceMode.Acceleration);
+                        //else
+                        //    Rigidbody.AddForce(transform.forward * vector12.magnitude, ForceMode.Acceleration);
 
-                        flag2 = true;
+                        usingEitherHook = true;
                     }
                 }
                 if ((Animation.IsPlaying(HeroAnim.AIR_FALL) && (CurrentSpeed < 0.2f)) && IsFrontGrounded())
@@ -761,11 +1177,10 @@ namespace Assets.Scripts.Characters.Humans
             }
 
             Spinning = false;
-            if (flag3 && flag4)
+            if (usingLeftHook && usingRightHook)
             {
                 float num14 = CurrentSpeed + 0.1f;
-                AddRightForce();
-                Vector3 vector13 = (((HookRight.transform.position + HookLeft.transform.position) * 0.5f)) - transform.position;
+                Vector3 vector13 = (((RightHookProjectile.transform.position + LeftHookProjectile.transform.position) * 0.5f)) - transform.position;
                 float num15 = 0f;
                 if (InputManager.HumanReelIn)
                     num15 = -1f;
@@ -781,11 +1196,10 @@ namespace Assets.Scripts.Characters.Humans
                 Spinning = true;
                 Rigidbody.velocity = (vector14 * num14);
             }
-            else if (flag3)
+            else if (usingLeftHook)
             {
                 float num17 = CurrentSpeed + 0.1f;
-                AddRightForce();
-                Vector3 vector15 = HookLeft.transform.position - transform.position;
+                Vector3 vector15 = LeftHookProjectile.transform.position - transform.position;
                 float num18 = 0f;
 
                 if (InputManager.HumanReelIn)
@@ -802,11 +1216,10 @@ namespace Assets.Scripts.Characters.Humans
                 Spinning = true;
                 Rigidbody.velocity = (vector16 * num17);
             }
-            else if (flag4)
+            else if (usingRightHook)
             {
                 float num20 = CurrentSpeed + 0.1f;
-                AddRightForce();
-                Vector3 vector17 = HookRight.transform.position - transform.position;
+                Vector3 vector17 = RightHookProjectile.transform.position - transform.position;
                 float num21 = 0f;
 
                 if (InputManager.HumanReelIn)
@@ -825,29 +1238,29 @@ namespace Assets.Scripts.Characters.Humans
             }
             bool flag7 = false;
 
-            if ((HookLeft != null) || (HookRight != null))
+            if ((LeftHookProjectile != null) || (RightHookProjectile != null))
             {
-                if (((HookLeft != null) && (HookLeft.transform.position.y > gameObject.transform.position.y)) && (IsLaunchLeft && HookLeft.isHooked()))
+                if (((LeftHookProjectile != null) && (LeftHookProjectile.transform.position.y > gameObject.transform.position.y)) && (IsLeftHookEmbedded && LeftHookProjectile.IsHooked()))
                 {
                     flag7 = true;
                 }
-                if (((HookRight != null) && (HookRight.transform.position.y > gameObject.transform.position.y)) && (IsLaunchRight && HookRight.isHooked()))
+                if (((RightHookProjectile != null) && (RightHookProjectile.transform.position.y > gameObject.transform.position.y)) && (IsRightHookEmbedded && RightHookProjectile.IsHooked()))
                 {
                     flag7 = true;
                 }
             }
 
-            if (flag7)
-                Rigidbody.AddForce(new Vector3(0f, -10f * Rigidbody.mass, 0f));
-            else
-                Rigidbody.AddForce(new Vector3(0f, -Gravity * Rigidbody.mass, 0f));
+            //if (flag7)
+            //    Rigidbody.AddForce(new Vector3(0f, -10f * Rigidbody.mass, 0f));
+            //else
+            //    Rigidbody.AddForce(new Vector3(0f, -Gravity * Rigidbody.mass, 0f));
 
             if (CurrentSpeed > 10f)
                 CurrentCamera.fieldOfView = Mathf.Lerp(CurrentCamera.fieldOfView, Mathf.Min((float) 100f, (float) (CurrentSpeed + 40f)), 0.1f);
             else
                 CurrentCamera.fieldOfView = Mathf.Lerp(CurrentCamera.fieldOfView, 50f, 0.1f);
 
-            if (flag2)
+            if (usingEitherHook)
             {
                 UseGas(UseGasSpeed * Time.deltaTime);
                 if (!smoke_3dmg_em.enabled && photonView.isMine)
@@ -878,7 +1291,7 @@ namespace Assets.Scripts.Characters.Humans
                 var vector2 = HookTarget.transform.position - transform.position;
                 var magnitude = vector2.magnitude;
                 if (magnitude > 2f)
-                    Rigidbody.AddForce((((vector2.normalized * Mathf.Pow(magnitude, 0.15f)) * 30f) - (Rigidbody.velocity * 0.95f)), ForceMode.VelocityChange);
+                    Rigidbody.AddForce(((vector2.normalized * Mathf.Pow(magnitude, 0.15f)) * 30f) - (Rigidbody.velocity * 0.95f), ForceMode.VelocityChange);
             }
             else
                 HookSomeone = false;
@@ -893,7 +1306,7 @@ namespace Assets.Scripts.Characters.Humans
                 Vector3 vector3 = BadGuy.transform.position - transform.position;
                 float f = vector3.magnitude;
                 if (f > 5f)
-                    Rigidbody.AddForce(((vector3.normalized * Mathf.Pow(f, 0.15f)) * 0.2f), ForceMode.Impulse);
+                    Rigidbody.AddForce((vector3.normalized * Mathf.Pow(f, 0.15f)) * 0.2f, ForceMode.Impulse);
             }
             else
                 HookedBySomeone = false;
@@ -905,7 +1318,7 @@ namespace Assets.Scripts.Characters.Humans
 
             if (InputManager.HumanHookLeft && !cancel)
             {
-                if (HookLeft != null)
+                if (LeftHookProjectile != null)
                     LeftHookHold = true;
                 else
                 {
@@ -926,7 +1339,7 @@ namespace Assets.Scripts.Characters.Humans
 
             if (InputManager.HumanHookRight && !cancel)
             {
-                if (HookRight != null)
+                if (RightHookProjectile != null)
                     RightHookHold = true;
                 else
                 {
@@ -948,7 +1361,7 @@ namespace Assets.Scripts.Characters.Humans
             {
                 LeftHookHold = true;
                 RightHookHold = true;
-                if ((HookLeft == null) && (HookRight == null))
+                if ((LeftHookProjectile == null) && (RightHookProjectile == null))
                 {
                     var ray = Camera.main.ScreenPointToRay(UnityEngine.Input.mousePosition);
                     LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
@@ -977,7 +1390,7 @@ namespace Assets.Scripts.Characters.Humans
                 {
                     if (!(State is HumanAttackState))
                     {
-                        if (TargetMoveDirection == Vector2.zero && HookLeft == null && HookRight == null && !(State is HumanFillGasState))
+                        if (TargetMoveDirection == Vector2.zero && LeftHookProjectile == null && RightHookProjectile == null && !(State is HumanFillGasState))
                         {
                             SetState<HumanLandState>();
                             CrossFade(HeroAnim.DASH_LAND, 0.01f);
@@ -1000,7 +1413,7 @@ namespace Assets.Scripts.Characters.Humans
                     if (photonView.isMine)
                         OnLandClient?.Invoke(this);
 
-                    Zero = Rigidbody.velocity;
+                    //zero = Rigidbody.velocity;
                 }
 
                 IsGrounded = true;
@@ -1041,13 +1454,13 @@ namespace Assets.Scripts.Characters.Humans
                     Quaternion quaternion2;
                     Vector3 zero = Vector3.zero;
                     Vector3 position = Vector3.zero;
-                    if ((IsLaunchLeft && (HookLeft != null)) && HookLeft.isHooked())
+                    if ((IsLeftHookEmbedded && (LeftHookProjectile != null)) && LeftHookProjectile.IsHooked())
                     {
-                        zero = HookLeft.transform.position;
+                        zero = LeftHookProjectile.transform.position;
                     }
-                    if ((IsLaunchRight && (HookRight != null)) && HookRight.isHooked())
+                    if ((IsRightHookEmbedded && (RightHookProjectile != null)) && RightHookProjectile.IsHooked())
                     {
-                        position = HookRight.transform.position;
+                        position = RightHookProjectile.transform.position;
                     }
                     Vector3 vector5 = Vector3.zero;
                     if ((zero.magnitude != 0f) && (position.magnitude == 0f))
@@ -1112,13 +1525,13 @@ namespace Assets.Scripts.Characters.Humans
                         HandL.localRotation = Quaternion.Euler(90f, 0f, 0f);
                         HandR.localRotation = Quaternion.Euler(-90f, 0f, 0f);
                     }
-                    if (IsLeftHandHooked && (HookLeft != null))
+                    if (IsLeftHandHooked && (LeftHookProjectile != null))
                     {
-                        LeftArmAimTo(HookLeft.transform.position);
+                        LeftArmAimTo(LeftHookProjectile.transform.position);
                     }
-                    if (IsRightHandHooked && (HookRight != null))
+                    if (IsRightHandHooked && (RightHookProjectile != null))
                     {
-                        RightArmAimTo(HookRight.transform.position);
+                        RightArmAimTo(RightHookProjectile.transform.position);
                     }
                 }
                 SetHookedPplDirection();
@@ -1147,63 +1560,6 @@ namespace Assets.Scripts.Characters.Humans
         #endregion
 
         #region Other
-        public void Initialize(CharacterPreset preset)
-        {
-            //TODO: Remove hack
-            var manager = GetComponent<CustomizationManager>();
-            if (preset == null)
-            {
-                preset = manager.Presets.First();
-            }
-
-            preset.Apply(this, manager.Prefabs);
-            Skill = preset.CurrentBuild.Skill;
-            Skill.Initialize(this);
-
-            EquipmentType = preset.CurrentBuild.Equipment;
-            Equipment.Initialize();
-
-            if (EquipmentType == EquipmentType.Ahss)
-            {
-                StandAnimation = HeroAnim.AHSS_STAND_GUN;
-                UseGun = true;
-                GunDummy = new GameObject
-                {
-                    name = "GunDummy"
-                };
-                GunDummy.transform.position = transform.position;
-                GunDummy.transform.rotation = transform.rotation;
-            }
-
-            if (photonView.isMine)
-            {
-                //TODO: If this is a default preset, find a more efficient way
-                var config = JsonConvert.SerializeObject(preset, Formatting.Indented, new JsonSerializerSettings
-                {
-                    Converters = new List<JsonConverter> { new ColorJsonConverter() },
-                    ContractResolver = new JsonIgnoreResolver() // This will stop Images (on skills) from being serialized
-                });
-                photonView.RPC(nameof(InitializeRpc), PhotonTargets.OthersBuffered, config);
-            }
-
-            EntityService.Register(this);
-        }
-
-        [PunRPC]
-        public void InitializeRpc(string characterPreset, PhotonMessageInfo info)
-        {
-            if (photonView.isMine)
-            {
-                //TODO: HandLe Abusive RPC
-                return;
-            }
-
-            if (info.sender.ID == photonView.ownerId)
-            {
-                Initialize(JsonConvert.DeserializeObject<CharacterPreset>(characterPreset, new ColorJsonConverter()));
-            }
-        }
-
         public override void OnHit(Entity attacker, int damage)
         {
             //TODO: 160 HERO OnHit logic
@@ -1406,30 +1762,30 @@ namespace Assets.Scripts.Characters.Humans
                     float num5 = Mathf.Sqrt((x * x) + (num4 * num4));
                     float num6 = Mathf.Atan2(y, num5) * Mathf.Rad2Deg;
                     TargetRotation = Quaternion.Euler(-num6 * (1f - (Vector3.Angle(Rigidbody.velocity, transform.forward) / 90f)), FacingDirection, 0f);
-                    if ((IsLeftHandHooked && (HookLeft != null)) || (IsRightHandHooked && (HookRight != null)))
+                    if ((IsLeftHandHooked && (LeftHookProjectile != null)) || (IsRightHandHooked && (RightHookProjectile != null)))
                     {
                         transform.rotation = TargetRotation;
                     }
                 }
                 else
                 {
-                    if ((IsLeftHandHooked && (HookLeft != null)) && (IsRightHandHooked && (HookRight != null)))
+                    if ((IsLeftHandHooked && (LeftHookProjectile != null)) && (IsRightHandHooked && (RightHookProjectile != null)))
                     {
                         if (AlmostSingleHook)
                         {
                             NeedLean = true;
-                            z = GetLeanAngle(HookRight.transform.position, true);
+                            z = GetLeanAngle(RightHookProjectile.transform.position, true);
                         }
                     }
-                    else if (IsLeftHandHooked && (HookLeft != null))
+                    else if (IsLeftHandHooked && (LeftHookProjectile != null))
                     {
                         NeedLean = true;
-                        z = GetLeanAngle(HookLeft.transform.position, true);
+                        z = GetLeanAngle(LeftHookProjectile.transform.position, true);
                     }
-                    else if (IsRightHandHooked && (HookRight != null))
+                    else if (IsRightHandHooked && (RightHookProjectile != null))
                     {
                         NeedLean = true;
-                        z = GetLeanAngle(HookRight.transform.position, false);
+                        z = GetLeanAngle(RightHookProjectile.transform.position, false);
                     }
                     if (NeedLean)
                     {
@@ -1723,7 +2079,7 @@ namespace Assets.Scripts.Characters.Humans
                 Animation[HeroAnim.DASH].time = 0.1f;
                 SetState<HumanAirDodgeState>();
                 FalseAttack();
-                Rigidbody.AddForce((DashV * 40f), ForceMode.VelocityChange);
+                //Rigidbody.AddForce(DashV * 40f, ForceMode.VelocityChange);
             }
         }
 
@@ -1735,13 +2091,13 @@ namespace Assets.Scripts.Characters.Humans
                 {
                     ErenTitan.lifeTime = 0.1f;
                 }
-                if (HookLeft != null)
+                if (LeftHookProjectile != null)
                 {
-                    HookLeft.removeMe();
+                    LeftHookProjectile.removeMe();
                 }
-                if (HookRight != null)
+                if (RightHookProjectile != null)
                 {
-                    HookRight.removeMe();
+                    RightHookProjectile.removeMe();
                 }
                 meatDie.Play();
                 if ((photonView.isMine) && !UseGun)
@@ -1800,13 +2156,13 @@ namespace Assets.Scripts.Characters.Humans
         public void Transform()
         {
             SkillCDDuration = SkillCDLast;
-            if (HookLeft != null)
+            if (LeftHookProjectile != null)
             {
-                HookLeft.removeMe();
+                LeftHookProjectile.removeMe();
             }
-            if (HookRight != null)
+            if (RightHookProjectile != null)
             {
-                HookRight.removeMe();
+                RightHookProjectile.removeMe();
             }
             ErenTitan = PhotonNetwork.Instantiate("ErenTitan", transform.position, transform.rotation, 0).GetComponent<ErenTitan>();
             ErenTitan.realBody = gameObject;
@@ -1879,15 +2235,6 @@ namespace Assets.Scripts.Characters.Humans
             return obj2;
         }
 
-        [Obsolete("Does this do something?")]
-        //Hotfix for Issue 97.
-        private void AddRightForce()
-        {
-            //Whereas this may not be completely accurate to AoTTG, it is very close. Further balancing required in the future.
-            Rigidbody.AddForce(Rigidbody.velocity * 0.00f, ForceMode.Acceleration);
-        }
-
-
         public Vector3 GetGlobaleFacingVector3(float resultAngle)
         {
             float num = -resultAngle + 90f;
@@ -1954,7 +2301,7 @@ namespace Assets.Scripts.Characters.Humans
         public void GetOffHorse()
         {
             PlayAnimation(HeroAnim.HORSE_GET_OFF);
-            Rigidbody.AddForce((((Vector3.up * 10f) - (transform.forward * 2f)) - (transform.right * 1f)), ForceMode.VelocityChange);
+            Rigidbody.AddForce(((Vector3.up * 10f) - (transform.forward * 2f)) - (transform.right * 1f), ForceMode.VelocityChange);
             Unmounted();
         }
 
@@ -2044,9 +2391,9 @@ namespace Assets.Scripts.Characters.Humans
             float num = Mathf.Pow(LaunchForce.magnitude, 0.1f);
             if (IsGrounded)
             {
-                Rigidbody.AddForce((Vector3.up * Mathf.Min((float) (LaunchForce.magnitude * 0.2f), (float) 10f)), ForceMode.Impulse);
+                Rigidbody.AddForce(Vector3.up * Mathf.Min((float) (LaunchForce.magnitude * 0.2f), (float) 10f), ForceMode.Impulse);
             }
-            Rigidbody.AddForce(((LaunchForce * num) * 0.1f), ForceMode.Impulse);
+            Rigidbody.AddForce((LaunchForce * num) * 0.1f, ForceMode.Impulse);
         }
 
         private bool IsFrontGrounded()
@@ -2093,7 +2440,7 @@ namespace Assets.Scripts.Characters.Humans
             }
             vector.Normalize();
             vector = (vector * 20f);
-            if (((HookLeft != null) && (HookRight != null)) && (HookLeft.isHooked() && HookRight.isHooked()))
+            if (((LeftHookProjectile != null) && (RightHookProjectile != null)) && (LeftHookProjectile.IsHooked() && RightHookProjectile.IsHooked()))
             {
                 vector = (vector * 0.8f);
             }
@@ -2129,11 +2476,11 @@ namespace Assets.Scripts.Characters.Humans
             }
             if (left)
             {
-                IsLaunchLeft = true;
+                IsLeftHookEmbedded = true;
             }
             if (!left)
             {
-                IsLaunchRight = true;
+                IsRightHookEmbedded = true;
             }
             LaunchForce = vector;
             if (!leviMode)
@@ -2146,6 +2493,7 @@ namespace Assets.Scripts.Characters.Humans
                 {
                     LaunchForce += ((Vector3.up * (des.y - transform.position.y)) * 10f);
                 }
+                Debug.Log("Launch Force");
                 Rigidbody.AddForce(LaunchForce);
             }
             FacingDirection = Mathf.Atan2(LaunchForce.x, LaunchForce.z) * Mathf.Rad2Deg;
@@ -2169,14 +2517,14 @@ namespace Assets.Scripts.Characters.Humans
             {
                 LaunchElapsedTimeR = -100f;
                 LaunchElapsedTimeL = -100f;
-                if (HookRight != null)
+                if (RightHookProjectile != null)
                 {
-                    HookRight.disable();
+                    RightHookProjectile.disable();
                     ReleaseIfIHookSb();
                 }
-                if (HookLeft != null)
+                if (LeftHookProjectile != null)
                 {
-                    HookLeft.disable();
+                    LeftHookProjectile.disable();
                     ReleaseIfIHookSb();
                 }
             }
@@ -2188,20 +2536,20 @@ namespace Assets.Scripts.Characters.Humans
             if (CurrentGas != 0f)
             {
                 UseGas(UseGasSpeed);
-                HookLeft = PhotonNetwork.Instantiate("hook", transform.position, transform.rotation, 0).GetComponent<Bullet>();
+                LeftHookProjectile = PhotonNetwork.Instantiate("hook", transform.position, transform.rotation, 0).GetComponent<Bullet>();
                 GameObject obj2 = !UseGun ? hookRefL1 : hookRefL2;
                 string str = !UseGun ? "hookRefL1" : "hookRefL2";
-                HookLeft.transform.position = obj2.transform.position;
+                LeftHookProjectile.transform.position = obj2.transform.position;
                 float num = !single ? ((distance <= 50f) ? (distance * 0.05f) : (distance * 0.3f)) : 0f;
-                Vector3 vector = (point - ((transform.right * num))) - HookLeft.transform.position;
+                Vector3 vector = (point - ((transform.right * num))) - LeftHookProjectile.transform.position;
                 vector.Normalize();
                 if (mode == 1)
                 {
-                    HookLeft.launch((vector * 3f), Rigidbody.velocity, str, true, gameObject, true);
+                    LeftHookProjectile.launch((vector * 3f), Rigidbody.velocity, str, true, gameObject, true);
                 }
                 else
                 {
-                    HookLeft.launch((vector * 3f), Rigidbody.velocity, str, true, gameObject, false);
+                    LeftHookProjectile.launch((vector * 3f), Rigidbody.velocity, str, true, gameObject, false);
                 }
                 LaunchPointLeft = Vector3.zero;
             }
@@ -2213,18 +2561,18 @@ namespace Assets.Scripts.Characters.Humans
                 return;
 
             UseGas(UseGasSpeed);
-            HookRight = PhotonNetwork.Instantiate("hook", transform.position, transform.rotation, 0).GetComponent<Bullet>();
+            RightHookProjectile = PhotonNetwork.Instantiate("hook", transform.position, transform.rotation, 0).GetComponent<Bullet>();
             GameObject obj2 = !UseGun ? hookRefR1 : hookRefR2;
             string str = !UseGun ? "hookRefR1" : "hookRefR2";
-            HookRight.transform.position = obj2.transform.position;
+            RightHookProjectile.transform.position = obj2.transform.position;
             float num = !single ? ((distance <= 50f) ? (distance * 0.05f) : (distance * 0.3f)) : 0f;
-            Vector3 vector = (point + ((transform.right * num))) - HookRight.transform.position;
+            Vector3 vector = (point + ((transform.right * num))) - RightHookProjectile.transform.position;
             vector.Normalize();
 
             if (mode == 1)
-                HookRight.launch((vector * 5f), Rigidbody.velocity, str, false, gameObject, true);
+                RightHookProjectile.launch((vector * 5f), Rigidbody.velocity, str, false, gameObject, true);
             else
-                HookRight.launch((vector * 3f), Rigidbody.velocity, str, false, gameObject, false);
+                RightHookProjectile.launch((vector * 3f), Rigidbody.velocity, str, false, gameObject, false);
 
             LaunchPointRight = Vector3.zero;
         }
@@ -2310,11 +2658,11 @@ namespace Assets.Scripts.Characters.Humans
 
             }
 
-            if (HookLeft != null)
-                HookLeft.removeMe();
+            if (LeftHookProjectile != null)
+                LeftHookProjectile.removeMe();
 
-            if (HookRight != null)
-                HookRight.removeMe();
+            if (RightHookProjectile != null)
+                RightHookProjectile.removeMe();
 
             meatDie.Play();
             FalseAttack();
@@ -2412,11 +2760,11 @@ namespace Assets.Scripts.Characters.Humans
                     SkillCD.transform.localPosition = vector;
             }
             meatDie.Play();
-            if (HookLeft != null)
-                HookLeft.removeMe();
+            if (LeftHookProjectile != null)
+                LeftHookProjectile.removeMe();
 
-            if (HookRight != null)
-                HookRight.removeMe();
+            if (RightHookProjectile != null)
+                RightHookProjectile.removeMe();
 
             Transform audioDie = transform.Find("audio_die");
             audioDie.parent = null;
@@ -2494,11 +2842,11 @@ namespace Assets.Scripts.Characters.Humans
                     SkillCD.transform.localPosition = vector;
             }
 
-            if (HookLeft != null)
-                HookLeft.removeMe();
+            if (LeftHookProjectile != null)
+                LeftHookProjectile.removeMe();
 
-            if (HookRight != null)
-                HookRight.removeMe();
+            if (RightHookProjectile != null)
+                RightHookProjectile.removeMe();
 
             meatDie.Play();
             FalseAttack();
@@ -2653,13 +3001,13 @@ namespace Assets.Scripts.Characters.Humans
             if (Vector3.Distance(hookPosition, transform.position) < 15f)
             {
                 LaunchForce = PhotonView.Find(hooker).gameObject.transform.position - transform.position;
-                Rigidbody.AddForce((-Rigidbody.velocity * 0.9f), ForceMode.VelocityChange);
+                Rigidbody.AddForce(-Rigidbody.velocity * 0.9f, ForceMode.VelocityChange);
                 var num = Mathf.Pow(LaunchForce.magnitude, 0.1f);
 
                 if (IsGrounded)
-                    Rigidbody.AddForce((Vector3.up * Mathf.Min(LaunchForce.magnitude * 0.2f, 10f)), ForceMode.Impulse);
+                    Rigidbody.AddForce(Vector3.up * Mathf.Min(LaunchForce.magnitude * 0.2f, 10f), ForceMode.Impulse);
 
-                Rigidbody.AddForce(((LaunchForce * num) * 0.1f), ForceMode.Impulse);
+                Rigidbody.AddForce((LaunchForce * num) * 0.1f, ForceMode.Impulse);
                 if (!(State is HumanGrabState))
                 {
                     DashTime = 1f;
@@ -2687,12 +3035,12 @@ namespace Assets.Scripts.Characters.Humans
             AlmostSingleHook = false;
             if (IsRightHandHooked && IsLeftHandHooked)
             {
-                if ((HookLeft != null) && (HookRight != null))
+                if ((LeftHookProjectile != null) && (RightHookProjectile != null))
                 {
-                    Vector3 normal = HookLeft.transform.position - HookRight.transform.position;
+                    Vector3 normal = LeftHookProjectile.transform.position - RightHookProjectile.transform.position;
                     if (normal.sqrMagnitude < 4f)
                     {
-                        Vector3 vector2 = (((HookLeft.transform.position + HookRight.transform.position) * 0.5f)) - transform.position;
+                        Vector3 vector2 = (((LeftHookProjectile.transform.position + RightHookProjectile.transform.position) * 0.5f)) - transform.position;
                         FacingDirection = Mathf.Atan2(vector2.x, vector2.z) * Mathf.Rad2Deg;
                         if (UseGun && !(State is HumanAttackState))
                         {
@@ -2705,9 +3053,9 @@ namespace Assets.Scripts.Characters.Humans
                     }
                     else
                     {
-                        var to = transform.position - HookLeft.transform.position;
-                        var vector6 = transform.position - HookRight.transform.position;
-                        var vector7 = ((HookLeft.transform.position + HookRight.transform.position) * 0.5f);
+                        var to = transform.position - LeftHookProjectile.transform.position;
+                        var vector6 = transform.position - RightHookProjectile.transform.position;
+                        var vector7 = ((LeftHookProjectile.transform.position + RightHookProjectile.transform.position) * 0.5f);
                         var from = transform.position - vector7;
                         if ((Vector3.Angle(from, to) < 30f) && (Vector3.Angle(from, vector6) < 30f))
                         {
@@ -2734,14 +3082,14 @@ namespace Assets.Scripts.Characters.Humans
             {
                 AlmostSingleHook = true;
                 Vector3 zero;
-                if (IsRightHandHooked && (HookRight != null))
-                    zero = HookRight.transform.position - transform.position;
+                if (IsRightHandHooked && (RightHookProjectile != null))
+                    zero = RightHookProjectile.transform.position - transform.position;
                 else
                 {
-                    if (!IsLeftHandHooked || (HookLeft == null))
+                    if (!IsLeftHandHooked || (LeftHookProjectile == null))
                         return;
 
-                    zero = HookLeft.transform.position - transform.position;
+                    zero = LeftHookProjectile.transform.position - transform.position;
                 }
                 FacingDirection = Mathf.Atan2(zero.x, zero.z) * Mathf.Rad2Deg;
                 if (!(State is HumanAttackState))
@@ -2860,11 +3208,11 @@ namespace Assets.Scripts.Characters.Humans
 
             SetState<HumanIdleState>();
 
-            if (HookLeft)
-                HookLeft.removeMe();
+            if (LeftHookProjectile)
+                LeftHookProjectile.removeMe();
 
-            if (HookRight)
-                HookRight.removeMe();
+            if (RightHookProjectile)
+                RightHookProjectile.removeMe();
 
             if (smoke_3dmg_em.enabled && photonView.isMine)
             {
@@ -3020,11 +3368,5 @@ namespace Assets.Scripts.Characters.Humans
             TitanForm = true;
         }
         #endregion
-
-        private void OnGUI()
-        {
-            var style = new GUIStyle { fontSize = 50, richText = true };
-            GUI.TextField(new Rect(100f, 100f, 300f, 100f), $"<color=white>Anim:\t {CurrentAnimation}\nState:\t {State.GetType().Name}</color>", style);
-        }
     }
 }

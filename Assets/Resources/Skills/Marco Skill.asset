@@ -12,7 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48a16cc4cbf8dd745a022c8f6458bf25, type: 3}
   m_Name: Marco Skill
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  sprite: {fileID: 0}
   _cooldown: 0
+  _canUseGas: 1
   _breaksGrabState: 0
   CompatibleEquipmentTypes: 000000000100000002000000
+  Animations:
+  - {fileID: 7400000, guid: 8ab8f70536dfea94e978de07817452a7, type: 2}
+  - {fileID: 7400000, guid: cf134f22d2b753a4db1551fdc295cdae, type: 2}

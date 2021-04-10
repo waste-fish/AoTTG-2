@@ -12,8 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aac7be8c9f896454e910ea098f7842c7, type: 3}
   m_Name: Jean Skill
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  sprite: {fileID: 0}
   _cooldown: 0
+  _canUseGas: 1
   _breaksGrabState: 1
   CompatibleEquipmentTypes: 000000000100000002000000
+  Animations:
+  - {fileID: 7400000, guid: 4518f84bcec27e644ac7c40a35d4e33e, type: 2}
   timesAllowed: 1

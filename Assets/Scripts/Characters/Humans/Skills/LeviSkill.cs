@@ -22,9 +22,9 @@ namespace Assets.Scripts.Characters.Humans.Skills
             LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
             if (Physics.Raycast(ray, out hit, float.MaxValue, mask.value))
             {
-                if (Hero.HookRight != null)
+                if (Hero.RightHookProjectile != null)
                 {
-                    Hero.HookRight.disable();
+                    Hero.RightHookProjectile.disable();
                     Hero.ReleaseIfIHookSb();
                 }
                 Hero.DashDirection = hit.point - Hero.transform.position;

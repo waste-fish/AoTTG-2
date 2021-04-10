@@ -22,14 +22,14 @@ namespace Assets.Scripts.Characters.Humans.Skills
             LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
             if (Physics.Raycast(ray, out hit, float.MaxValue, mask.value))
             {
-                if (Hero.HookRight != null)
+                if (Hero.RightHookProjectile != null)
                 {
-                    Hero.HookRight.disable();
+                    Hero.RightHookProjectile.disable();
                     Hero.ReleaseIfIHookSb();
                 }
-                if (Hero.HookLeft != null)
+                if (Hero.LeftHookProjectile != null)
                 {
-                    Hero.HookLeft.disable();
+                    Hero.LeftHookProjectile.disable();
                     Hero.ReleaseIfIHookSb();
                 }
                 Hero.DashDirection = hit.point - Hero.transform.position;
@@ -85,14 +85,14 @@ namespace Assets.Scripts.Characters.Humans.Skills
                 Vector3 vector20 = Hero.LaunchPointLeft - Hero.transform.position;
                 vector20.Normalize();
                 Hero.Rigidbody.AddForce(vector20 * 13f, ForceMode.Impulse);
-                if (Hero.HookRight != null)
+                if (Hero.RightHookProjectile != null)
                 {
-                    Hero.HookRight.disable();
+                    Hero.RightHookProjectile.disable();
                     Hero.ReleaseIfIHookSb();
                 }
-                if (Hero.HookLeft != null)
+                if (Hero.LeftHookProjectile != null)
                 {
-                    Hero.HookLeft.disable();
+                    Hero.LeftHookProjectile.disable();
                     Hero.ReleaseIfIHookSb();
                 }
             }

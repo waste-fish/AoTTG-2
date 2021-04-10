@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Characters.Humans.Equipment;
+﻿using Assets.Scripts.Characters.Humans.Constants;
+using Assets.Scripts.Characters.Humans.Equipment;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,18 @@ namespace Assets.Scripts.Characters.Humans.Skills
         public float MaxCooldown => _cooldown;
         protected float CurrentCooldown { get; private set; }
 
+        [SerializeField] protected bool _canUseGas = true;
+        public bool CanUseGas => _canUseGas;
+
         [SerializeField] protected bool _breaksGrabState;
         public bool BreaksGrabState => _breaksGrabState;
 
         public List<EquipmentType> CompatibleEquipmentTypes = new List<EquipmentType>();
+
+        [JsonIgnore] [SerializeField] public AnimationClip[] Animations = new AnimationClip[0];
+        protected int CurrentAnimation = 0;
+
+        public string CurrentAnimationName => HeroAnim.SKILL_PREFIX + CurrentAnimation;
 
         public void Initialize(Hero hero)
         {

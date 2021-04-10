@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d2f9d9403daf7447894106b87e920f5, type: 3}
   m_Name: Petra Skill
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  sprite: {fileID: 0}
   _cooldown: 3.5
+  _canUseGas: 0
   _breaksGrabState: 0
   CompatibleEquipmentTypes: 00000000
+  Animations:
+  - {fileID: 7400000, guid: 36baa42f3bfbbfe429117f1ceba7244a, type: 2}

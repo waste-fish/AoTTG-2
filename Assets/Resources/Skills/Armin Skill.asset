@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 550f5a64f0d9a264d9de2f99b64966a3, type: 3}
   m_Name: Armin Skill
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  sprite: {fileID: 0}
   _cooldown: 0
+  _canUseGas: 1
   _breaksGrabState: 0
   CompatibleEquipmentTypes: 
+  Animations:
+  - {fileID: 7400000, guid: 998694dca78398546bd2f9f82dec198d, type: 2}

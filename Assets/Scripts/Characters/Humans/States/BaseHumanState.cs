@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.States
@@ -17,6 +18,9 @@ namespace Assets.Scripts.Characters.Humans.States
         public virtual void OnExit() { }
         public virtual void OnUpdate() { }
         public virtual void OnFixedUpdate() { }
+
+        public virtual Vector3 FixedUpdateMovement() { return Vector3.zero; }
+        public virtual void FixedUpdateTransitioning() { }
 
         public virtual void OnAttack() { }
         public virtual void OnAttackRelease() { }

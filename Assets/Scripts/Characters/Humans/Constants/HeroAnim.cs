@@ -1,3 +1,5 @@
+using System;
+
 namespace Assets.Scripts.Characters.Humans.Constants
 {
     public static class HeroAnim
@@ -8,16 +10,19 @@ namespace Assets.Scripts.Characters.Humans.Constants
         public const string ATTACK1_HOOK_R1 = "attack1_hook_r1";
         public const string ATTACK1_HOOK_R2 = "attack1_hook_r2";
         public const string ATTACK2 = "attack2";
-        public const string SPECIAL_MIKASA_0 = "attack3_1";
-        public const string SPECIAL_MIKASA_1 = "attack3_2";
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_MIKASA_0 = "attack3_1";
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_MIKASA_1 = "attack3_2";
         public const string ATTACK4 = "attack4";
-        public const string SPECIAL_LEVI = "attack5";
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_LEVI = "attack5";
 
-        public const string SPECIAL_ARMIN = "special_armin";
-        public const string SPECIAL_MARCO_0 = "special_marco_0";
-        public const string SPECIAL_MARCO_1 = "special_marco_1";
-        public const string SPECIAL_PETRA = "special_petra";
-        public const string SPECIAL_SASHA = "special_sasha";
+        public const string SKILL_PREFIX = "skill_";
+
+
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_ARMIN = "special_armin";
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_MARCO_0 = "special_marco_0";
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_MARCO_1 = "special_marco_1";
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_PETRA = "special_petra";
+        [Obsolete("Moving to Skill asset")] public const string SPECIAL_SASHA = "special_sasha";
 
 
         public const string SALUTE = "salute";

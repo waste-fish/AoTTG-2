@@ -1,4 +1,5 @@
 using Assets.Scripts.Characters.Humans.Constants;
+using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.States
@@ -12,18 +13,17 @@ namespace Assets.Scripts.Characters.Humans.States
                     Hero.SetState<HumanIdleState>(true);
         }
 
-        public override void OnFixedUpdate()
+        public override Vector3 FixedUpdateMovement() // 81136
         {
-            if (Hero.IsGrounded)
+            if (Hero.CurrentSpeed < Hero.Speed * 1.2f)
             {
-                Hero.Zero = (Hero.Rigidbody.velocity * 0.99f);
-                if (Hero.CurrentSpeed < (Hero.Speed * 1.2f))
-                {
-                    Hero.SetState<HumanIdleState>();
-                    Hero.SparksEM.enabled = false;
-                }
+                Hero.SetState<HumanIdleState>();
+                Hero.SparksEM.enabled = false;
             }
+
+            return Hero.Rigidbody.velocity * 0.99f;
         }
+
 
         public override void OnJump()
         {

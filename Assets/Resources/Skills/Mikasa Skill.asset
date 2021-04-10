@@ -14,5 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 0}
   _cooldown: 0
+  _canUseGas: 1
   _breaksGrabState: 0
   CompatibleEquipmentTypes: 00000000
+  Animations:
+  - {fileID: 7400000, guid: 1c231a13758a21e42a232b2a1215883e, type: 2}
+  - {fileID: 7400000, guid: fb7778e947807a34fa5297ac8e923f7b, type: 2}

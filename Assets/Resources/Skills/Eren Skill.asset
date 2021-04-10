@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d49e3ee59743e343ad1a9c937a8f64a, type: 3}
   m_Name: Eren Skill
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 0}
+  sprite: {fileID: 0}
   _cooldown: 0
+  _canUseGas: 1
   _breaksGrabState: 1
   CompatibleEquipmentTypes: 000000000100000002000000
+  Animations: []

@@ -22,16 +22,16 @@ namespace Assets.Scripts.Characters.Humans.States
             }
         }
 
-        public override void OnFixedUpdate()
+        public override Vector3 FixedUpdateMovement() // 75006
         {
-            if ((Hero.Animation[HeroAnim.DODGE].normalizedTime >= 0.2f) && (Hero.Animation[HeroAnim.DODGE].normalizedTime < 0.8f))
-            {
-                zero = ((-Hero.transform.forward * 2.4f) * Hero.Speed);
-            }
-            if (Hero.Animation[HeroAnim.DODGE].normalizedTime > 0.8f)
-            {
-                zero = (Hero.Rigidbody.velocity * 0.9f);
-            }
+            if (Hero.Animation[HeroAnim.DODGE].normalizedTime >= 0.2f
+                && Hero.Animation[HeroAnim.DODGE].normalizedTime < 0.8f)
+                return -Hero.transform.forward * 2.4f * Hero.Speed;
+
+            if (Hero.Animation[HeroAnim.DODGE].normalizedTime >= 0.8f)
+                return Hero.Rigidbody.velocity * 0.9f;
+
+            return Vector3.zero;
         }
     }
 }

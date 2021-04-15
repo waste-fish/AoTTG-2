@@ -45,6 +45,7 @@ namespace Assets.Scripts.Characters.Titan
         private float waitTime = 2f;
         private FengGameManagerMKII manager;
         private GamemodeBase Gamemode;
+        private string CurrentScene;
 
         public override void Initialize(TitanConfiguration configuration)
         {
@@ -77,6 +78,9 @@ namespace Assets.Scripts.Characters.Titan
             base.GetComponent<Rigidbody>().freezeRotation = true;
             base.GetComponent<Rigidbody>().useGravity = false;
             base.GetComponent<Rigidbody>().isKinematic = true;
+            CurrentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+
+
         }
 
         public void beTauntedBy(GameObject target, float tauntTime)
@@ -512,8 +516,17 @@ namespace Assets.Scripts.Characters.Titan
             //    }
             //}
             this.state = "wait";
-            Transform transform = base.transform;
-            transform.position += (Vector3) (-Vector3.up * 10000f);
+            
+            if(CurrentScene == "Colossal Titan")
+            {
+                Transform transform = base.transform;
+                transform.position += (Vector3) (-Vector3.up * 10000f);
+            }else if(CurrentScene == "Trost - anime revamp")
+            {
+                base.transform.localScale = new Vector3(0.4105237f, 0.4105237f, 0.4105237f);
+                Transform transform = base.transform;
+            }
+            
             //if (FengGameManagerMKII.LAN)
             //{
             //    base.GetComponent<PhotonView>().enabled = false;
@@ -617,7 +630,11 @@ namespace Assets.Scripts.Characters.Titan
                     this.waitTime -= Time.deltaTime;
                     if (this.waitTime <= 0f)
                     {
-                        base.transform.position = new Vector3(30f, 0f, 784f);
+                        if(CurrentScene == "Colossal Titan")
+                        {
+                            base.transform.position = new Vector3(30f, 0f, 784f);
+                        }
+                        
                         UnityEngine.Object.Instantiate(Resources.Load("FX/ThunderCT"), base.transform.position + ((Vector3) (Vector3.up * 350f)), Quaternion.Euler(270f, 0f, 0f));
                         Camera.main.GetComponent<IN_GAME_MAIN_CAMERA>().FlashBlind();
                         if (base.photonView.isMine)

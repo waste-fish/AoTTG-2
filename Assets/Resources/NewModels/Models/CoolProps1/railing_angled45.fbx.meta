@@ -1,23 +1,9 @@
 fileFormatVersion: 2
-guid: dec51012ac9d78d479e5e19b7096e192
+guid: 70c66322ac4297e4b8290fc039e0e995
 ModelImporter:
   serializedVersion: 20200
-  internalIDToNameTable:
-  - first:
-      74: 112250307976659143
-    second: Field|FieldAction
-  - first:
-      74: -1338848804058566152
-    second: Field|FieldAction.001
-  - first:
-      74: -4237622332801128312
-    second: Field|KeyAction
-  externalObjects:
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Costume
-    second: {fileID: 2100000, guid: f8100ac9dabb7a14c96fa95715dd6fcd, type: 2}
+  internalIDToNameTable: []
+  externalObjects: {}
   materials:
     materialImportMode: 2
     materialName: 0

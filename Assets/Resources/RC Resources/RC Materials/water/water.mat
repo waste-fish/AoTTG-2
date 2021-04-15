@@ -62,7 +62,7 @@ Material:
     - _SmallWavesdetail:
         m_Texture: {fileID: 2800000, guid: edcc3a8c156f0a1458b4590c1960448d, type: 3}
         m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Offset: {x: 1, y: 1}
     - _Texture0:
         m_Texture: {fileID: 2800000, guid: 8f85cbbd1cdbbdc46aadefa0725f5a1b, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -76,7 +76,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _foamtexture:
-        m_Texture: {fileID: 2800000, guid: 59450d398c1a9fc4e972abad5fd2f7b3, type: 3}
+        m_Texture: {fileID: 2800000, guid: dc72f17bcf624264fb25f3a9431f25d5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _smallwaves:
@@ -92,11 +92,15 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _Dirt: 0
     - _DstBlend: 0
     - _Float0: 30
+    - _Foamcommon: 1
+    - _Foamsoftness: 0.001
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _Life: 0.738
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -111,32 +115,36 @@ Material:
     - _SubsurfaceDistortion: 0.084
     - _TessValue: 32
     - _UVSec: 0
+    - _WaveFoam: 1
     - _WaveTesselationintensity: 0.014
     - _WindDirection1: -27
     - _WindSpeed1: 1
     - _ZWrite: 1
     - __dirty: 0
-    - _bigwavesdirection: -30
-    - _bigwavesflow: 0.17
-    - _bigwavesintensity: 1.44
-    - _bigwavesspeed: 8
+    - _bigwavesdirection: 3.23
+    - _bigwavesflow: 0.118
+    - _bigwavesintensity: 1.04
+    - _bigwavesspeed: 5
     - _bigwavetilling: 0.2
     - _distortionintensity: 2
-    - _edgeblending: 30
+    - _edgeblending: 67.9
     - _foamdirection: -30
-    - _foamintensity: 23.29
+    - _foamintensity: 13.4
     - _foamspeed: 0.5
-    - _foamtilling: 10
-    - _smallwavesDirection: -30
+    - _foamtilling: 15
+    - _smallwavesDirection: 3.23
     - _smallwavesSpeed: 5
-    - _smallwavesflow: 0.17
+    - _smallwavesflow: 0.805
     - _smallwavesflow1: 0.267
-    - _smallwavesintensity: 0.53
+    - _smallwavesintensity: 0.55
     - _waterabsorbtion: 29.3
+    - _wavefoam: 0
     m_Colors:
     - _AbsorbedColor: {r: 0.972549, g: 0.46274513, b: 0.5637599, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Color0: {r: 0, g: 0.5299132, b: 1, a: 0}
+    - _Color0: {r: 0.9481131, g: 0.9829879, b: 1, a: 0}
+    - _Dirtcolor: {r: 0.94811314, g: 0.98298794, b: 1, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _absorbedcolor: {r: 1, g: 0.9856805, b: 0.9764151, a: 0}
+    - _Lifecolor: {r: 1, g: 0.9858491, b: 0.9945573, a: 0}
+    - _absorbedcolor: {r: 1, g: 0.9882353, b: 0.98039216, a: 1}
   m_BuildTextureStacks: []

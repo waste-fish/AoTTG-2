@@ -31,8 +31,16 @@ namespace Assets.Scripts.Gamemode
             Object.Destroy(GameObject.Find("playerRespawnTrost"));
             Object.Destroy(GameObject.Find("rock"));
             if (!PhotonNetwork.isMasterClient) return;
+            if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Colossal Titan")
+            {
+                Debug.Log("Loading colossal titan config for Colossal titan map");
+                SpawnService.Spawn<ColossalTitan>(-Vector3.up * 10000f, Quaternion.Euler(0f, 180f, 0f), null);
+            }else if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Trost - anime revamp")
+            {
+                Debug.Log("Loading colossal titan config for trost anime revamp map");
+                SpawnService.Spawn<ColossalTitan>(new Vector3(-3, 0, 419.5f), Quaternion.Euler(0f, 180f, 0f), null);
+            }
             
-            SpawnService.Spawn<ColossalTitan>(-Vector3.up * 10000f, Quaternion.Euler(0f, 180f, 0f), null);
             Routes = GameObject.FindGameObjectsWithTag("route");
             GameObject[] objArray = GameObject.FindGameObjectsWithTag("titanRespawn");
             var spawns = new List<GameObject>();

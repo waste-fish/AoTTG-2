@@ -109,12 +109,13 @@ Material:
     - _Snowintensity: 0
     - _Snowmaxinclinaison: 0
     - _Snowstickiness: 0.749
-    - _Snowtension: 0
+    - _Snowtension: 1
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
+    - _snowopacity: 1
     m_Colors:
     - _AlbedoColor: {r: 1, g: 1, b: 1, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

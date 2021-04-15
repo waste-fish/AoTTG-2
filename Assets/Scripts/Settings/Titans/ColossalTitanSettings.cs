@@ -10,7 +10,9 @@ namespace Assets.Scripts.Settings.Titans
 
         public ColossalTitanSettings(Difficulty difficulty) : base(difficulty)
         {
+            
             HealthMode = TitanHealthMode.Scaled;
+
             switch (difficulty)
             {
                 case Difficulty.Easy:

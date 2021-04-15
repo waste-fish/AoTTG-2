@@ -378,6 +378,29 @@ namespace Assets.Scripts.Room
                 SceneName = "Trost - anime revamp",
                 Gamemodes = new List<GamemodeSettings>
                 {
+                    new RushSettings
+                    {
+                        Name = "Colossal Titan",
+                        Description = "Defeat the Colossal! Defeat the Colossal Titan.\nPrevent the abnormal titan from running to the north gate.",
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = true,
+                        },
+                    },
+                    new TrostSettings
+                    {
+                        Name = "Trost",
+                        Description = "Escort Titan Eren",
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = true,
+                        },
+                    },
+
 
                     new KillTitansSettings
                     {

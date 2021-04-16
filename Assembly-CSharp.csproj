@@ -68,6 +68,12 @@
     <Compile Include="Assets\PhotonChatApi\ChatChannel.cs" />
     <Compile Include="Assets\PhotonChatApi\ChannelCreationOptions.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatPeer.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\HorizontalLineDecoratorDrawer.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Title.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Atributes\TitleAttribute.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\skyModule.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\CloudStack.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Atributes\HorizontalLineAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Resources\shaders\Unlit - Depth Cutout.shader" />
@@ -93,6 +99,7 @@
      <None Include="Assets\Shaders\Particle Alpha Blend Scale.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\contributors.txt" />
+     <None Include="Assets\Resources\CloudTest\VenetianSkySystem\Shaders\CLouds\Clouds.shader" />
      <None Include="Assets\Shaders\Projector Multiply.shader" />
      <None Include="Assets\Resources\shaders\Unlit - Dynamic Font.shader" />
      <None Include="Assets\Resources\RC Resources\RC Materials\water\Water.shader" />

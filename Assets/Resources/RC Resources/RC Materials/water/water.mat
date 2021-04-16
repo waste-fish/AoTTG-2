@@ -126,7 +126,7 @@ Material:
     - _bigwavesintensity: 1.04
     - _bigwavesspeed: 5
     - _bigwavetilling: 0.2
-    - _distortionintensity: 2
+    - _distortionintensity: 5
     - _edgeblending: 67.9
     - _foamdirection: -30
     - _foamintensity: 13.4

@@ -10659,17 +10659,9 @@ MonoBehaviour:
   assetGuid: 
   m_Mesh: {fileID: 0}
   m_IsSelectable: 1
-  m_SelectedFaces: 94000000
-  m_SelectedEdges:
-  - a: 152
-    b: 153
-  - a: 153
-    b: 154
-  - a: 154
-    b: 155
-  - a: 155
-    b: 152
-  m_SelectedVertices: 98000000990000009a0000009b000000
+  m_SelectedFaces: 
+  m_SelectedEdges: []
+  m_SelectedVertices: 
 --- !u!1 &1066562087689232163
 GameObject:
   m_ObjectHideFlags: 0
@@ -16454,9 +16446,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1889912474852456682}
-  - component: {fileID: 8096227823491991377}
-  - component: {fileID: 508024614865523892}
-  - component: {fileID: 4531680405135781523}
+  - component: {fileID: 6007071514904664862}
   m_Layer: 9
   m_Name: Gate
   m_TagString: Untagged
@@ -16481,89 +16471,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &8096227823491991377
-MeshRenderer:
+--- !u!205 &6007071514904664862
+LODGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1256928490135528016}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.1013937, y: 11.739679, z: -0.09502983}
+  m_Size: 23.491951
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.29229558
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 7179589983759483633}
+  - screenRelativeHeight: 0.013674934
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 5767597633404706519}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 2
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &508024614865523892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256928490135528016}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8233d90336aea43098adf6dbabd606a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MeshFormatVersion: 1
-  m_Faces: []
-  m_SharedVertices: []
-  m_SharedTextures: []
-  m_Positions: []
-  m_Textures0: []
-  m_Textures2: []
-  m_Textures3: []
-  m_Tangents: []
-  m_Colors: []
-  m_UnwrapParameters:
-    m_HardAngle: 88
-    m_PackMargin: 20
-    m_AngleError: 8
-    m_AreaError: 15
-  m_PreserveMeshAssetOnDestroy: 0
-  assetGuid: 
-  m_Mesh: {fileID: 0}
-  m_IsSelectable: 1
-  m_SelectedFaces: 
-  m_SelectedEdges: []
-  m_SelectedVertices: 
---- !u!33 &4531680405135781523
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1256928490135528016}
-  m_Mesh: {fileID: 0}
 --- !u!1 &7182923088983164067
 GameObject:
   m_ObjectHideFlags: 0
@@ -17079,7 +17009,7 @@ LODGroup:
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 1889383115916669979}
-  - screenRelativeHeight: 0
+  - screenRelativeHeight: 0.007674549
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 653530121683341006}

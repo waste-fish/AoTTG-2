@@ -376,6 +376,7 @@
     <Compile Include="Assets\Scripts\Room\Chat\InRoomChat.cs" />
     <Compile Include="Assets\Scripts\UI\CommandLine\Command.cs" />
     <Compile Include="Assets\Scripts\Characters\Humans\Customization\CharacterList.cs" />
+    <Compile Include="Assets\Scripts\TerrainOptimization\TerrainLOD.cs" />
     <Compile Include="Assets\Scripts\Characters\Humans\Customization\CharacterBuild.cs" />
     <Compile Include="Assets\Scripts\UI\Camera\IN_GAME_MAIN_CAMERA.cs" />
     <Compile Include="Assets\Scripts\Items\FlareMovement.cs" />

@@ -60,23 +60,24 @@
     <Compile Include="Assets\PhotonChatApi\ChatDisconnectCause.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatUserStatus.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatState.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\CloudStack.cs" />
     <Compile Include="Assets\PhotonChatApi\ChannelWellKnownProperties.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatClient.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Atributes\TitleAttribute.cs" />
     <Compile Include="Assets\PhotonChatApi\IChatClientListener.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\HorizontalLineDecoratorDrawer.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatEventCode.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Atributes\HorizontalLineAttribute.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatOperationCode.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatChannel.cs" />
     <Compile Include="Assets\PhotonChatApi\ChannelCreationOptions.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatPeer.cs" />
-    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\HorizontalLineDecoratorDrawer.cs" />
-    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Title.cs" />
-    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Atributes\TitleAttribute.cs" />
     <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\skyModule.cs" />
-    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\CloudStack.cs" />
-    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Atributes\HorizontalLineAttribute.cs" />
+    <Compile Include="Assets\PhotonChatApi\ChatPeer.cs" />
+    <Compile Include="Assets\Resources\CloudTest\VenetianSkySystem\Scripts\Decoration\Title.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Resources\shaders\Unlit - Depth Cutout.shader" />
+     <None Include="Assets\Samples\Terrain Tools\0.1.0-preview\Terrain Assets\ThirdPartyNotices.txt" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\Resources\shaders\Unlit - Depth.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
@@ -145,12 +146,14 @@
      <None Include="Assets\Shaders\Double Sided Transparent Diffuse Bump Cutout.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
      <None Include="Assets\Resources\shaders\dynamicfonts\Unlit - Transparent Colored (DynamicFont) (HardClip).shader" />
+     <None Include="Assets\Resources\NewModels\Materials\Rendering\Shaders\DefaultTransparent.shader" />
      <None Include="Assets\Resources\shaders\Unlit - Transparent Colored (Packed) (AlphaClip) .shader" />
      <None Include="Assets\Ui\Fonts\SIL Open Font License.txt" />
      <None Include="Assets\Resources\shaders\Unlit - Transparent Colored (Packed).shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Universal\2DUnlit.shader" />
      <None Include="Assets\Resources\RC Resources\RC Materials\shu ye+\NewLeaf.shader" />
+     <None Include="Assets\Resources\CloudTest\VenetianSkySystem\Materials\Clouds\NOISElightingTest.shader" />
     <Reference Include="UnityEngine">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2020.2.5f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
     </Reference>

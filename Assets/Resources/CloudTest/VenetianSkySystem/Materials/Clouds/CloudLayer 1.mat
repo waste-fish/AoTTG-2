@@ -19,6 +19,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BigDetail:
+        m_Texture: {fileID: 2800000, guid: 1e6d1fea58bcca94391e8054136d927d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -49,6 +53,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _Detailshape:
         m_Texture: {fileID: 2800000, guid: 171c167d8df285a49b9b997b52cb702f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Edge:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -87,8 +95,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SmallDetail:
+        m_Texture: {fileID: 2800000, guid: 171c167d8df285a49b9b997b52cb702f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture0:
-        m_Texture: {fileID: 2800000, guid: 2cd8d7c95a2836649b383ebdd291d965, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1e6d1fea58bcca94391e8054136d927d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture1:
@@ -121,11 +133,22 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _AlphaCutoff: 0.5
+    - _BigDetailSpeed: 0
+    - _Bigdetailintensity: 0
     - _BumpScale: 1
-    - _CloudCutoff: 0.103
-    - _CloudSoftness: 0.385
+    - _CloudCutoff: 0.391
+    - _CloudDirectionalSpeed: 0
+    - _CloudLightingseparationintensity: 54.12
+    - _CloudSoftness: 1.24
+    - _CloudSpeed: 100
+    - _CloudVariationSpeed: 0
+    - _Clouddensity: 1
+    - _Clouddir: 0
+    - _Contrast: -0.51
     - _Coverage: 0.932
     - _Cutoff: 0.5
+    - _Density: 0.757
+    - _DetailIntensity: 0.52
     - _DetailNormalMapScale: 1
     - _DetailScale: 2
     - _Detailintensity: 8
@@ -136,22 +159,45 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _HeightgradientHardness: 0.058
+    - _HeightgradientOffset: 1.181
     - _Lerppower: 0.555
     - _Lerppower1: 0.564
     - _Lerppower2: 0.443
-    - _Lightcontribution: 1.7
+    - _LightContribHardness: 1
+    - _LightContribOffset: 0
+    - _Lightcontribution: 0.5
+    - _Lightingoffsetdistance: 0.045
+    - _MainShapeTilling: 1.1
+    - _MainShapetilling: 0.1
+    - _Maindeformationspeed: 0
     - _MasterScale: 0.13
     - _Metallic: 0
     - _MidYValue: 82.4
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _Offsetdistance: 0.038
+    - _Offsetdistance1: 0.077
     - _Parallax: 0.02
+    - _SSSContrast: 0.006
+    - _SSSStrength: 2
+    - _SSScontrast: 1
+    - _SSSdensity: 0.278
+    - _SSSpower: 27.8
     - _Scatteringmultiplier: 1
-    - _Scatteringpower: 5
+    - _Scatteringpower: 26
+    - _ScrollDirection: 0
+    - _ScrollSpeed: 0
+    - _ShadowTransparancy: 0
+    - _Smalldetailintensity: 0
+    - _Smalldetailtilling: 0.5
+    - _Smooth: 85.24
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _Speed: 5
     - _SrcBlend: 1
+    - _SunIntensity: 0.621
+    - _TaperPower: 1
     - _Taperpower: 0.035
     - _Tilling: 1500
     - _TransAmbient: 0.2
@@ -163,6 +209,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     - __dirty: 0
+    - _bigdetailtilling: -0.76
     - _cloudHeight: 1000
     - _cloudHeight1: 400
     - _cloudmainscale: 0.01
@@ -171,11 +218,13 @@ Material:
     - _detail1scale: 0.3
     - _detail2importance: 0
     - _direction: 84
-    - _fadelenght: 71.78
-    - _fadeoffset: 0
+    - _fadelenght: 9.16
+    - _fadeoffset: 0.5
     - _midYValue: 1000
+    - _midYValue1: 1000
+    - _smallDetailSpeed: 10
     - _softness: 0.41
-    - _taperPower: 0.91
+    - _taperPower: 0.924
     - _taperPower1: 1.051
     m_Colors:
     - _Cloudspeeddirection: {r: 1, g: 1, b: 0, a: 0}

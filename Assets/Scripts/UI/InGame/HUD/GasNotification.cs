@@ -11,7 +11,8 @@ namespace Assets.Scripts.UI.InGame.HUD
         {
             foreach(GameObject gas in gasNotifications)
             {
-                gas.SetActive(blades.curGas <= 20);
+                // TODO
+                //gas.SetActive(blades.curGas <= 20);
             }
         }
     }

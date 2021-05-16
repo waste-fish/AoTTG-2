@@ -95,9 +95,9 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
                     obj6.GetComponent<Rigidbody>().AddTorque(vector4, ForceMode.Acceleration);
                 }
             }
-            if ((Hero.Animation[Hero.ReloadAnimation].normalizedTime > 0.62f) && !Hero.BladesThrown)
+            if ((Hero.Animation[Hero.ReloadAnimation].normalizedTime > 0.62f) && !Hero.HasThrownBlades)
             {
-                Hero.BladesThrown = true;
+                Hero.HasThrownBlades = true;
                 if (!((Hero.LeftBulletRemaining <= 0) || Hero.LeftGunHasBullet))
                 {
                     AmountLeft--;

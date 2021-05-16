@@ -85,7 +85,7 @@ namespace Assets.Scripts.Characters.Humans
         public string AttackAnimation { get; set; }
         public int AttackLoop { get; set; }
         private GameObject BadGuy { get; set; }
-        public bool BladesThrown { get; set; }
+        public bool HasThrownBlades { get; set; }
         public float BombCD { get; set; }
         public bool BombImmune { get; set; }
         public float BombRadius { get; set; }
@@ -121,7 +121,7 @@ namespace Assets.Scripts.Characters.Humans
         public float FacingDirection { get; set; }
         private Transform ForearmL { get; set; }
         private Transform ForearmR { get; set; }
-        private float Gravity { get; set; } = 20f * gravityModifier;
+        private float Gravity => 20f * gravityModifier;
         private float gravityModifier = GameSettings.Global.Gravity ?? 1f;
         public bool IsGrounded { get; set; }
         public GameObject GunDummy { get; private set; }
@@ -1658,12 +1658,6 @@ namespace Assets.Scripts.Characters.Humans
 
             ReleaseIfIHookSb();
             Service.Settings.OnGlobalSettingsChanged -= OnGlobalSettingsChanged;
-
-            if (info.sender.ID == photonView.ownerId)
-            {
-                var config = JsonConvert.DeserializeObject<CustomizationNetworkObject>(characterPreset, new ColorJsonConverter());
-                Initialize(config.ToPreset(Prefabs));
-            }
         }
         #endregion
 
@@ -2004,7 +1998,7 @@ namespace Assets.Scripts.Characters.Humans
             if ((!UseGun || IsGrounded) || GameSettings.PvP.AhssAirReload.Value)
             {
                 SetState<HumanChangeBladeState>();
-                BladesThrown = false;
+                HasThrownBlades = false;
                 Equipment.Weapon.PlayReloadAnimation();
             }
         }

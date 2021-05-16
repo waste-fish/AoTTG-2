@@ -5,6 +5,9 @@ namespace Assets.Scripts.Characters.Humans.States
 {
     public class HumanGrabState : BaseHumanState
     {
+        public override bool CancelFixedUpdate => true;
+        public override bool HasMovementControl => false;
+
         public override void OnFixedUpdate()
         {
             Hero.Rigidbody.AddForce(-Hero.Rigidbody.velocity, ForceMode.VelocityChange);

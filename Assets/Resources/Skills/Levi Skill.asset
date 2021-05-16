@@ -15,6 +15,7 @@ MonoBehaviour:
   sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   _cooldown: 3.5
   _canUseGas: 0
+  _canRotate: 1
   _breaksGrabState: 0
   CompatibleEquipmentTypes: 00000000
   Animations:

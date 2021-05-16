@@ -18,8 +18,13 @@ namespace Assets.Scripts.Characters.Humans.Skills
         public float MaxCooldown => _cooldown;
         protected float CurrentCooldown { get; private set; }
 
+        [Tooltip("While using this skill, hero can use gas?")]
         [SerializeField] protected bool _canUseGas = true;
         public bool CanUseGas => _canUseGas;
+
+        [Tooltip("While using this skill, hero can rotate towards target direction?")]
+        [SerializeField] protected bool _canRotate = true;
+        public bool CanRotate => _canRotate;
 
         [SerializeField] protected bool _breaksGrabState;
         public bool BreaksGrabState => _breaksGrabState;

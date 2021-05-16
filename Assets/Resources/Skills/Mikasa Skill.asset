@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sprite: {fileID: 0}
   _cooldown: 0
-  _canUseGas: 1
+  _canUseGas: 0
+  _canRotate: 1
   _breaksGrabState: 0
   CompatibleEquipmentTypes: 00000000
   Animations:

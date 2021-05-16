@@ -8,6 +8,9 @@ namespace Assets.Scripts.Characters.Humans.States
         protected Hero Hero { get; private set; }
         protected BaseHumanState _previous;
 
+        public virtual bool CancelFixedUpdate { get; } = false;
+        public virtual bool HasMovementControl { get; } = true;
+
         public static BaseHumanState Create<T>(Hero hero, BaseHumanState previous = null) where T : BaseHumanState, new()
         {
             Debug.Log(previous?.GetType().Name + " -> " + typeof(T).Name);

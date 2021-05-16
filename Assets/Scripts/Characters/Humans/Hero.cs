@@ -96,7 +96,6 @@ namespace Assets.Scripts.Characters.Humans
         public int BulletMax { get; private set; } = 7;
         public Bullet LeftHookProjectile { get; private set; }
         public Bullet RightHookProjectile { get; private set; }
-        public Dictionary<string, Image> cachedSprites { get; set; }
         public float CameraMultiplier { get; set; }
         public TriggerColliderWeapon checkBoxLeft;
         public TriggerColliderWeapon checkBoxRight;
@@ -130,12 +129,12 @@ namespace Assets.Scripts.Characters.Humans
         private Transform HandR { get; set; }
         private bool HasDied { get; set; }
         public bool HasSpawn { get; set; }
-        private bool HookedBySomeone { get; set; } = true;
+        private bool IsHookedBySomeone { get; set; } = true;
         public GameObject hookRefL1;
         public GameObject hookRefL2;
         public GameObject hookRefR1;
         public GameObject hookRefR2;
-        private bool HookSomeone { get; set; }
+        private bool IsHookingSomeone { get; set; }
         private GameObject HookTarget { get; set; }
         private float Invincible { get; set; } = 3f; // Time when you cannot be harmed after spawning
         public bool IsCannon { get; set; }
@@ -596,9 +595,75 @@ namespace Assets.Scripts.Characters.Humans
 
         public void FixedUpdate()
         {
+            if (!photonView.isMine)
+                return;
+
+            #region Return if TitanForm, Cannon, or Pause 12201
+            if (TitanForm || IsCannon || IN_GAME_MAIN_CAMERA.isPausing)
+                return;
+            #endregion
+
+            #region CurrentSpeed 70954
+            CurrentSpeed = Rigidbody.velocity.magnitude;
+            #endregion
+            #region Rotate to target if not Levi, Petra, or Mikasa Special 28180
+            if (Animation.IsPlaying(Skill.CurrentAnimationName) && Skill.CanRotate)
+                Rigidbody.rotation = Quaternion.Lerp(transform.rotation, TargetRotation, Time.fixedDeltaTime * 6f);
+            #endregion
+
+            #region GrabState 47367
+            if (State.CancelFixedUpdate)
+            {
+                Rigidbody.AddForce(-Rigidbody.velocity, ForceMode.VelocityChange);
+                return;
+            }
+            #endregion
+
+            #region UpdateGrounded 25616
+            UpdateGrounded();
+            #endregion
+
+            #region Skill FixedUpdate 93323
+            if (Skill != null && Skill.IsActive)
+                Skill.OnFixedUpdate();
+            #endregion
+
+            #region Hooking/Hooked 74335
+            if (IsHookingSomeone)
+            {
+                if (HookTarget)
+                {
+                    var direction = HookTarget.transform.position - transform.position;
+                    if (direction.magnitude > 2f)
+                    {
+                        Debug.Log("<color=#00FFFF>AddForce: HookSomeone</color>");
+                        Rigidbody.AddForce((direction.normalized * Mathf.Pow(direction.magnitude, 0.15f) * 30f) - (Rigidbody.velocity * 0.95f), ForceMode.VelocityChange);
+                    }
+                }
+                else
+                    IsHookingSomeone = false;
+            }
+            else if (IsHookedBySomeone)
+            {
+                if (BadGuy)
+                {
+                    var direction = BadGuy.transform.position - transform.position;
+                    if (direction.magnitude > 5f)
+                    {
+                        Debug.Log("<color=#00FFFF>AddForce: HookedBySomeone</color>");
+                        Rigidbody.AddForce(direction.normalized * Mathf.Pow(direction.magnitude, 0.15f) * 0.2f, ForceMode.Impulse);
+                    }
+                    else
+                        IsHookedBySomeone = false;
+                }
+            }
+            #endregion
+
+            #region USED flag2,3,4
             var usingEitherHook = false;
             var usingLeftHook = false;
             var usingRightHook = false;
+            #endregion
             #region IsLeftHookEmbedded 78864
             if (IsLeftHookEmbedded)
             {
@@ -690,177 +755,117 @@ namespace Assets.Scripts.Characters.Humans
             #endregion
 
             if (IsGrounded)
-            {
-                #region LandFrame to LandState or SlideState 31304
-                if (IsLandFrame && !(State is HumanAttackState || State is HumanFillGasState))
-                {
-                    var hVelocity = new Vector3(Rigidbody.velocity.x, 0f, Rigidbody.velocity.y);
-
-                    if (TargetMoveDirection.magnitude == 0
-                        && LeftHookProjectile == null
-                        && RightHookProjectile == null)
-                    {
-                        SetState<HumanLandState>();
-                        CrossFade(HeroAnim.DASH_LAND, 0.01f);
-                    }
-                    else if (hVelocity.magnitude > Speed * 1.5f)
-                    {
-                        SetState<HumanSlideState>();
-                        CrossFade(HeroAnim.DASH_LAND, 0.05f);
-                        FacingDirection = Mathf.Atan2(Rigidbody.velocity.x, Rigidbody.velocity.z) * Mathf.Rad2Deg;
-                        TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
-                        SparksEM.enabled = true;
-                    }
-                }
-                #endregion
-
-                #region Movement 40193
-                var zero = IsLandFrame ? Rigidbody.velocity : Vector3.zero;
-                zero = State.FixedUpdateMovement(); // 75006, 29099, 47951, 81136
-
-                var force = zero - Rigidbody.velocity;
-                force.y = 0f;
-
-                if (force.magnitude > MaxVelocityChange)
-                    force = force.normalized * MaxVelocityChange;
-
-                if (Animation.IsPlaying(HeroAnim.HORSE_GET_ON)
-                    && Animation[HeroAnim.HORSE_GET_ON].normalizedTime > 0.18f
-                    && Animation[HeroAnim.HORSE_GET_ON].normalizedTime < 1f)
-                {
-                    force = -Rigidbody.velocity;
-                    force.y = 6f;
-                    var distanceFromHorse = Vector3.Distance(Horse.transform.position,
-                        transform.position);
-                    var toHorseStrength = (0.6f * Gravity * distanceFromHorse) / 12f;
-                    var toHorseVector = Horse.transform.position - transform.position;
-                    force += toHorseVector.normalized * toHorseStrength;
-                }
-
-                if (!(State is HumanAttackState) || !UseGun)
-                {
-                    Debug.Log("<color=#00FFFF>AddForce: Idle Walk Force, Dodge</color>");
-                    Rigidbody.AddForce(force, ForceMode.VelocityChange);
-                    Rigidbody.rotation = Quaternion.Lerp(transform.transform.rotation,
-                        Quaternion.Euler(0f, FacingDirection, 0f), Time.deltaTime * 10f);
-                }
-                #endregion
-            }
+                GroundedFixedUpdated();
             else
             {
-                #region Disable SparksEM 59152
-                if (SparksEM.enabled)
-                    SparksEM.enabled = false;
-                #endregion
+                NotGroundedFixedUpdate();
 
+                if (!(State is HumanIdleState) && Animation[HeroAnim.DASH].normalizedTime > 0.99f)
+                    HandleFixedUpdateAnimationCrossfades();
 
-            }
+                State.FixedUpdateTransitioning(); // 95943, 
 
-            if (!(State is HumanIdleState) && Animation[HeroAnim.DASH].normalizedTime > 0.99f)
-                HandleFixedUpdateAnimationCrossfades();
+                if (Animation.IsPlaying(HeroAnim.HORSE_GET_OFF) && Animation[HeroAnim.HORSE_GET_OFF].normalizedTime >= 1f)
+                    CrossFade(HeroAnim.AIR_RISE, 0.2f);
 
-            State.FixedUpdateTransitioning(); // 95943, 
-
-            if (Animation.IsPlaying(HeroAnim.HORSE_GET_OFF) && Animation[HeroAnim.HORSE_GET_OFF].normalizedTime >= 1f)
-                CrossFade(HeroAnim.AIR_RISE, 0.2f);
-
-            if (Animation.IsPlaying(HeroAnim.TO_ROOF))
-            {
-                if (Animation[HeroAnim.TO_ROOF].normalizedTime < 0.22f)
+                if (Animation.IsPlaying(HeroAnim.TO_ROOF))
                 {
-                    Debug.Log("<color=#00AA33>Velocity = (0, 0, 0)</color>");
-                    Rigidbody.velocity = Vector3.zero;
-                    Debug.Log("<color=#00FFFF>AddForce: TO_ROOF < 0.22f</color>");
-                    Rigidbody.AddForce(new Vector3(0f, Gravity, 0f), ForceMode.Acceleration);
-                }
-                else
-                {
-                    if (!WallJump)
+                    if (Animation[HeroAnim.TO_ROOF].normalizedTime < 0.22f)
                     {
-                        WallJump = true;
-                        Debug.Log("<color=#00FFFF>AddForce: !WallJump</color>");
-                        Rigidbody.AddForce((Vector3.up * 8f), ForceMode.Impulse);
+                        Debug.Log("<color=#00AA33>Velocity = (0, 0, 0)</color>");
+                        Rigidbody.velocity = Vector3.zero;
+                        Debug.Log("<color=#00FFFF>AddForce: TO_ROOF < 0.22f</color>");
+                        Rigidbody.AddForce(new Vector3(0f, Gravity, 0f), ForceMode.Acceleration);
                     }
-
-                    Debug.Log("<color=#00FFFF>AddForce: TO_ROOF > 0.22f</color>");
-                    Rigidbody.AddForce((transform.forward * 0.05f), ForceMode.Impulse);
-                }
-
-                if (Animation[HeroAnim.TO_ROOF].normalizedTime >= 1f)
-                    PlayAnimation(HeroAnim.AIR_RISE);
-            }
-            else if (State is HumanIdleState && IsPressDirectionTowardsHero(TargetMoveDirection.x, TargetMoveDirection.y)
-              && !InputManager.HumanJump && !InputManager.HumanHookLeft
-              && !InputManager.HumanHookRight && !InputManager.HumanHookBoth
-              && IsFrontGrounded() && !Animation.IsPlaying(HeroAnim.WALL_RUN)
-              && !Animation.IsPlaying(HeroAnim.DODGE))
-            {
-                CrossFade(HeroAnim.WALL_RUN, 0.1f);
-                WallRunTime = 0f;
-            }
-            else if (Animation.IsPlaying(HeroAnim.WALL_RUN))
-            {
-                Debug.Log("<color=#00FFFF>AddForce: WALL_RUN</color>");
-                Rigidbody.AddForce((Vector3.up * Speed) - Rigidbody.velocity, ForceMode.VelocityChange);
-                WallRunTime += Time.fixedDeltaTime;
-                if (WallRunTime >= 1f || TargetMoveDirection.magnitude == 0)
-                {
-                    Debug.Log("<color=#00FFFF>AddForce: wallRunTime > 1f && not moving</color>");
-                    Rigidbody.AddForce((-transform.forward * Speed) * 0.75f, ForceMode.Impulse);
-                    Dodge(true);
-                }
-                else if (!IsUpFrontGrounded())
-                {
-                    WallJump = false;
-                    CrossFade(HeroAnim.TO_ROOF, 0.1f);
-                }
-                else if (!IsFrontGrounded())
-                    CrossFade(HeroAnim.AIR_FALL, 0.1f);
-            }
-            else if (!Animation.IsPlaying(Skill.CurrentAnimationName) || Skill.CanUseGas)
-            {
-                if (!Animation.IsPlaying(HeroAnim.DASH) && !Animation.IsPlaying(HeroAnim.JUMP))
-                {
-                    var x = TargetMoveDirection.x;
-                    var z = TargetMoveDirection.y;
-                    Vector3 vector11 = new Vector3(x, 0f, z);
-                    float num12 = GetGlobalFacingDirection(x, z);
-                    Vector3 vector12 = GetGlobaleFacingVector3(num12);
-                    float num13 = vector11.magnitude;
-                    if (num13 > 0.95)
-                        num13 = 1f;
-                    else if (num13 < 0.25f)
-                        num13 = 0f;
-                    vector12 *= num13 * 25f;
-
-                    bool moving = true;
-                    if (TargetMoveDirection.magnitude == 0f)
+                    else
                     {
-                        if (State is HumanAttackState)
-                            vector12 = Vector3.zero;
-
-                        moving = false;
-                    }
-
-                    if (moving)
-                    {
-                        FacingDirection = num12;
-                        TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
-                    }
-
-                    if (!usingLeftHook && !usingRightHook && !IsMounted && InputManager.HumanJump && CurrentGas > 0f)
-                    {
-                        if (TargetMoveDirection.magnitude > 0f)
+                        if (!WallJump)
                         {
-                            Debug.Log("<color=#00FFFF>AddForce: Directional Gas</color>");
-                            Rigidbody.AddForce(vector12, ForceMode.Acceleration);
+                            WallJump = true;
+                            Debug.Log("<color=#00FFFF>AddForce: !WallJump</color>");
+                            Rigidbody.AddForce((Vector3.up * 8f), ForceMode.Impulse);
                         }
-                        else
+
+                        Debug.Log("<color=#00FFFF>AddForce: TO_ROOF > 0.22f</color>");
+                        Rigidbody.AddForce((transform.forward * 0.05f), ForceMode.Impulse);
+                    }
+
+                    if (Animation[HeroAnim.TO_ROOF].normalizedTime >= 1f)
+                        PlayAnimation(HeroAnim.AIR_RISE);
+                }
+                else if (State is HumanIdleState && IsPressDirectionTowardsHero(TargetMoveDirection.x, TargetMoveDirection.y)
+                  && !InputManager.HumanJump && !InputManager.HumanHookLeft
+                  && !InputManager.HumanHookRight && !InputManager.HumanHookBoth
+                  && IsFrontGrounded() && !Animation.IsPlaying(HeroAnim.WALL_RUN)
+                  && !Animation.IsPlaying(HeroAnim.DODGE))
+                {
+                    CrossFade(HeroAnim.WALL_RUN, 0.1f);
+                    WallRunTime = 0f;
+                }
+                else if (Animation.IsPlaying(HeroAnim.WALL_RUN))
+                {
+                    Debug.Log("<color=#00FFFF>AddForce: WALL_RUN</color>");
+                    Rigidbody.AddForce((Vector3.up * Speed) - Rigidbody.velocity, ForceMode.VelocityChange);
+                    WallRunTime += Time.fixedDeltaTime;
+                    if (WallRunTime >= 1f || TargetMoveDirection.magnitude == 0)
+                    {
+                        Debug.Log("<color=#00FFFF>AddForce: wallRunTime > 1f && not moving</color>");
+                        Rigidbody.AddForce((-transform.forward * Speed) * 0.75f, ForceMode.Impulse);
+                        Dodge(true);
+                    }
+                    else if (!IsUpFrontGrounded())
+                    {
+                        WallJump = false;
+                        CrossFade(HeroAnim.TO_ROOF, 0.1f);
+                    }
+                    else if (!IsFrontGrounded())
+                        CrossFade(HeroAnim.AIR_FALL, 0.1f);
+                }
+                else if (!Animation.IsPlaying(Skill.CurrentAnimationName) || Skill.CanUseGas)
+                {
+                    if (!Animation.IsPlaying(HeroAnim.DASH) && !Animation.IsPlaying(HeroAnim.JUMP))
+                    {
+                        var x = TargetMoveDirection.x;
+                        var z = TargetMoveDirection.y;
+                        Vector3 vector11 = new Vector3(x, 0f, z);
+                        float num12 = GetGlobalFacingDirection(x, z);
+                        Vector3 vector12 = GetGlobaleFacingVector3(num12);
+                        float num13 = vector11.magnitude;
+                        if (num13 > 0.95)
+                            num13 = 1f;
+                        else if (num13 < 0.25f)
+                            num13 = 0f;
+                        vector12 *= num13 * 25f;
+
+                        bool moving = true;
+                        if (TargetMoveDirection.magnitude == 0f)
                         {
-                            Debug.Log("<color=#00FFFF>AddForce: Forward Gas</color>");
-                            Rigidbody.AddForce((transform.forward * vector12.magnitude), ForceMode.Acceleration);
+                            if (State is HumanAttackState)
+                                vector12 = Vector3.zero;
+
+                            moving = false;
                         }
-                        usingEitherHook = true;
+
+                        if (moving)
+                        {
+                            FacingDirection = num12;
+                            TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                        }
+
+                        if (!usingLeftHook && !usingRightHook && !IsMounted && InputManager.HumanJump && CurrentGas > 0f)
+                        {
+                            if (TargetMoveDirection.magnitude > 0f)
+                            {
+                                Debug.Log("<color=#00FFFF>AddForce: Directional Gas</color>");
+                                Rigidbody.AddForce(vector12, ForceMode.Acceleration);
+                            }
+                            else
+                            {
+                                Debug.Log("<color=#00FFFF>AddForce: Forward Gas</color>");
+                                Rigidbody.AddForce((transform.forward * vector12.magnitude), ForceMode.Acceleration);
+                            }
+                            usingEitherHook = true;
+                        }
                     }
                 }
             }
@@ -1281,9 +1286,89 @@ namespace Assets.Scripts.Characters.Humans
             }
         }
 
+        private void NotGroundedFixedUpdate()
+        {
+            #region Disable SparksEM 59152
+            if (SparksEM.enabled)
+                SparksEM.enabled = false;
+            #endregion
+
+            #region Mount and Ride Horse 25204
+            if (Horse
+                && (Animation.IsPlaying(HeroAnim.HORSE_GET_ON) || Animation.IsPlaying(HeroAnim.AIR_FALL))
+                && Rigidbody.velocity.y < 0f
+                && Vector3.Distance(Horse.transform.position + Vector3.up * 1.65f, transform.position) < 0.5f)
+            {
+                transform.position = Horse.transform.position + Vector3.up * 1.65f;
+                transform.rotation = Horse.transform.rotation;
+                IsMounted = true;
+                CrossFade(HeroAnim.HORSE_IDLE, 0.1f);
+                Horse.Mount();
+            }
+            #endregion
+        }
+
+        private void GroundedFixedUpdated()
+        {
+            #region LandFrame to LandState or SlideState 31304
+            if (IsLandFrame && State.HasMovementControl)
+            {
+                var hVelocity = new Vector3(Rigidbody.velocity.x, 0f, Rigidbody.velocity.y);
+
+                if (TargetMoveDirection.magnitude == 0
+                    && LeftHookProjectile == null
+                    && RightHookProjectile == null)
+                {
+                    SetState<HumanLandState>();
+                    CrossFade(HeroAnim.DASH_LAND, 0.01f);
+                }
+                else if (hVelocity.magnitude > Speed * 1.5f)
+                {
+                    SetState<HumanSlideState>();
+                    CrossFade(HeroAnim.DASH_LAND, 0.05f);
+                    FacingDirection = Mathf.Atan2(Rigidbody.velocity.x, Rigidbody.velocity.z) * Mathf.Rad2Deg;
+                    TargetRotation = Quaternion.Euler(0f, FacingDirection, 0f);
+                    SparksEM.enabled = true;
+                }
+            }
+            #endregion
+
+            #region Movement 40193
+            var zero = IsLandFrame ? Rigidbody.velocity : Vector3.zero;
+            zero = State.FixedUpdateMovement(); // 75006, 29099, 47951, 81136
+
+            var force = zero - Rigidbody.velocity;
+            force.y = 0f;
+
+            if (force.magnitude > MaxVelocityChange)
+                force = force.normalized * MaxVelocityChange;
+
+            if (Animation.IsPlaying(HeroAnim.HORSE_GET_ON)
+                && Animation[HeroAnim.HORSE_GET_ON].normalizedTime > 0.18f
+                && Animation[HeroAnim.HORSE_GET_ON].normalizedTime < 1f)
+            {
+                force = -Rigidbody.velocity;
+                force.y = 6f;
+                var distanceFromHorse = Vector3.Distance(Horse.transform.position,
+                    transform.position);
+                var toHorseStrength = (0.6f * Gravity * distanceFromHorse) / 12f;
+                var toHorseVector = Horse.transform.position - transform.position;
+                force += toHorseVector.normalized * toHorseStrength;
+            }
+
+            if (State.HasMovementControl || !UseGun)
+            {
+                Debug.Log("<color=#00FFFF>AddForce: Idle Walk Force, Dodge</color>");
+                Rigidbody.AddForce(force, ForceMode.VelocityChange);
+                Rigidbody.rotation = Quaternion.Lerp(transform.transform.rotation,
+                    Quaternion.Euler(0f, FacingDirection, 0f), Time.deltaTime * 10f);
+            }
+            #endregion
+        }
+
         private void UpdateHookedSomeone()
         {
-            if (!HookSomeone)
+            if (!IsHookingSomeone)
                 return;
 
             if (HookTarget != null)
@@ -1294,11 +1379,11 @@ namespace Assets.Scripts.Characters.Humans
                     Rigidbody.AddForce(((vector2.normalized * Mathf.Pow(magnitude, 0.15f)) * 30f) - (Rigidbody.velocity * 0.95f), ForceMode.VelocityChange);
             }
             else
-                HookSomeone = false;
+                IsHookingSomeone = false;
         }
         private void UpdateHookedBySomeone()
         {
-            if (!HookedBySomeone || BadGuy == null)
+            if (!IsHookedBySomeone || BadGuy == null)
                 return;
 
             if (BadGuy != null)
@@ -1309,7 +1394,7 @@ namespace Assets.Scripts.Characters.Humans
                     Rigidbody.AddForce((vector3.normalized * Mathf.Pow(f, 0.15f)) * 0.2f, ForceMode.Impulse);
             }
             else
-                HookedBySomeone = false;
+                IsHookedBySomeone = false;
         }
 
         private void ActiveHooks()
@@ -1383,6 +1468,8 @@ namespace Assets.Scripts.Characters.Humans
         }
         private void UpdateGrounded()
         {
+            bool lastGrounded = IsGrounded;
+
             LayerMask mask = Layers.Ground.ToLayer() | Layers.EnemyBox.ToLayer();
             if (Physics.Raycast(gameObject.transform.position + (Vector3.up * 0.1f), -Vector3.up, (float) 0.3f, mask.value))
             {
@@ -1420,6 +1507,11 @@ namespace Assets.Scripts.Characters.Humans
             }
             else
                 IsGrounded = false;
+
+            if (!lastGrounded && IsGrounded)
+                IsLandFrame = true;
+            else
+                IsLandFrame = false;
         }
 
         #region OldLateUpdate
@@ -1734,7 +1826,7 @@ namespace Assets.Scripts.Characters.Humans
         [PunRPC]
         public void BadGuyReleaseMe()
         {
-            HookedBySomeone = false;
+            IsHookedBySomeone = false;
             BadGuy = null;
         }
 
@@ -2375,14 +2467,14 @@ namespace Assets.Scripts.Characters.Humans
         public void HookFail()
         {
             HookTarget = null;
-            HookSomeone = false;
+            IsHookingSomeone = false;
         }
 
         public void HookToHuman(GameObject target, Vector3 hookPosition)
         {
             ReleaseIfIHookSb();
             HookTarget = target;
-            HookSomeone = true;
+            IsHookingSomeone = true;
             if (target.GetComponent<Hero>() != null)
             {
                 target.GetComponent<Hero>().HookedByHuman(photonView.viewID, hookPosition);
@@ -2935,12 +3027,12 @@ namespace Assets.Scripts.Characters.Humans
 
         public void ReleaseIfIHookSb()
         {
-            if (!HookSomeone || HookTarget == null)
+            if (!IsHookingSomeone || HookTarget == null)
                 return;
 
             HookTarget.GetPhotonView().RPC(nameof(BadGuyReleaseMe), HookTarget.GetPhotonView().owner, new object[0]);
             HookTarget = null;
-            HookSomeone = false;
+            IsHookingSomeone = false;
         }
 
         public IEnumerator ReloadSky()
@@ -2996,7 +3088,7 @@ namespace Assets.Scripts.Characters.Humans
         [PunRPC]
         private void RPCHookedByHuman(int hooker, Vector3 hookPosition)
         {
-            HookedBySomeone = true;
+            IsHookedBySomeone = true;
             BadGuy = PhotonView.Find(hooker).gameObject;
             if (Vector3.Distance(hookPosition, transform.position) < 15f)
             {
@@ -3024,7 +3116,7 @@ namespace Assets.Scripts.Characters.Humans
             }
             else
             {
-                HookedBySomeone = false;
+                IsHookedBySomeone = false;
                 BadGuy = null;
                 PhotonView.Find(hooker).RPC(nameof(HookFail), PhotonView.Find(hooker).owner, new object[0]);
             }

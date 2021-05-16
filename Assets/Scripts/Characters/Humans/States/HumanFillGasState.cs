@@ -4,6 +4,8 @@ namespace Assets.Scripts.Characters.Humans.States
 {
     public class HumanFillGasState : BaseHumanState
     {
+        public override bool HasMovementControl => false;
+
         public override void OnUpdate()
         {
             if (!Hero.TitanForm && !Hero.IsCannon)

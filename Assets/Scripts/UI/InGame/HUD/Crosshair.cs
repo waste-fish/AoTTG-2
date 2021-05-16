@@ -110,5 +110,11 @@ namespace Assets.Scripts.UI.InGame.HUD
                 Mathf.Atan2(crossR.transform.position.y - mousePos.y, crossR.transform.position.x - mousePos.x) * Mathf.Rad2Deg);
             crossImageR.color = hitDistance > 120f ? Color.red : Color.white;
         }
+
+        public GameObject Distance;
+        public GameObject Speedometer;
+        public GameObject Cross1;
+        public GameObject CrossL1;
+        public GameObject CrossR1;
     }
 }

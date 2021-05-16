@@ -121,7 +121,8 @@ namespace Assets.Scripts.Characters.Humans
         public float FacingDirection { get; set; }
         private Transform ForearmL { get; set; }
         private Transform ForearmR { get; set; }
-        private float Gravity { get; set; } = 20f;
+        private float Gravity { get; set; } = 20f * gravityModifier;
+        private float gravityModifier = GameSettings.Global.Gravity ?? 1f;
         public bool IsGrounded { get; set; }
         public GameObject GunDummy { get; private set; }
         public Vector3 GunTarget { get; set; }
@@ -352,9 +353,18 @@ namespace Assets.Scripts.Characters.Humans
             UpperarmR = Body.upper_arm_R;
             Equipment = gameObject.AddComponent<Equipment.Equipment>();
             Faction = Service.Faction.GetHumanity();
+            Service.Settings.OnGlobalSettingsChanged += OnGlobalSettingsChanged;
             Service.Entity.Register(this);
 
             CustomAnimationSpeed();
+        }
+
+        public void OnGlobalSettingsChanged(GlobalSettings settings)
+        {
+            if (settings.Gravity.HasValue)
+            {
+                gravityModifier = settings.Gravity.Value;
+            }
         }
 
         private void Start()
@@ -398,7 +408,7 @@ namespace Assets.Scripts.Characters.Humans
 
             if (!photonView.isMine)
             {
-                gameObject.layer = Layers.NetworkObject.ToLayer();
+                gameObject.layer = (int) Layers.NetworkObject;
                 if (IN_GAME_MAIN_CAMERA.dayLight == DayLight.Night)
                 {
                     GameObject obj3 = Instantiate(Resources.Load<GameObject>("flashlight"));
@@ -1579,6 +1589,7 @@ namespace Assets.Scripts.Characters.Humans
                     else
                     {
                         quaternion2 = Quaternion.Euler(Maincamera.transform.rotation.eulerAngles.x, Maincamera.transform.rotation.eulerAngles.y, 0f);
+                        Rigidbody.AddForce(new Vector3(0f, -Gravity * Rigidbody.mass, 0f));
                     }
                     Maincamera.transform.rotation = Quaternion.Lerp(Maincamera.transform.rotation, quaternion2, Time.deltaTime * 2f);
                 }
@@ -1635,19 +1646,24 @@ namespace Assets.Scripts.Characters.Humans
         #region OnDestroy
         protected override void OnDestroy()
         {
+            base.OnDestroy();
+
             DeregisterInputs();
 
-            base.OnDestroy();
             if (MyNetWorkName != null)
-            {
                 Destroy(MyNetWorkName);
-            }
-            if (GunDummy != null)
-            {
-                Destroy(GunDummy);
-            }
-            ReleaseIfIHookSb();
 
+            if (GunDummy != null)
+                Destroy(GunDummy);
+
+            ReleaseIfIHookSb();
+            Service.Settings.OnGlobalSettingsChanged -= OnGlobalSettingsChanged;
+
+            if (info.sender.ID == photonView.ownerId)
+            {
+                var config = JsonConvert.DeserializeObject<CustomizationNetworkObject>(characterPreset, new ColorJsonConverter());
+                Initialize(config.ToPreset(Prefabs));
+            }
         }
         #endregion
 

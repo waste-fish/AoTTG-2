@@ -6,6 +6,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
     {
         public override bool CanReload => AmountLeft < 5 || AmountRight < 5;
 
+        private Assets.Scripts.UI.InGame.Weapon.Blades bladesUi;
         public int TotalBlades => AmountLeft;
         private const int MaxAmmo = 5;
 
@@ -19,46 +20,46 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
 
         public override void PlayReloadAnimation()
         {
-            Hero.ReloadAnimation = Hero.IsGrounded
+            Hero.reloadAnimation = Hero.grounded
                 ? "changeBlade"
                 : "changeBlade_air";
-            Hero.CrossFade(Hero.ReloadAnimation, 0.1f);
+            Hero.CrossFade(Hero.reloadAnimation, 0.1f);
         }
 
         public override void Reload()
         {
-            if (!Hero.IsGrounded)
+            if (!Hero.grounded)
             {
-                if (!(Hero.Animation[Hero.ReloadAnimation].normalizedTime < 0.2f || Hero.BladesThrown))
+                if (!(Hero.Animation[Hero.reloadAnimation].normalizedTime < 0.2f || Hero.throwedBlades))
                 {
-                    Hero.BladesThrown = true;
+                    Hero.throwedBlades = true;
                     if (WeaponLeft.activeSelf)
                     {
                         ThrowBlades();
                     }
                 }
-                if (Hero.Animation[Hero.ReloadAnimation].normalizedTime >= 0.56f && TotalBlades > 0)
+                if (Hero.Animation[Hero.reloadAnimation].normalizedTime >= 0.56f && TotalBlades > 0)
                 {
                     WeaponLeft.SetActive(true);
                     WeaponRight.SetActive(true);
-                    Hero.CurrentBladeSta = Hero.TotalBladeSta;
+                    Hero.currentBladeSta = Hero.totalBladeSta;
                 }
             }
             else
             {
-                if (!(Hero.Animation[Hero.ReloadAnimation].normalizedTime < 0.13f || Hero.BladesThrown))
+                if (!(Hero.Animation[Hero.reloadAnimation].normalizedTime < 0.13f || Hero.throwedBlades))
                 {
-                    Hero.BladesThrown = true;
+                    Hero.throwedBlades = true;
                     if (WeaponLeft.activeSelf)
                     {
                         ThrowBlades();
                     }
                 }
-                if (Hero.Animation[Hero.ReloadAnimation].normalizedTime >= 0.37f && TotalBlades > 0)
+                if (Hero.Animation[Hero.reloadAnimation].normalizedTime >= 0.37f && TotalBlades > 0)
                 {
                     WeaponLeft.SetActive(true);
                     WeaponRight.SetActive(true);
-                    Hero.CurrentBladeSta = Hero.TotalBladeSta;
+                    Hero.currentBladeSta = Hero.totalBladeSta;
                 }
             }
         }
@@ -72,8 +73,13 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
 
         public override void UpdateSupplyUi(GameObject inGameUi)
         {
-            var bladesUi = inGameUi.GetComponentInChildren<Assets.Scripts.UI.InGame.Weapon.Blades>();
-            bladesUi.SetBlades(AmountLeft);
+            bladesUi = inGameUi.GetComponentInChildren<Assets.Scripts.UI.InGame.Weapon.Blades>();
+            if (bladesUi == null) return;
+            if(Hero.currentBladeSta > 0) 
+                bladesUi.SetBlades(AmountLeft);
+            //TODO: This is a temporary reference to bladeSta and gasSta of Hero;
+            bladesUi.bladeSta = Hero.currentBladeSta;
+            bladesUi.curGas = Hero.currentGas;
         }
 
         private void ThrowBlades()
@@ -102,7 +108,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
             AmountRight--;
 
             if (TotalBlades == 0)
-                Hero.CurrentBladeSta = 0f;
+                Hero.currentBladeSta = 0f;
         }
 
         public override void Use(int amount = 0)
@@ -112,10 +118,11 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
                 amount = 1;
             }
             amount *= 2;
-            if (Hero.CurrentBladeSta > 0f)
+            if (Hero.currentBladeSta > 0f)
             {
-                Hero.CurrentBladeSta -= amount;
-                if (Hero.CurrentBladeSta <= 0f)
+                Hero.currentBladeSta -= amount;
+                bladesUi.ShakeBlades();
+                if (Hero.currentBladeSta <= 0f)
                 {
                     if (Hero.photonView.isMine)
                     {
@@ -126,7 +133,7 @@ namespace Assets.Scripts.Characters.Humans.Equipment.Weapon
                         Hero.checkBoxLeft.GetComponent<TriggerColliderWeapon>().IsActive = false;
                         Hero.checkBoxRight.GetComponent<TriggerColliderWeapon>().IsActive = false;
                     }
-                    Hero.CurrentBladeSta = 0f;
+                    Hero.currentBladeSta = 0f;
                     this.ThrowBlades();
                 }
             }

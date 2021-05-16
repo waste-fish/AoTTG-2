@@ -135,6 +135,8 @@ namespace Assets.Scripts
         public static Level NewRoundLevel { get; set; }
         public static GamemodeSettings NewRoundGamemode { get; set; }
 
+        private float pingTimeLast = 0; // This is used to ensure ping is only retrieved once a second. 
+
         /// <summary>
         /// We store this in a variable to make sure the Coroutine is killed if the game 
         /// is restarted, making it so player can't be duplicated.
@@ -365,6 +367,19 @@ namespace Assets.Scripts
                     InGameUI.SpawnMenu.gameObject.SetActive(true);
                 }
 
+                // Update the players ping once every second. 
+                float timeSince = Time.time * 1000;
+                if (timeSince - pingTimeLast > 1000)
+                {
+                    pingTimeLast = timeSince;
+                    var hashtable = new Hashtable
+                    {
+                        {PhotonPlayerProperty.ping, PhotonNetwork.GetPing().ToString()},
+                    };
+                    var propertiesToSet = hashtable;
+                    PhotonNetwork.player.SetCustomProperties(propertiesToSet);
+                }
+
                 int length;
                 if (!PhotonNetwork.offlineMode)
                 {
@@ -531,7 +546,7 @@ namespace Assets.Scripts
         {
             if (enter)
             {
-                if (Service.Player.Self.photonView.isMine)
+                if (Service.Player.Self != null && Service.Player.Self.photonView.isMine)
                 {
                     PhotonNetwork.Destroy(Service.Player.Self.photonView);
                 }
@@ -2103,6 +2118,7 @@ namespace Assets.Scripts
 
         public void RecompilePlayerList(float time)
         {
+            Debug.Log("This shouldn't happen");
             if (!this.isRecompiling)
             {
                 this.isRecompiling = true;
@@ -2593,7 +2609,6 @@ namespace Assets.Scripts
 
         private void Start()
         {
-            QualitySettings.vSyncCount = 1;
             Application.targetFrameRate = Screen.currentResolution.refreshRate;
 
             PhotonNetwork.automaticallySyncScene = true;
@@ -2636,10 +2651,9 @@ namespace Assets.Scripts
             Damage = Mathf.Max(10, Damage);
             object[] parameters = new object[] { Damage };
             base.photonView.RPC(nameof(netShowDamage), player, parameters);
-            if (!PhotonNetwork.offlineMode)
-            {
-                this.sendKillInfo(false, (string) player.CustomProperties[PhotonPlayerProperty.name], true, name, Damage);
-            }
+            
+            this.sendKillInfo(false, (string) player.CustomProperties[PhotonPlayerProperty.name], true, name, Damage);
+            
             this.playerKillInfoUpdate(player, Damage);
         }
 

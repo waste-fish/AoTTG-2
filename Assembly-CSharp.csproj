@@ -124,6 +124,7 @@
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Universal\2DLit.shader" />
      <None Include="Assets\AmplifyShaderEditor\Plugins\EditorResources\Templates\Universal\Unlit.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+     <None Include="Assets\Shaders\TintedUIBlur.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
      <None Include="Assets\Shaders\xft_displacement_screen.shader" />
      <None Include="Assets\Shaders\3d text.shader" />

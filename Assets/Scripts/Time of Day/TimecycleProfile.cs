@@ -24,7 +24,11 @@ namespace Assets.Scripts.DayNightCycle
         public Gradient equatorColor = new Gradient();
         public Gradient groundColor = new Gradient();
         [Space]
+<<<<<<< HEAD
         public AnimationCurve atmosphereDensity = new AnimationCurve();
+=======
+        public AnimationCurve atmosphereThickness = new AnimationCurve();
+>>>>>>> development
 
         [Header("Fog settings")]
         public bool overrideFog = false;

@@ -159,12 +159,16 @@ namespace Assets.Scripts.DayNightCycle
         void UpdateMaterial()
         {
 <<<<<<< HEAD
+<<<<<<< HEAD
             SkyboxMaterial.SetVector("_Axis", DirectionalLight.transform.right);
             SkyboxMaterial.SetFloat("_Angle", -CurrentTimeScale * 360f);
             //DJ's proof of concept atmospheric density thingy 
             SkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereDensity.Evaluate(CurrentTimeScale));
 
 
+=======
+            ProceduralSkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereThickness.Evaluate(CurrentTimeScale));
+>>>>>>> development
 =======
             ProceduralSkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereThickness.Evaluate(CurrentTimeScale));
 >>>>>>> development
@@ -276,7 +280,11 @@ namespace Assets.Scripts.DayNightCycle
             UpdateLightingSettings();
             UpdateLight();
 <<<<<<< HEAD
+<<<<<<< HEAD
             SkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereDensity.Evaluate(CurrentTimeScale));
+=======
+            ProceduralSkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereThickness.Evaluate(CurrentTime));
+>>>>>>> development
 =======
             ProceduralSkyboxMaterial.SetFloat("_AtmosphereThickness", timecycle.atmosphereThickness.Evaluate(CurrentTime));
 >>>>>>> development

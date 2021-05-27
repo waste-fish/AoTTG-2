@@ -25,11 +25,7 @@ namespace Assets.Scripts.DayNightCycle
         public Gradient groundColor = new Gradient();
         [Space]
 <<<<<<< HEAD
-<<<<<<< HEAD
         public AnimationCurve atmosphereDensity = new AnimationCurve();
-=======
-        public AnimationCurve atmosphereThickness = new AnimationCurve();
->>>>>>> development
 =======
         public AnimationCurve atmosphereThickness = new AnimationCurve();
 >>>>>>> development

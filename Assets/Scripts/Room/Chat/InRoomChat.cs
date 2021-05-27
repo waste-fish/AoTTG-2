@@ -2,10 +2,10 @@ using Assets.Scripts.UI.Input;
 using Assets.Scripts.UI.Menu;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine.EventSystems;
-using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
 using static Assets.Scripts.FengGameManagerMKII;
 using static Assets.Scripts.Room.Chat.ChatUtility;
 
@@ -18,13 +18,9 @@ namespace Assets.Scripts.Room.Chat
         public static readonly string ChatRPC = "Chat";
         private string inputLine = string.Empty;
         private readonly List<string> messages = new List<string>();
-        public TMP_InputField ChatInputField;
-        public TMP_Text ChatText;
-        public GameObject messagePrefab;
-        public GameObject messagePrefabParent;
+        public InputField ChatInputField;
+        public Text ChatText;
         private bool IsChatOpen { get; set; }
-        private readonly Regex openingTag = new Regex(@"<([a-z]*)(?:=.+?)?>");
-        private readonly Regex closingTag = new Regex( @"</([a-z]*)>");
 
         public bool IsVisible()
         {
@@ -44,10 +40,6 @@ namespace Assets.Scripts.Room.Chat
         public void ClearMessages()
         {
             messages.Clear();
-            foreach(Transform child in messagePrefabParent.transform)
-            {
-                Destroy(child.gameObject);
-            }
         }
 
         public void AddMessage(string message)
@@ -60,12 +52,10 @@ namespace Assets.Scripts.Room.Chat
             }
             RemoveMessageIfMoreThanMax();
             messages.Add(message);
-            
-            UpdateChat(message);
         }
         public void OutputSystemMessage(string input)
         {
-            var message = $"<color=#FFCC00>{input}</color>";
+            var message = $"<color=#FFCC00>{input}</color>"; ;
             instance.chatRoom.AddMessage(message);
         }
 
@@ -78,7 +68,6 @@ namespace Assets.Scripts.Room.Chat
         {
             var message = $"<color=#FF0000>Error: {input}</color>";
             instance.chatRoom.AddMessage(message);
-
         }
 
         /// <summary>
@@ -106,7 +95,8 @@ namespace Assets.Scripts.Room.Chat
             }
 
             HandleChatInput(this);
-            inputLine = ChatInputField?.text;
+
+            UpdateChat(this);
         }
 
         private void TrimMessage(string message)
@@ -116,9 +106,9 @@ namespace Assets.Scripts.Room.Chat
 
         private void RemoveMessageIfMoreThanMax()
         {
-            if(messagePrefabParent.transform.childCount >= MaxStoredMessages)
+            if (messages.Count() == MaxStoredMessages)
             {
-                Destroy(messagePrefabParent.transform.GetChild(0).gameObject);
+                messages.RemoveAt(0);
             }
         }
 
@@ -154,7 +144,7 @@ namespace Assets.Scripts.Room.Chat
                         }
                         else
                         {
-                            ChatAll($"  {chat.inputLine}"); // Two spaces to separate playerId and their message. 
+                            ChatAll(chat.inputLine);
                         }
                     }
                     chat.inputLine = string.Empty;
@@ -172,10 +162,20 @@ namespace Assets.Scripts.Room.Chat
             }
         }
 
-        public void UpdateChat(string message)
+        private void UpdateChat(InRoomChat chat)
         {
-            GameObject newMessage = Instantiate(messagePrefab, messagePrefabParent.transform);
-            newMessage.GetComponent<TMP_Text>().text = message;
+            var messageHandler = new StringBuilder();
+            foreach (var message in messages)
+            {
+                messageHandler.AppendLine(message);
+            }
+
+            if (ChatText != null)
+            {
+                chat.ChatText.text = messageHandler.ToString();
+            }
+
+            chat.inputLine = chat.ChatInputField?.text;
         }
 
         private void CommandHandler(string input)
@@ -185,8 +185,8 @@ namespace Assets.Scripts.Room.Chat
 
     private bool MarkupIsOk(string message)
     {
-        var openingTags = openingTag.Matches(message);
-        var closingTags =  closingTag.Matches(message);
+        var openingTags = Regex.Matches(message, @"<([a-z]*)(?:=.+?)?>");
+        var closingTags =  Regex.Matches(message, @"</([a-z]*)>");
         Dictionary<string, int> openCount = new Dictionary<string, int>();
         Dictionary<string, int> closeCount = new Dictionary<string, int>();
 

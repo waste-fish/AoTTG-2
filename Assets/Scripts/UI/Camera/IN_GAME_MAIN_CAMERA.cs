@@ -5,7 +5,6 @@ using Assets.Scripts.Characters.Titan;
 using Assets.Scripts.Services;
 using Assets.Scripts.Services.Interface;
 using Assets.Scripts.UI.Camera;
-using Assets.Scripts.UI.InGame.HUD;
 using Assets.Scripts.UI.Input;
 using System;
 using UnityEngine;
@@ -155,7 +154,7 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
         //GameObject.Find("flash").GetComponent<UISprite>().alpha = 1f;
         //this.flashDuration = 2f;
     }
-
+    
     public GameObject SetMainObject(GameObject obj, bool resetRotation = true, bool lockAngle = false)
     {
         float num;
@@ -385,10 +384,11 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
 
     public void Update()
     {
-        if (InputManager.KeyDown(InputUi.HideHUD))
-        {
+
+        if (Input.GetKeyDown(KeyCode.F1))
+         {
             ToggleHUD();
-        }
+         }
         SnapShotUpdate();
         if (flashDuration > 0f)
         {
@@ -670,9 +670,8 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
 
     public void ToggleHUD()
     {
-        HUD.transform.gameObject.SetActive(!HUD.transform.gameObject.activeInHierarchy);
+       HUD.SetActive(!HUD.activeInHierarchy);
     }
-
     public static void ToggleSpawnMenu()
     {
         var spawnMenu = FengGameManagerMKII.instance.InGameUI.SpawnMenu.gameObject;
@@ -740,17 +739,7 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
             num3 = ((((Input.mousePosition.x - (Screen.width * 0.6f)) / Screen.width) * 0.4f) * GetSensitivityMultiWithDeltaTime()) * 150f;
             transform.RotateAround(transform.position, Vector3.up, num3);
         }
-
-        float x;
-
-        if (!MenuManager.IsAnyMenuOpen)
-        {
-            x = ((140f * ((Screen.height * 0.6f) - Input.mousePosition.y)) / Screen.height) * 0.5f;
-        }
-        else
-        {
-            x = 0f;
-        }
+        float x = ((140f * ((Screen.height * 0.6f) - Input.mousePosition.y)) / Screen.height) * 0.5f;
         transform.rotation = Quaternion.Euler(x, transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
         Transform transform4 = transform;
         transform4.position -= ((transform.forward * distance) * distanceMulti) * distanceOffsetMulti;
@@ -803,26 +792,12 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
 
     private float GetSensitivityMulti()
     {
-        if (MenuManager.IsAnyMenuOpen)
-        {
-            return 0f; //Prevents camera from moving when on menu
-        }
-        else
-        {
-            return InputManager.Settings.MouseSensitivity;
-        }
+        return InputManager.Settings.MouseSensitivity;
     }
 
     private float GetSensitivityMultiWithDeltaTime()
     {
-        if (MenuManager.IsAnyMenuOpen)
-        {
-            return 0f; //Prevents camera from moving when on menu
-        }
-        else
-        {
-            return InputManager.Settings.MouseSensitivity * Time.deltaTime * 62f;
-        }
+        return InputManager.Settings.MouseSensitivity * Time.deltaTime * 62f;
     }
 
     private Texture2D RTImage2(Camera cam)
@@ -871,24 +846,18 @@ public class IN_GAME_MAIN_CAMERA : MonoBehaviour
 
     private void Start()
     {
+        HUD =GameObject.Find("HUD");
         GameObject.Find("MultiplayerManager").GetComponent<FengGameManagerMKII>().addCamera(this);
         isPausing = false;
-        HUD = Service.Ui.GetUiHandler().InGameUi.HUD.transform.gameObject;
+
         // This doesn't exist in the scene and causes a NullReferenceException.
         // TODO: Fix titan locking
         locker = GameObject.Find("locker");
         CreateSnapShotRT2();
-
-        // Find the compass gameobject to set the camera's transform to this.
-        CompassController compass = GameObject.Find("Compass").GetComponent<CompassController>();
-        compass.cam = this.transform;
-        compass.compassMode = true;
-
     }
 
     private void OnDestroy()
     {
         EntityService.OnRegister -= EntityService_OnRegistered;
-        GameObject.Find("Compass").GetComponent<CompassController>().compassMode = false;
     }
 }

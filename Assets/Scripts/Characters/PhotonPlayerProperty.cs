@@ -49,6 +49,5 @@ public class PhotonPlayerProperty
     public static string team = "team";
     public static string total_dmg = "total_dmg";
     public static string uniform_type = "uniform_type";
-    public static string ping = "ping";
 }
 

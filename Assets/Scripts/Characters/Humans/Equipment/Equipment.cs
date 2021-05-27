@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.Characters.Humans.Equipment.Weapon;
 using System.Linq;
-using Assets.Scripts.Services;
 using UnityEngine;
 
 namespace Assets.Scripts.Characters.Humans.Equipment
@@ -37,7 +36,6 @@ namespace Assets.Scripts.Characters.Humans.Equipment
             }
 
             Weapon.Hero = Hero;
-            Service.Ui.GetUiHandler().InGameUi.HUD.Weapons.SetWeapon(Hero.EquipmentType);
         }
 
 

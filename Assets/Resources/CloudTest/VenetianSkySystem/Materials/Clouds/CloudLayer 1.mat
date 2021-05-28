@@ -232,7 +232,7 @@ Material:
     - _Smooth: 85.24
     - _SmoothnessTextureChannel: 0
     - _Soft: 0.001
-    - _Softness: 0.98
+    - _Softness: 1.08
     - _SpecularHighlights: 1
     - _Speed: 0
     - _SrcBlend: 1
@@ -246,13 +246,13 @@ Material:
     - _TransScattering: 2
     - _TransShadow: 0.9
     - _Translucency: 1
-    - _TurbulanceIntensity: 0.22
+    - _TurbulanceIntensity: 0.311
     - _TurbulanceTilling: 1188.1
     - _UVSec: 0
     - _VariationSpeed: 0.1
     - _WeatherCoverage: 0.057
     - _WeatherTilling: 50002
-    - _WeatherVariationspeed: 10
+    - _WeatherVariationspeed: 27.18
     - _WindShapeTilling: 1570
     - _ZWrite: 1
     - __dirty: 0

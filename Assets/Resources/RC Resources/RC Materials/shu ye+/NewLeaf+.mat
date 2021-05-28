@@ -10,7 +10,7 @@ Material:
   m_Name: NewLeaf+
   m_Shader: {fileID: 4800000, guid: efce79e05bb96b046914ba1ed9eb6bad, type: 3}
   m_ShaderKeywords: 
-  m_LightmapFlags: 0
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -72,6 +72,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaCutoff: 0.5
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -83,6 +84,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _SSSmapintensity: 1
     - _SSSpower: 18.16
     - _SSSscale: 0.5
     - _SmoothnessTextureChannel: 0
@@ -93,6 +95,7 @@ Material:
     - _WindDirection: 0
     - _WindIntensity: 0.1
     - _WindSpeed: 0.1
+    - _WindTextureScale: 1
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:

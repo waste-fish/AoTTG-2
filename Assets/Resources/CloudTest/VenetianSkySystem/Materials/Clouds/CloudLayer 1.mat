@@ -174,10 +174,10 @@ Material:
     - _Clouddensity: 1
     - _Clouddir: 0
     - _Contrast: -0.51
-    - _Coverage: 0.225
+    - _Coverage: 0.128
     - _Cutoff: 0.088
     - _Density: 0.757
-    - _DetailIntensity: 0.329
+    - _DetailIntensity: 0.365
     - _DetailIntensity1: 0.34
     - _DetailNormalMapScale: 1
     - _DetailScale: 2
@@ -232,7 +232,7 @@ Material:
     - _Smooth: 85.24
     - _SmoothnessTextureChannel: 0
     - _Soft: 0.001
-    - _Softness: 0.63
+    - _Softness: 0.98
     - _SpecularHighlights: 1
     - _Speed: 0
     - _SrcBlend: 1
@@ -246,13 +246,13 @@ Material:
     - _TransScattering: 2
     - _TransShadow: 0.9
     - _Translucency: 1
-    - _TurbulanceIntensity: 0.26
+    - _TurbulanceIntensity: 0.22
     - _TurbulanceTilling: 1188.1
     - _UVSec: 0
     - _VariationSpeed: 0.1
-    - _WeatherCoverage: 0
+    - _WeatherCoverage: 0.057
     - _WeatherTilling: 50002
-    - _WeatherVariationspeed: 100
+    - _WeatherVariationspeed: 10
     - _WindShapeTilling: 1570
     - _ZWrite: 1
     - __dirty: 0
@@ -273,7 +273,7 @@ Material:
     - _softness: 0.41
     - _taperPower: 0.924
     - _taperPower1: 1.051
-    - _windSpeed: 3
+    - _windSpeed: 0.3
     m_Colors:
     - _Cloudspeeddirection: {r: 1, g: 1, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}

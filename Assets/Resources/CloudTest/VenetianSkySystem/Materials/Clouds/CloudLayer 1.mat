@@ -160,7 +160,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _3droundness: 1
+    - _3droundness: 1.07
     - _AlphaCutoff: 0.5
     - _BigDetailSpeed: 0
     - _Bigdetailintensity: 0
@@ -174,7 +174,7 @@ Material:
     - _Clouddensity: 1
     - _Clouddir: 0
     - _Contrast: -0.51
-    - _Coverage: 0.128
+    - _Coverage: 0.097
     - _Cutoff: 0.088
     - _Density: 0.757
     - _DetailIntensity: 0.365
@@ -190,6 +190,7 @@ Material:
     - _Fadeoffset: 1.15
     - _Float0: 0.5
     - _Float1: 0.03529412
+    - _FogDistance: 10000
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -217,10 +218,10 @@ Material:
     - _Offsetdistance1: 0.077
     - _Parallax: 0.02
     - _SSSContrast: 0.006
-    - _SSSStrength: 1.79
+    - _SSSStrength: 2.63
     - _SSScontrast: 1
     - _SSSdensity: 0.278
-    - _SSSdiffusion: 26
+    - _SSSdiffusion: 28
     - _SSSpower: 27.8
     - _Scatteringmultiplier: 1
     - _Scatteringpower: 26
@@ -232,7 +233,7 @@ Material:
     - _Smooth: 85.24
     - _SmoothnessTextureChannel: 0
     - _Soft: 0.001
-    - _Softness: 1.08
+    - _Softness: 0.74
     - _SpecularHighlights: 1
     - _Speed: 0
     - _SrcBlend: 1
@@ -246,11 +247,11 @@ Material:
     - _TransScattering: 2
     - _TransShadow: 0.9
     - _Translucency: 1
-    - _TurbulanceIntensity: 0.311
+    - _TurbulanceIntensity: 0.164
     - _TurbulanceTilling: 1188.1
     - _UVSec: 0
     - _VariationSpeed: 0.1
-    - _WeatherCoverage: 0.057
+    - _WeatherCoverage: 0.144
     - _WeatherTilling: 50002
     - _WeatherVariationspeed: 27.18
     - _WindShapeTilling: 1570

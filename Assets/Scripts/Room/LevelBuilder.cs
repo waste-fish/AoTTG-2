@@ -384,7 +384,7 @@ namespace Assets.Scripts.Room
                         Description = "Defeat the Colossal! Defeat the Colossal Titan.\nPrevent the abnormal titan from running to the north gate.",
                         Time = new TimeSettings
                         {
-                            CurrentTime = 12,
+                            CurrentTime = 24,
                             DayLength = 300,
                             Pause = true,
                         },
@@ -395,7 +395,7 @@ namespace Assets.Scripts.Room
                         Description = "Escort Titan Eren",
                         Time = new TimeSettings
                         {
-                            CurrentTime = 12,
+                            CurrentTime = 24,
                             DayLength = 300,
                             Pause = true,
                         },

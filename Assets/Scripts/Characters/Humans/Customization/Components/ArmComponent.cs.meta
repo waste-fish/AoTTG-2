@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/Resources/CloudTest/VenetianSkySystem/Scripts/Decoration/Atributes/HorizontalLineAttribute.cs.meta
+guid: 8ffe4e4b5fd6a9641a0a388f1b21ee49
+=======
 guid: 983026c2a65d8b54f8fa2fd95296ef88
+>>>>>>> development:Assets/Scripts/Characters/Humans/Customization/Components/ArmComponent.cs.meta
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2

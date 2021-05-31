@@ -384,7 +384,7 @@ namespace Assets.Scripts.Room
                         Description = "Defeat the Colossal! Defeat the Colossal Titan.\nPrevent the abnormal titan from running to the north gate.",
                         Time = new TimeSettings
                         {
-                            CurrentTime = 24,
+                            CurrentTime = 13.2f,
                             DayLength = 300,
                             Pause = true,
                         },
@@ -395,7 +395,7 @@ namespace Assets.Scripts.Room
                         Description = "Escort Titan Eren",
                         Time = new TimeSettings
                         {
-                            CurrentTime = 24,
+                            CurrentTime = 15,
                             DayLength = 300,
                             Pause = true,
                         },
@@ -406,7 +406,7 @@ namespace Assets.Scripts.Room
                     {
                         Time = new TimeSettings
                         {
-                            CurrentTime = 16,
+                            CurrentTime = 9,
                             DayLength = 4000,
                             Pause = false,
                         },
@@ -416,7 +416,7 @@ namespace Assets.Scripts.Room
                     {
                         Time = new TimeSettings
                         {
-                            CurrentTime = 16,
+                            CurrentTime = 9,
                             DayLength = 4000,
                             Pause = false,
                         },
@@ -425,7 +425,7 @@ namespace Assets.Scripts.Room
                     new WaveGamemodeSettings(){
                         Time = new TimeSettings
                         {
-                            CurrentTime = 12,
+                            CurrentTime = 9,
                             DayLength = 4000,
                             Pause = true,
                         }
@@ -434,7 +434,7 @@ namespace Assets.Scripts.Room
                     {
                         Time = new TimeSettings
                         {
-                            CurrentTime = 12,
+                            CurrentTime = 11,
                             DayLength = 4000,
                             Pause = false,
                         },

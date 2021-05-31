@@ -1,3 +1,321 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:31d27ed1517e876b5cc2ea39c84679027ad8b337b8dc49bb111647a8f2e491d1
-size 8343
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45bea74f2b417f346a1616b8ccbb50b8, type: 3}
+  m_Name: Trost-AnimeRevamp
+  m_EditorClassIdentifier: 
+  overrideSunlight: 1
+  maxSunlightIntensity: 1
+  sunlightColor:
+    serializedVersion: 2
+    key0: {r: 0, g: 0, b: 0, a: 1}
+    key1: {r: 0.60709274, g: 0.49047703, b: 0.6226415, a: 1}
+    key2: {r: 0.9622642, g: 0.65827453, b: 0.49474904, a: 0}
+    key3: {r: 1, g: 1, b: 1, a: 0}
+    key4: {r: 1, g: 1, b: 1, a: 0}
+    key5: {r: 0.9339623, g: 0.3918121, b: 0, a: 0}
+    key6: {r: 0.39607847, g: 0.2509804, b: 0.4156863, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 10486
+    ctime1: 12321
+    ctime2: 14649
+    ctime3: 19136
+    ctime4: 46399
+    ctime5: 49938
+    ctime6: 53214
+    ctime7: 55049
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  overrideMoonlight: 1
+  maxMoonlightIntensity: 0.3
+  moonlightColor:
+    serializedVersion: 2
+    key0: {r: 0.23529413, g: 0.34117648, b: 0.5058824, a: 1}
+    key1: {r: 0.22352943, g: 0.32156864, b: 0.4784314, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0.23529413, g: 0.34117648, b: 0.5058824, a: 0}
+    key7: {r: 0.24603951, g: 0.36136135, b: 0.5377358, a: 0}
+    ctime0: 0
+    ctime1: 9638
+    ctime2: 13762
+    ctime3: 21010
+    ctime4: 42598
+    ctime5: 48766
+    ctime6: 51882
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  overrideEnvironmentLighting: 1
+  lightingOverrideMode: 0
+  lightingColor:
+    serializedVersion: 2
+    key0: {r: 1, g: 0, b: 0.7144089, a: 1}
+    key1: {r: 1, g: 0, b: 0.71372557, a: 1}
+    key2: {r: 1, g: 0, b: 0.7137255, a: 0}
+    key3: {r: 0.9450981, g: 0, b: 0.6745098, a: 0}
+    key4: {r: 0.9450981, g: 0, b: 0.6745098, a: 0}
+    key5: {r: 0.9450981, g: 0, b: 0.6745098, a: 0}
+    key6: {r: 0.9450981, g: 0, b: 0.6745098, a: 0}
+    key7: {r: 0.8941177, g: 0, b: 0.6392157, a: 0}
+    ctime0: 0
+    ctime1: 9830
+    ctime2: 13762
+    ctime3: 21010
+    ctime4: 42598
+    ctime5: 48766
+    ctime6: 51882
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  skyColor:
+    serializedVersion: 2
+    key0: {r: 0.11685653, g: 0.18447714, b: 0.24528301, a: 1}
+    key1: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 1}
+    key2: {r: 0.43529412, g: 0.24313726, b: 0.33333334, a: 0}
+    key3: {r: 0.1882353, g: 0.23529412, b: 0.3137255, a: 0}
+    key4: {r: 0.1882353, g: 0.23529412, b: 0.3137255, a: 0}
+    key5: {r: 0.4339623, g: 0.24359204, b: 0.3346387, a: 0}
+    key6: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 0}
+    key7: {r: 0.112362064, g: 0.18292604, b: 0.23584908, a: 0}
+    ctime0: 0
+    ctime1: 10987
+    ctime2: 16962
+    ctime3: 21974
+    ctime4: 42598
+    ctime5: 48766
+    ctime6: 51904
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  equatorColor:
+    serializedVersion: 2
+    key0: {r: 0.11685653, g: 0.18447714, b: 0.24528301, a: 1}
+    key1: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 1}
+    key2: {r: 0.54509807, g: 0.31764707, b: 0.03137255, a: 0}
+    key3: {r: 0.52156866, g: 0.6156863, b: 0.6313726, a: 0}
+    key4: {r: 0.5058824, g: 0.6, b: 0.6117647, a: 0}
+    key5: {r: 0.56078434, g: 0.32941177, b: 0.03137255, a: 0}
+    key6: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 0}
+    key7: {r: 0.112362064, g: 0.18292604, b: 0.23584908, a: 0}
+    ctime0: 0
+    ctime1: 10987
+    ctime2: 16962
+    ctime3: 21974
+    ctime4: 42598
+    ctime5: 48766
+    ctime6: 51904
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  groundColor:
+    serializedVersion: 2
+    key0: {r: 0, g: 0.12941177, b: 0.07058824, a: 1}
+    key1: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 1}
+    key2: {r: 0.4339623, g: 0.0020469967, b: 0.20478265, a: 0}
+    key3: {r: 0, g: 0.4117647, b: 0.07479723, a: 0}
+    key4: {r: 0, g: 0.41176474, b: 0.07450981, a: 0}
+    key5: {r: 0.43529415, g: 0.003921569, b: 0.20392159, a: 0}
+    key6: {r: 0.15686275, g: 0.15686275, b: 0.15686275, a: 0}
+    key7: {r: 0, g: 0.12941177, b: 0.07058824, a: 0}
+    ctime0: 0
+    ctime1: 10987
+    ctime2: 16962
+    ctime3: 21974
+    ctime4: 42598
+    ctime5: 48766
+    ctime6: 51904
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2
+  atmosphereThickness:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.3464791
+      outSlope: -0.3464791
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.029856935
+      value: 0.9896552
+      inSlope: -1.0023006
+      outSlope: -1.0023006
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 1
+      outWeight: 0.6728777
+    - serializedVersion: 3
+      time: 0.17298281
+      value: 0.5020752
+      inSlope: -0.0002305668
+      outSlope: -0.0002305668
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.25
+      value: 1.3
+      inSlope: -0.00045224786
+      outSlope: -0.00045224786
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.333333
+      value: 1
+      inSlope: 0.00022042224
+      outSlope: 0.00022042224
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.6
+      value: 1
+      inSlope: 0.0023865986
+      outSlope: 0.0023865986
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.75
+      value: 1.7
+      inSlope: -0.00007206198
+      outSlope: -0.00007206198
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.8
+      value: 0.6
+      inSlope: 0.00072623504
+      outSlope: 0.00072623504
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 0.9
+      value: 1
+      inSlope: 0.0009490614
+      outSlope: 0.0009490614
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 1
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  overrideFog: 1
+  maxFogDensity: 0.0001
+  fogColor:
+    serializedVersion: 2
+    key0: {r: 0.07058824, g: 0.10588236, b: 0.14901961, a: 1}
+    key1: {r: 0.06906373, g: 0.10576838, b: 0.1509434, a: 1}
+    key2: {r: 0.8313726, g: 0.7843138, b: 0.52156866, a: 0}
+    key3: {r: 0.8470589, g: 0.9490197, b: 0.9568628, a: 0}
+    key4: {r: 0.8470589, g: 0.9490197, b: 0.9568628, a: 0}
+    key5: {r: 0.83921576, g: 0.5647059, b: 0.13333334, a: 0}
+    key6: {r: 0.07058824, g: 0.10588236, b: 0.14901961, a: 0}
+    key7: {r: 0.07058824, g: 0.10588236, b: 0.14901961, a: 0}
+    ctime0: 0
+    ctime1: 14071
+    ctime2: 18350
+    ctime3: 21102
+    ctime4: 44433
+    ctime5: 47185
+    ctime6: 53247
+    ctime7: 65535
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 8
+    m_NumAlphaKeys: 2

@@ -177,7 +177,7 @@ Material:
     - _Coverage: 0.148
     - _Cutoff: 0.088
     - _Density: 0.757
-    - _DetailIntensity: 0.365
+    - _DetailIntensity: 0.505
     - _DetailIntensity1: 0.34
     - _DetailNormalMapScale: 1
     - _DetailScale: 2
@@ -247,7 +247,7 @@ Material:
     - _TransScattering: 2
     - _TransShadow: 0.9
     - _Translucency: 1
-    - _TurbulanceIntensity: 0.18
+    - _TurbulanceIntensity: 0.227
     - _TurbulanceTilling: 1188.1
     - _UVSec: 0
     - _VariationSpeed: 0.1

@@ -1,6 +1,6 @@
 {
     "name": "AoTTG2.Core",
-    "rootNamespace": "Assets.Scripts",
+    "rootNamespace": "",
     "references": [
         "PhotonUnityNetworking",
         "Discord",
@@ -8,8 +8,9 @@
         "UnityEditor.UI",
         "UnityEngine.UI",
         "Toorah.ScribtableVariables",
-        "Unity.InputSystem",
-        "Unity.RenderPipelines.Universal.Runtime"
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.Localization",
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -406,6 +406,50 @@ namespace Assets.Scripts.Room
                     },
                 }
             });
+
+            _levels.Add(new Level
+            {
+                Name = "Forest Remaster",
+                Description = "Big boy trees man",
+                SceneName = "forest remaster",
+
+                Gamemodes = new List<GamemodeSettings>
+                {
+                   
+                    new KillTitansSettings
+                    {
+                        GamemodeType = GamemodeType.Titans,
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = true,
+                        },
+                    },
+                    new EndlessSettings
+                    {
+                        GamemodeType = GamemodeType.Endless,
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = true,
+                        },
+                    },
+                    new WaveGamemodeSettings
+                    {
+                        Time = new TimeSettings
+                        {
+                            CurrentTime = 12,
+                            DayLength = 300,
+                            Pause = true,
+                        },
+                    },
+                    
+                   
+                   
+                }
+            });
         }
     }
 }

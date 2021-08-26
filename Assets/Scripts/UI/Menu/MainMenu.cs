@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI.Menu
 {
+    /// <summary>
+    /// UI Container class which is used to navigate to all the Main menu UI elements
+    /// </summary>
     public class MainMenu : UiNavigationElement
     {
         public void Singleplayer()
@@ -27,6 +30,7 @@ namespace Assets.Scripts.UI.Menu
         public void MapEditor()
         {
             //TODO: Switch to MapEditor scene
+            Navigate(typeof(MapConverter));
         }
 
         public void Quit()

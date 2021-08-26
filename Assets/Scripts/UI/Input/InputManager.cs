@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace Assets.Scripts.UI.Input
 {
+    /// <summary>
+    /// The InputManager, manages logic related to Input. It also loads / saves rebind settings.
+    /// </summary>
     public class InputManager : MonoBehaviour
     {
         private static KeyCode[] _cannonKeys;
@@ -34,7 +37,6 @@ namespace Assets.Scripts.UI.Input
             Menu = KeyCode.Escape;
 #endif
         }
-
 
         public static ControlSettings Settings;
 
@@ -158,8 +160,11 @@ namespace Assets.Scripts.UI.Input
                 [InputUi.Camera] = KeyCode.C,
                 [InputUi.Pause] = KeyCode.P,
                 [InputUi.Restart] = KeyCode.T,
-                [InputUi.InteractionWheel] = KeyCode.Tab,
-                [InputUi.Screenshot] = KeyCode.F12,
+                [InputUi.InteractionWheel] = KeyCode.I, //was Tab
+                [InputUi.Screenshot] = KeyCode.F2,
+                [InputUi.HideHUD] = KeyCode.F1,
+                [InputUi.Scoreboard] = KeyCode.Tab,
+                [InputUi.HideHooks] = KeyCode.H
             };
 
             _uiKeys = uiKeys.Values.ToArray();

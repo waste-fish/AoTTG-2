@@ -8,6 +8,7 @@ using Assets.Scripts.Gamemode.Options;
 using Assets.Scripts.Serialization;
 using Assets.Scripts.Services;
 using Assets.Scripts.Settings;
+using Assets.Scripts.Settings.New;
 using Assets.Scripts.UI.InGame.HUD;
 using Assets.Scripts.UI.Input;
 using Assets.Scripts.Utility;
@@ -22,6 +23,9 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.Characters.Humans
 {
+    /// <summary>
+    /// The GOD class for ODMG & Player controllers humans. Very inefficient and poorly written, and requires a lot of refactoring
+    /// </summary>
     public class Hero : Human
     {
         public CharacterPrefabs Prefabs;
@@ -79,7 +83,7 @@ namespace Assets.Scripts.Characters.Humans
         private BUFF currentBuff { get; set; }
         public Camera currentCamera;
         public IN_GAME_MAIN_CAMERA currentInGameCamera;
-        private float currentGas { get; set; } = 100f;
+        public float currentGas { get; set; } = 100f;
         public float currentSpeed;
         public Vector3 currentV;
         private bool dashD { get; set; }
@@ -96,7 +100,8 @@ namespace Assets.Scripts.Characters.Humans
         public float facingDirection { get; set; }
         private Transform forearmL { get; set; }
         private Transform forearmR { get; set; }
-        private float gravity { get; set; } = 20f;
+        private float Gravity => 20f * gravityModifier;
+        private float gravityModifier = GameSettings.Global?.Gravity ?? 1;
         public bool grounded;
         private GameObject gunDummy { get; set; }
         private Vector3 gunTarget { get; set; }
@@ -217,8 +222,7 @@ namespace Assets.Scripts.Characters.Humans
         public SmoothSyncMovement SmoothSync { get; protected set; }
 
         [SerializeField] StringVariable bombMainPath;
-
-
+        
         #region Unity Methods
 
         protected override void Awake()
@@ -240,9 +244,29 @@ namespace Assets.Scripts.Characters.Humans
             upperarmR = Body.upper_arm_R;
             Equipment = gameObject.AddComponent<Equipment.Equipment>();
             Faction = Service.Faction.GetHumanity();
+            Service.Settings.OnGlobalSettingsChanged += OnGlobalSettingsChanged;
             Service.Entity.Register(this);
 
             CustomAnimationSpeed();
+            Setting.Debug.NoClip.OnValueChanged += NoClip_OnValueChanged;
+            if (Setting.Debug.NoClip == true)
+                NoClip_OnValueChanged(true);
+        }
+
+        private void NoClip_OnValueChanged(bool value)
+        {
+            if (photonView.isMine && PhotonNetwork.isMasterClient)
+            {
+                gameObject.GetComponent<CapsuleCollider>().enabled = !value; // Inverted as NoClip enabled = no collider
+            }
+        }
+
+        public void OnGlobalSettingsChanged(GlobalSettings settings)
+        {
+            if (settings.Gravity.HasValue)
+            {
+                gravityModifier = settings.Gravity.Value;
+            }
         }
 
         private void Start()
@@ -282,7 +306,7 @@ namespace Assets.Scripts.Characters.Humans
 
             if (!photonView.isMine)
             {
-                gameObject.layer = Layers.NetworkObject.ToLayer();
+                gameObject.layer = (int) Layers.NetworkObject;
                 if (IN_GAME_MAIN_CAMERA.dayLight == DayLight.Night)
                 {
                     GameObject obj3 = Instantiate(Resources.Load<GameObject>("flashlight"));
@@ -1280,7 +1304,8 @@ namespace Assets.Scripts.Characters.Humans
                 Destroy(gunDummy);
             }
             ReleaseIfIHookSb();
-
+            Service.Settings.OnGlobalSettingsChanged -= OnGlobalSettingsChanged;
+            Setting.Debug.NoClip.OnValueChanged -= NoClip_OnValueChanged;
         }
 
         public void LateUpdate()
@@ -1715,7 +1740,7 @@ namespace Assets.Scripts.Characters.Humans
                             force = -Rigidbody.velocity;
                             force.y = num7;
                             float num8 = Vector3.Distance(myHorse.transform.position, transform.position);
-                            float num9 = ((0.6f * gravity) * num8) / 12f;
+                            float num9 = ((0.6f * Gravity) * num8) / 12f;
                             vector7 = myHorse.transform.position - transform.position;
                             force += (num9 * vector7.normalized);
                         }
@@ -1825,7 +1850,7 @@ namespace Assets.Scripts.Characters.Humans
                             if (Animation[HeroAnim.TO_ROOF].normalizedTime < 0.22f)
                             {
                                 Rigidbody.velocity = Vector3.zero;
-                                Rigidbody.AddForce(new Vector3(0f, gravity * Rigidbody.mass, 0f));
+                                Rigidbody.AddForce(new Vector3(0f, Gravity * Rigidbody.mass, 0f));
                             }
                             else
                             {
@@ -2006,7 +2031,7 @@ namespace Assets.Scripts.Characters.Humans
                     }
                     else
                     {
-                        Rigidbody.AddForce(new Vector3(0f, -gravity * Rigidbody.mass, 0f));
+                        Rigidbody.AddForce(new Vector3(0f, -Gravity * Rigidbody.mass, 0f));
                     }
 
                     if (currentSpeed > 10f)
@@ -2043,8 +2068,6 @@ namespace Assets.Scripts.Characters.Humans
 
         #endregion
 
-
-
         public void Initialize(CharacterPreset preset)
         {
             //TODO: Remove hack
@@ -2073,7 +2096,7 @@ namespace Assets.Scripts.Characters.Humans
             if (photonView.isMine)
             {
                 //TODO: If this is a default preset, find a more efficient way
-                var config = JsonConvert.SerializeObject(preset, Formatting.Indented, new ColorJsonConverter());
+                var config = JsonConvert.SerializeObject(CustomizationNetworkObject.Convert(Prefabs, preset), Formatting.Indented, new ColorJsonConverter());
                 photonView.RPC(nameof(InitializeRpc), PhotonTargets.OthersBuffered, config);
             }
 
@@ -2091,7 +2114,8 @@ namespace Assets.Scripts.Characters.Humans
 
             if (info.sender.ID == photonView.ownerId)
             {
-                Initialize(JsonConvert.DeserializeObject<CharacterPreset>(characterPreset, new ColorJsonConverter()));
+                var config = JsonConvert.DeserializeObject<CustomizationNetworkObject>(characterPreset, new ColorJsonConverter());
+                Initialize(config.ToPreset(Prefabs));
             }
         }
 
@@ -2210,7 +2234,7 @@ namespace Assets.Scripts.Characters.Humans
         }
 
         #endregion
-
+        
         public void AttackAccordingToMouse()
         {
             if (Input.mousePosition.x < (Screen.width * 0.5))
@@ -3916,6 +3940,7 @@ namespace Assets.Scripts.Characters.Humans
 
                 hookUI.crossImage.color = magnitude > 120f ? Color.red : Color.white;
                 hookUI.distanceLabel.transform.localPosition = hookUI.cross.localPosition;
+                hookUI.speedLabel.transform.localPosition = hookUI.cross.localPosition;
 
                 if (((int) FengGameManagerMKII.settings[0xbd]) == 1)
                 {
@@ -3926,6 +3951,7 @@ namespace Assets.Scripts.Characters.Humans
                     distance += "\n" + ((currentSpeed / 100f)).ToString("F1") + "K";
                 }
                 hookUI.distanceLabel.text = distance;
+                hookUI.speedLabel.text = ((currentSpeed / 100f)).ToString("F1") + "K";
 
                 Vector3 vector2 = new Vector3(0f, 0.4f, 0f);
                 vector2 -= (transform.right * 0.3f);
@@ -3967,21 +3993,8 @@ namespace Assets.Scripts.Characters.Humans
 
         private void ShowGas()
         {
-            float num = currentGas / totalGas;
             float num2 = currentBladeSta / totalBladeSta;
-            cachedSprites["GasLeft"].fillAmount = cachedSprites["GasRight"].fillAmount = currentGas / totalGas;
-            if (num <= 0.25f)
-            {
-                cachedSprites["GasLeft"].color = cachedSprites["GasRight"].color = Color.red;
-            }
-            else if (num < 0.5f)
-            {
-                cachedSprites["GasLeft"].color = cachedSprites["GasRight"].color = Color.yellow;
-            }
-            else
-            {
-                cachedSprites["GasLeft"].color = cachedSprites["GasRight"].color = Color.white;
-            }
+            cachedSprites["GasLeft"].fillAmount = cachedSprites["GasRight"].fillAmount = 1 - (currentGas / totalGas);
             Equipment.Weapon.UpdateSupplyUi(InGameUI);
         }
 

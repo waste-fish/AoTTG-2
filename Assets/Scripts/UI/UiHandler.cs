@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.UI.InGame;
+using Assets.Scripts.UI.InGame;
 using System;
 using System.Linq;
 using UnityEngine;
@@ -17,6 +17,9 @@ namespace Assets.Scripts.UI
         public MenuUi MenuUi;
         public InGameUi InGameUi;
         public Text Version;
+
+        public bool hasCustomHUD = false;
+        
 
         public void Start()
         {
@@ -42,6 +45,9 @@ namespace Assets.Scripts.UI
         public void ShowInGameUi()
         {
             InGameUi.gameObject.SetActive(true);
+            MenuUi.Singleplayer.gameObject.SetActive(false);
+            MenuUi.CreateRoom.gameObject.SetActive(false);
+            MenuUi.Lobby.gameObject.SetActive(false);
             MenuUi.gameObject.SetActive(false);
         }
 

@@ -64,8 +64,10 @@
     <Compile Include="Assets\PhotonChatApi\ChatOperationCode.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatChannel.cs" />
     <Compile Include="Assets\PhotonChatApi\ChannelCreationOptions.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatPeer.cs" />
     <Compile Include="Assets\Venetian Water System\Script\VenetianWaterSystem.cs" />
+    <Compile Include="Assets\PhotonChatApi\ChatPeer.cs" />
+    <Compile Include="Assets\Resources\ForestremasterPrefab\trees\the falloff\PlayAnimation.cs" />
+    <Compile Include="Assets\Resources\ForestremasterPrefab\trees\the falloff\DestroyParticles.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\Resources\shaders\Unlit - Depth Cutout.shader" />

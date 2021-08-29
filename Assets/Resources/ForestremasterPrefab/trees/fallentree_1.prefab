@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 4169661398430680480}
   - component: {fileID: 1134223521258632985}
   - component: {fileID: 8197720661228284650}
-  m_Layer: 0
-  m_Name: fallentree_1 1
+  m_Layer: 9
+  m_Name: fallentree_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

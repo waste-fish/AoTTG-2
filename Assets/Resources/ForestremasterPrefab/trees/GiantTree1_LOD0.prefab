@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5552296841540655247}
   - component: {fileID: 5513363506318000468}
   - component: {fileID: 9207279508682323257}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: GiantTree1_LOD0
   m_TagString: Untagged
   m_Icon: {fileID: 0}

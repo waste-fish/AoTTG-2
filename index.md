@@ -8,7 +8,7 @@
 <body OnLoad="load()"> 
 	<script type="text/javascript">
 function load(){
-window.location.href = 'website/index.php';
+window.location.href = 'aottg2.net/website/index.php';
 }
 	</script>
 </body>

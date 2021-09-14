@@ -22,7 +22,7 @@
       {
         "files": [
           "api/**.yml",
-          "website/**.php"
+          "website/**.html"
         ],
         "cwd": "obj"
       },

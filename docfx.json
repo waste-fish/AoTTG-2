@@ -31,8 +31,8 @@
           "api/*.md",
           "toc.yml",
           "*.md",
-          "*.php",
-          "website/*.php"
+          "*.html",
+          "website/*.html"
         ],
         "exclude": [
           "obj/**",
@@ -44,7 +44,8 @@
       {
         "files": [
           "images/**",
-          "CNAME"
+          "CNAME",
+          "website/resources/**"
         ],
         "exclude": [
           "obj/**",

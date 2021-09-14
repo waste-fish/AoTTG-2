@@ -1,5 +1,6 @@
 - name: API Documentation
   href: obj/api/
+  homepage: api/index.md
 - name: Home
-  href: website/
-  homepage: index.php
+  href: google.com
+  homepage: google.com

@@ -30,8 +30,6 @@
         "files": [
           "api/*.md",
           "toc.yml",
-          "*.md",
-          "*.html",
           "website/*.html"
         ],
         "exclude": [
